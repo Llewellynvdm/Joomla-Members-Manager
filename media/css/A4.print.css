@@ -1,0 +1,37 @@
+/**
+ * @package    Joomla.Component.Builder
+ *
+ * @created    6th September, 2015
+ * @author     Llewellyn van der Merwe <https://www.joomlacomponentbuilder.com/>
+ * @github     Joomla Component Builder <https://github.com/vdm-io/Joomla-Component-Builder>
+ * @copyright  Copyright (C) 2015. All Rights Reserved
+ * @license    GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
+ */
+
+body {
+    background: rgb(204,204,204); 
+}
+page[size="A4"] {
+    background: white;
+    width: 20cm;
+    height: 25cm;
+    display: block;
+    margin: 0 auto;
+    margin-bottom: 0.5cm;
+    box-shadow: 0 0 0.5cm rgba(0,0,0,0.5);
+    padding: 15px;
+}
+
+page[size="A4"] table tr td {
+    font-size: 8pt !important;
+}
+
+@media print {
+    .no-print, .no-print *{ 
+        display: none !important; 
+    }
+    body, page[size="A4"] {
+        margin: 0;
+        box-shadow: 0;
+    }
+}

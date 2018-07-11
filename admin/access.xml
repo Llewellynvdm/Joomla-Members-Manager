@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<access component="com_membersmanager">
+	<section name="component">
+		<action name="core.admin" title="JACTION_ADMIN" description="JACTION_ADMIN_COMPONENT_DESC" />
+		<action name="core.options" title="JACTION_OPTIONS" description="JACTION_OPTIONS_COMPONENT_DESC" />
+		<action name="core.manage" title="JACTION_MANAGE" description="JACTION_MANAGE_COMPONENT_DESC" />
+		<action name="core.export" title="COM_MEMBERSMANAGER_EXPORT_DATA" description="COM_MEMBERSMANAGER_EXPORT_DATA_DESC" />
+		<action name="core.import" title="COM_MEMBERSMANAGER_IMPORT_DATA" description="COM_MEMBERSMANAGER_IMPORT_DATA_DESC" />
+		<action name="core.batch" title="COM_MEMBERSMANAGER_USE_BATCH" description="COM_MEMBERSMANAGER_USE_BATCH_DESC" />
+		<action name="core.version" title="COM_MEMBERSMANAGER_EDIT_VERSIONS" description="COM_MEMBERSMANAGER_EDIT_VERSIONS_DESC" />
+		<action name="core.create" title="JACTION_CREATE" description="JACTION_CREATE_COMPONENT_DESC" />
+		<action name="core.delete" title="JACTION_DELETE" description="JACTION_DELETE_COMPONENT_DESC" />
+		<action name="core.edit" title="JACTION_EDIT" description="JACTION_EDIT_COMPONENT_DESC" />
+		<action name="core.edit.state" title="JACTION_EDITSTATE" description="JACTION_ACCESS_EDITSTATE_DESC" />
+		<action name="core.edit.own" title="JACTION_EDITOWN" description="JACTION_EDITOWN_COMPONENT_DESC" />
+		<action name="core.edit.created_by" title="COM_MEMBERSMANAGER_EDIT_CREATED_BY" description="COM_MEMBERSMANAGER_EDIT_CREATED_BY_DESC" />
+		<action name="core.edit.created" title="COM_MEMBERSMANAGER_EDIT_CREATED_DATE" description="COM_MEMBERSMANAGER_EDIT_CREATED_DATE_DESC" />
+		<action name="country.access" title="COM_MEMBERSMANAGER_COUNTRIES_ACCESS" description="COM_MEMBERSMANAGER_COUNTRIES_ACCESS_DESC" />
+		<action name="country.batch" title="COM_MEMBERSMANAGER_COUNTRIES_BATCH_USE" description="COM_MEMBERSMANAGER_COUNTRIES_BATCH_USE_DESC" />
+		<action name="country.create" title="COM_MEMBERSMANAGER_COUNTRIES_CREATE" description="COM_MEMBERSMANAGER_COUNTRIES_CREATE_DESC" />
+		<action name="country.delete" title="COM_MEMBERSMANAGER_COUNTRIES_DELETE" description="COM_MEMBERSMANAGER_COUNTRIES_DELETE_DESC" />
+		<action name="country.edit" title="COM_MEMBERSMANAGER_COUNTRIES_EDIT" description="COM_MEMBERSMANAGER_COUNTRIES_EDIT_DESC" />
+		<action name="country.edit.own" title="COM_MEMBERSMANAGER_COUNTRIES_EDIT_OWN" description="COM_MEMBERSMANAGER_COUNTRIES_EDIT_OWN_DESC" />
+		<action name="country.edit.state" title="COM_MEMBERSMANAGER_COUNTRIES_EDIT_STATE" description="COM_MEMBERSMANAGER_COUNTRIES_EDIT_STATE_DESC" />
+		<action name="country.export" title="COM_MEMBERSMANAGER_COUNTRIES_EXPORT" description="COM_MEMBERSMANAGER_COUNTRIES_EXPORT_DESC" />
+		<action name="country.import" title="COM_MEMBERSMANAGER_COUNTRIES_IMPORT" description="COM_MEMBERSMANAGER_COUNTRIES_IMPORT_DESC" />
+		<action name="country.submenu" title="COM_MEMBERSMANAGER_COUNTRIES_SUBMENU" description="COM_MEMBERSMANAGER_COUNTRIES_SUBMENU_DESC" />
+		<action name="currency.access" title="COM_MEMBERSMANAGER_CURRENCIES_ACCESS" description="COM_MEMBERSMANAGER_CURRENCIES_ACCESS_DESC" />
+		<action name="currency.batch" title="COM_MEMBERSMANAGER_CURRENCIES_BATCH_USE" description="COM_MEMBERSMANAGER_CURRENCIES_BATCH_USE_DESC" />
+		<action name="currency.create" title="COM_MEMBERSMANAGER_CURRENCIES_CREATE" description="COM_MEMBERSMANAGER_CURRENCIES_CREATE_DESC" />
+		<action name="currency.delete" title="COM_MEMBERSMANAGER_CURRENCIES_DELETE" description="COM_MEMBERSMANAGER_CURRENCIES_DELETE_DESC" />
+		<action name="currency.edit" title="COM_MEMBERSMANAGER_CURRENCIES_EDIT" description="COM_MEMBERSMANAGER_CURRENCIES_EDIT_DESC" />
+		<action name="currency.edit.own" title="COM_MEMBERSMANAGER_CURRENCIES_EDIT_OWN" description="COM_MEMBERSMANAGER_CURRENCIES_EDIT_OWN_DESC" />
+		<action name="currency.edit.state" title="COM_MEMBERSMANAGER_CURRENCIES_EDIT_STATE" description="COM_MEMBERSMANAGER_CURRENCIES_EDIT_STATE_DESC" />
+		<action name="currency.export" title="COM_MEMBERSMANAGER_CURRENCIES_EXPORT" description="COM_MEMBERSMANAGER_CURRENCIES_EXPORT_DESC" />
+		<action name="currency.import" title="COM_MEMBERSMANAGER_CURRENCIES_IMPORT" description="COM_MEMBERSMANAGER_CURRENCIES_IMPORT_DESC" />
+		<action name="currency.submenu" title="COM_MEMBERSMANAGER_CURRENCIES_SUBMENU" description="COM_MEMBERSMANAGER_CURRENCIES_SUBMENU_DESC" />
+		<action name="member.access" title="COM_MEMBERSMANAGER_MEMBERS_ACCESS" description="COM_MEMBERSMANAGER_MEMBERS_ACCESS_DESC" />
+		<action name="member.batch" title="COM_MEMBERSMANAGER_MEMBERS_BATCH_USE" description="COM_MEMBERSMANAGER_MEMBERS_BATCH_USE_DESC" />
+		<action name="member.create" title="COM_MEMBERSMANAGER_MEMBERS_CREATE" description="COM_MEMBERSMANAGER_MEMBERS_CREATE_DESC" />
+		<action name="member.delete" title="COM_MEMBERSMANAGER_MEMBERS_DELETE" description="COM_MEMBERSMANAGER_MEMBERS_DELETE_DESC" />
+		<action name="member.edit" title="COM_MEMBERSMANAGER_MEMBERS_EDIT" description="COM_MEMBERSMANAGER_MEMBERS_EDIT_DESC" />
+		<action name="member.edit.created_by" title="COM_MEMBERSMANAGER_MEMBERS_EDIT_CREATED_BY" description="COM_MEMBERSMANAGER_MEMBERS_EDIT_CREATED_BY_DESC" />
+		<action name="member.edit.created" title="COM_MEMBERSMANAGER_MEMBERS_EDIT_CREATED_DATE" description="COM_MEMBERSMANAGER_MEMBERS_EDIT_CREATED_DATE_DESC" />
+		<action name="member.edit.own" title="COM_MEMBERSMANAGER_MEMBERS_EDIT_OWN" description="COM_MEMBERSMANAGER_MEMBERS_EDIT_OWN_DESC" />
+		<action name="member.edit.state" title="COM_MEMBERSMANAGER_MEMBERS_EDIT_STATE" description="COM_MEMBERSMANAGER_MEMBERS_EDIT_STATE_DESC" />
+		<action name="member.version" title="COM_MEMBERSMANAGER_MEMBERS_EDIT_VERSION" description="COM_MEMBERSMANAGER_MEMBERS_EDIT_VERSION_DESC" />
+		<action name="member.export" title="COM_MEMBERSMANAGER_MEMBERS_EXPORT" description="COM_MEMBERSMANAGER_MEMBERS_EXPORT_DESC" />
+		<action name="member.import" title="COM_MEMBERSMANAGER_MEMBERS_IMPORT" description="COM_MEMBERSMANAGER_MEMBERS_IMPORT_DESC" />
+		<action name="member.submenu" title="COM_MEMBERSMANAGER_MEMBERS_SUBMENU" description="COM_MEMBERSMANAGER_MEMBERS_SUBMENU_DESC" />
+		<action name="region.access" title="COM_MEMBERSMANAGER_REGIONS_ACCESS" description="COM_MEMBERSMANAGER_REGIONS_ACCESS_DESC" />
+		<action name="region.batch" title="COM_MEMBERSMANAGER_REGIONS_BATCH_USE" description="COM_MEMBERSMANAGER_REGIONS_BATCH_USE_DESC" />
+		<action name="region.create" title="COM_MEMBERSMANAGER_REGIONS_CREATE" description="COM_MEMBERSMANAGER_REGIONS_CREATE_DESC" />
+		<action name="region.delete" title="COM_MEMBERSMANAGER_REGIONS_DELETE" description="COM_MEMBERSMANAGER_REGIONS_DELETE_DESC" />
+		<action name="region.edit" title="COM_MEMBERSMANAGER_REGIONS_EDIT" description="COM_MEMBERSMANAGER_REGIONS_EDIT_DESC" />
+		<action name="region.edit.alias" title="COM_MEMBERSMANAGER_REGIONS_EDIT_ALIAS" description="COM_MEMBERSMANAGER_REGIONS_EDIT_ALIAS_DESC" />
+		<action name="region.edit.country" title="COM_MEMBERSMANAGER_REGIONS_EDIT_COUNTRY" description="COM_MEMBERSMANAGER_REGIONS_EDIT_COUNTRY_DESC" />
+		<action name="region.edit.created_by" title="COM_MEMBERSMANAGER_REGIONS_EDIT_CREATED_BY" description="COM_MEMBERSMANAGER_REGIONS_EDIT_CREATED_BY_DESC" />
+		<action name="region.edit.created" title="COM_MEMBERSMANAGER_REGIONS_EDIT_CREATED_DATE" description="COM_MEMBERSMANAGER_REGIONS_EDIT_CREATED_DATE_DESC" />
+		<action name="region.edit.name" title="COM_MEMBERSMANAGER_REGIONS_EDIT_NAME" description="COM_MEMBERSMANAGER_REGIONS_EDIT_NAME_DESC" />
+		<action name="region.edit.own" title="COM_MEMBERSMANAGER_REGIONS_EDIT_OWN" description="COM_MEMBERSMANAGER_REGIONS_EDIT_OWN_DESC" />
+		<action name="region.edit.state" title="COM_MEMBERSMANAGER_REGIONS_EDIT_STATE" description="COM_MEMBERSMANAGER_REGIONS_EDIT_STATE_DESC" />
+		<action name="region.export" title="COM_MEMBERSMANAGER_REGIONS_EXPORT" description="COM_MEMBERSMANAGER_REGIONS_EXPORT_DESC" />
+		<action name="region.import" title="COM_MEMBERSMANAGER_REGIONS_IMPORT" description="COM_MEMBERSMANAGER_REGIONS_IMPORT_DESC" />
+		<action name="type.access" title="COM_MEMBERSMANAGER_TYPES_ACCESS" description="COM_MEMBERSMANAGER_TYPES_ACCESS_DESC" />
+		<action name="type.batch" title="COM_MEMBERSMANAGER_TYPES_BATCH_USE" description="COM_MEMBERSMANAGER_TYPES_BATCH_USE_DESC" />
+		<action name="type.create" title="COM_MEMBERSMANAGER_TYPES_CREATE" description="COM_MEMBERSMANAGER_TYPES_CREATE_DESC" />
+		<action name="type.delete" title="COM_MEMBERSMANAGER_TYPES_DELETE" description="COM_MEMBERSMANAGER_TYPES_DELETE_DESC" />
+		<action name="type.edit" title="COM_MEMBERSMANAGER_TYPES_EDIT" description="COM_MEMBERSMANAGER_TYPES_EDIT_DESC" />
+		<action name="type.edit.created_by" title="COM_MEMBERSMANAGER_TYPES_EDIT_CREATED_BY" description="COM_MEMBERSMANAGER_TYPES_EDIT_CREATED_BY_DESC" />
+		<action name="type.edit.created" title="COM_MEMBERSMANAGER_TYPES_EDIT_CREATED_DATE" description="COM_MEMBERSMANAGER_TYPES_EDIT_CREATED_DATE_DESC" />
+		<action name="type.edit.description" title="COM_MEMBERSMANAGER_TYPES_EDIT_DESCRIPTION" description="COM_MEMBERSMANAGER_TYPES_EDIT_DESCRIPTION_DESC" />
+		<action name="type.edit.name" title="COM_MEMBERSMANAGER_TYPES_EDIT_NAME" description="COM_MEMBERSMANAGER_TYPES_EDIT_NAME_DESC" />
+		<action name="type.edit.own" title="COM_MEMBERSMANAGER_TYPES_EDIT_OWN" description="COM_MEMBERSMANAGER_TYPES_EDIT_OWN_DESC" />
+		<action name="type.edit.state" title="COM_MEMBERSMANAGER_TYPES_EDIT_STATE" description="COM_MEMBERSMANAGER_TYPES_EDIT_STATE_DESC" />
+		<action name="type.version" title="COM_MEMBERSMANAGER_TYPES_EDIT_VERSION" description="COM_MEMBERSMANAGER_TYPES_EDIT_VERSION_DESC" />
+		<action name="type.export" title="COM_MEMBERSMANAGER_TYPES_EXPORT" description="COM_MEMBERSMANAGER_TYPES_EXPORT_DESC" />
+		<action name="type.import" title="COM_MEMBERSMANAGER_TYPES_IMPORT" description="COM_MEMBERSMANAGER_TYPES_IMPORT_DESC" />
+	</section>
+	<section name="member">
+		<action name="member.edit" title="COM_MEMBERSMANAGER_MEMBERS_EDIT" description="COM_MEMBERSMANAGER_MEMBERS_EDIT_DESC" />
+		<action name="member.edit.own" title="COM_MEMBERSMANAGER_MEMBERS_EDIT_OWN" description="COM_MEMBERSMANAGER_MEMBERS_EDIT_OWN_DESC" />
+		<action name="member.edit.state" title="COM_MEMBERSMANAGER_MEMBERS_EDIT_STATE" description="COM_MEMBERSMANAGER_MEMBERS_EDIT_STATE_DESC" />
+		<action name="member.edit.created_by" title="COM_MEMBERSMANAGER_MEMBERS_EDIT_CREATED_BY" description="COM_MEMBERSMANAGER_MEMBERS_EDIT_CREATED_BY_DESC" />
+		<action name="member.edit.created" title="COM_MEMBERSMANAGER_MEMBERS_EDIT_CREATED_DATE" description="COM_MEMBERSMANAGER_MEMBERS_EDIT_CREATED_DATE_DESC" />
+		<action name="member.create" title="COM_MEMBERSMANAGER_MEMBERS_CREATE" description="COM_MEMBERSMANAGER_MEMBERS_CREATE_DESC" />
+		<action name="member.delete" title="COM_MEMBERSMANAGER_MEMBERS_DELETE" description="COM_MEMBERSMANAGER_MEMBERS_DELETE_DESC" />
+		<action name="member.access" title="COM_MEMBERSMANAGER_MEMBERS_ACCESS" description="COM_MEMBERSMANAGER_MEMBERS_ACCESS_DESC" />
+		<action name="member.version" title="COM_MEMBERSMANAGER_MEMBERS_EDIT_VERSION" description="COM_MEMBERSMANAGER_MEMBERS_EDIT_VERSION_DESC" />
+	</section>
+	<section name="type">
+		<action name="type.edit" title="COM_MEMBERSMANAGER_TYPES_EDIT" description="COM_MEMBERSMANAGER_TYPES_EDIT_DESC" />
+		<action name="type.edit.own" title="COM_MEMBERSMANAGER_TYPES_EDIT_OWN" description="COM_MEMBERSMANAGER_TYPES_EDIT_OWN_DESC" />
+		<action name="type.edit.state" title="COM_MEMBERSMANAGER_TYPES_EDIT_STATE" description="COM_MEMBERSMANAGER_TYPES_EDIT_STATE_DESC" />
+		<action name="type.edit.created_by" title="COM_MEMBERSMANAGER_TYPES_EDIT_CREATED_BY" description="COM_MEMBERSMANAGER_TYPES_EDIT_CREATED_BY_DESC" />
+		<action name="type.edit.created" title="COM_MEMBERSMANAGER_TYPES_EDIT_CREATED_DATE" description="COM_MEMBERSMANAGER_TYPES_EDIT_CREATED_DATE_DESC" />
+		<action name="type.create" title="COM_MEMBERSMANAGER_TYPES_CREATE" description="COM_MEMBERSMANAGER_TYPES_CREATE_DESC" />
+		<action name="type.delete" title="COM_MEMBERSMANAGER_TYPES_DELETE" description="COM_MEMBERSMANAGER_TYPES_DELETE_DESC" />
+		<action name="type.access" title="COM_MEMBERSMANAGER_TYPES_ACCESS" description="COM_MEMBERSMANAGER_TYPES_ACCESS_DESC" />
+		<action name="type.edit.name" title="COM_MEMBERSMANAGER_TYPES_EDIT_NAME" description="COM_MEMBERSMANAGER_TYPES_EDIT_NAME_DESC" />
+		<action name="type.edit.description" title="COM_MEMBERSMANAGER_TYPES_EDIT_DESCRIPTION" description="COM_MEMBERSMANAGER_TYPES_EDIT_DESCRIPTION_DESC" />
+		<action name="type.version" title="COM_MEMBERSMANAGER_TYPES_EDIT_VERSION" description="COM_MEMBERSMANAGER_TYPES_EDIT_VERSION_DESC" />
+	</section>
+	<section name="region">
+		<action name="region.edit" title="COM_MEMBERSMANAGER_REGIONS_EDIT" description="COM_MEMBERSMANAGER_REGIONS_EDIT_DESC" />
+		<action name="region.edit.own" title="COM_MEMBERSMANAGER_REGIONS_EDIT_OWN" description="COM_MEMBERSMANAGER_REGIONS_EDIT_OWN_DESC" />
+		<action name="region.edit.state" title="COM_MEMBERSMANAGER_REGIONS_EDIT_STATE" description="COM_MEMBERSMANAGER_REGIONS_EDIT_STATE_DESC" />
+		<action name="region.edit.created_by" title="COM_MEMBERSMANAGER_REGIONS_EDIT_CREATED_BY" description="COM_MEMBERSMANAGER_REGIONS_EDIT_CREATED_BY_DESC" />
+		<action name="region.edit.created" title="COM_MEMBERSMANAGER_REGIONS_EDIT_CREATED_DATE" description="COM_MEMBERSMANAGER_REGIONS_EDIT_CREATED_DATE_DESC" />
+		<action name="region.create" title="COM_MEMBERSMANAGER_REGIONS_CREATE" description="COM_MEMBERSMANAGER_REGIONS_CREATE_DESC" />
+		<action name="region.delete" title="COM_MEMBERSMANAGER_REGIONS_DELETE" description="COM_MEMBERSMANAGER_REGIONS_DELETE_DESC" />
+		<action name="region.access" title="COM_MEMBERSMANAGER_REGIONS_ACCESS" description="COM_MEMBERSMANAGER_REGIONS_ACCESS_DESC" />
+		<action name="region.edit.name" title="COM_MEMBERSMANAGER_REGIONS_EDIT_NAME" description="COM_MEMBERSMANAGER_REGIONS_EDIT_NAME_DESC" />
+		<action name="region.edit.country" title="COM_MEMBERSMANAGER_REGIONS_EDIT_COUNTRY" description="COM_MEMBERSMANAGER_REGIONS_EDIT_COUNTRY_DESC" />
+		<action name="region.edit.alias" title="COM_MEMBERSMANAGER_REGIONS_EDIT_ALIAS" description="COM_MEMBERSMANAGER_REGIONS_EDIT_ALIAS_DESC" />
+	</section>
+	<section name="country">
+		<action name="country.edit" title="COM_MEMBERSMANAGER_COUNTRIES_EDIT" description="COM_MEMBERSMANAGER_COUNTRIES_EDIT_DESC" />
+		<action name="country.edit.own" title="COM_MEMBERSMANAGER_COUNTRIES_EDIT_OWN" description="COM_MEMBERSMANAGER_COUNTRIES_EDIT_OWN_DESC" />
+		<action name="country.edit.state" title="COM_MEMBERSMANAGER_COUNTRIES_EDIT_STATE" description="COM_MEMBERSMANAGER_COUNTRIES_EDIT_STATE_DESC" />
+		<action name="country.create" title="COM_MEMBERSMANAGER_COUNTRIES_CREATE" description="COM_MEMBERSMANAGER_COUNTRIES_CREATE_DESC" />
+		<action name="country.delete" title="COM_MEMBERSMANAGER_COUNTRIES_DELETE" description="COM_MEMBERSMANAGER_COUNTRIES_DELETE_DESC" />
+		<action name="country.access" title="COM_MEMBERSMANAGER_COUNTRIES_ACCESS" description="COM_MEMBERSMANAGER_COUNTRIES_ACCESS_DESC" />
+	</section>
+	<section name="currency">
+		<action name="currency.edit" title="COM_MEMBERSMANAGER_CURRENCIES_EDIT" description="COM_MEMBERSMANAGER_CURRENCIES_EDIT_DESC" />
+		<action name="currency.edit.own" title="COM_MEMBERSMANAGER_CURRENCIES_EDIT_OWN" description="COM_MEMBERSMANAGER_CURRENCIES_EDIT_OWN_DESC" />
+		<action name="currency.edit.state" title="COM_MEMBERSMANAGER_CURRENCIES_EDIT_STATE" description="COM_MEMBERSMANAGER_CURRENCIES_EDIT_STATE_DESC" />
+		<action name="currency.create" title="COM_MEMBERSMANAGER_CURRENCIES_CREATE" description="COM_MEMBERSMANAGER_CURRENCIES_CREATE_DESC" />
+		<action name="currency.delete" title="COM_MEMBERSMANAGER_CURRENCIES_DELETE" description="COM_MEMBERSMANAGER_CURRENCIES_DELETE_DESC" />
+		<action name="currency.access" title="COM_MEMBERSMANAGER_CURRENCIES_ACCESS" description="COM_MEMBERSMANAGER_CURRENCIES_ACCESS_DESC" />
+	</section>
+</access>

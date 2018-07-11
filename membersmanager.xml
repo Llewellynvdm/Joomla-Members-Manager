@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="component" version="3.2" method="upgrade">
+	<name>COM_MEMBERSMANAGER</name>
+	<creationDate>11th July, 2018</creationDate>
+	<author>Llewellyn van der Merwe</author>
+	<authorEmail>llewellyn@joomlacomponentbuilder.com</authorEmail>
+	<authorUrl>https://www.joomlacomponentbuilder.com/</authorUrl>
+	<copyright>Copyright (C) 2015. All Rights Reserved</copyright>
+	<license>GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html</license>
+	<version>1.0.7</version>
+	<description><![CDATA[
+		<h1>Members Manager (v.1.0.7)</h1>
+		<div style="clear: both;"></div>
+		<p>A [Members manager](https://github.com/vdm-io/Joomla-Members-Manager) to use as a base for any kind of project that needs user integration. You can with much ease adapt it using the [JCB package](https://github.com/vdm-io/JCB-Community-Packages/raw/master/JCB_membersManager.zip).
+
+Watch this [tutorial](https://youtu.be/lkE0ZiSWufg) to see how.</p>
+		<p>Created by <a href="https://www.joomlacomponentbuilder.com/" target="_blank">Llewellyn van der Merwe</a><br /><small>Development started 6th September, 2015</small></p>
+	]]></description>
+
+	<!-- Runs on install; New in Joomla 1.5 -->
+	<install>
+		<sql>
+			<file driver="mysql" charset="utf8">sql/install.mysql.utf8.sql</file>
+		</sql>
+	</install>
+
+	<!-- Runs on uninstall; New in Joomla 1.5 -->
+	<uninstall>
+		<sql>
+			<file driver="mysql" charset="utf8">sql/uninstall.mysql.utf8.sql</file>
+		</sql>
+	</uninstall>
+
+	<!-- Runs on install/uninstall/update; New in Joomla 2.5 -->
+	<scriptfile>script.php</scriptfile>
+
+	<media destination="com_membersmanager" folder="media">
+		<filename>index.html</filename>
+		<folder>js</folder>
+		<folder>css</folder>
+		<folder>images</folder>
+		<folder>uikit-v2</folder>
+		<folder>uikit-v3</folder>
+		<folder>footable-v3</folder>
+	</media>
+
+	<!-- Update Schema; New in Joomla 2.5 -->
+	<update>
+		<schemas>
+			<schemapath type="mysql">sql/updates/mysql/</schemapath>
+		</schemas>
+	</update>
+
+	
+
+	
+
+	<administration>
+		<menu>COM_MEMBERSMANAGER_MENU</menu>
+		<submenu>
+			<!-- Instead of link you can specify individual link attributes -->
+		</submenu>
+		<files folder="admin">
+			<filename>access.xml</filename>
+			<filename>config.xml</filename>
+			<filename>controller.php</filename>###WHMCS_ENCRYPT_FILE###
+			<filename>index.html</filename>
+			<filename>membersmanager.php</filename>
+			<filename>README.txt</filename>
+			<folder>assets</folder>
+			<folder>controllers</folder>
+			<folder>helpers</folder>
+			<folder>models</folder>
+			<folder>sql</folder>
+			<folder>tables</folder>
+			<folder>views</folder>
+			<folder>layouts</folder>
+		</files>
+
+		<languages folder="admin">
+			<language tag="en-GB">language/en-GB/en-GB.com_membersmanager.ini</language>
+			<language tag="en-GB">language/en-GB/en-GB.com_membersmanager.sys.ini</language>
+		</languages>
+
+	</administration>
+</extension>

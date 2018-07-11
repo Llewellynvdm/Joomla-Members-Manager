@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="utf-8"?>
+<config>
+	<fieldset
+		addrulepath="/administrator/components/com_membersmanager/models/rules"
+		addfieldpath="/administrator/components/com_membersmanager/models/fields"
+		name="global_config"
+		label="COM_MEMBERSMANAGER_CONFIG_GLOBAL_LABEL"
+		description="COM_MEMBERSMANAGER_CONFIG_GLOBAL_DESC">
+		<field
+			name="check_in"
+			type="list"
+			default="0"
+			label="COM_MEMBERSMANAGER_CONFIG_CHECK_TIMER_LABEL"
+			description="COM_MEMBERSMANAGER_CONFIG_CHECK_TIMER_DESC">
+			<option
+				value="-5 hours">COM_MEMBERSMANAGER_CONFIG_CHECK_TIMER_OPTION_ONE</option>
+			<option
+				value="-12 hours">COM_MEMBERSMANAGER_CONFIG_CHECK_TIMER_OPTION_TWO</option>
+			<option
+				value="-1 day">COM_MEMBERSMANAGER_CONFIG_CHECK_TIMER_OPTION_THREE</option>
+			<option
+				value="-2 day">COM_MEMBERSMANAGER_CONFIG_CHECK_TIMER_OPTION_FOUR</option>
+			<option
+				value="-1 week">COM_MEMBERSMANAGER_CONFIG_CHECK_TIMER_OPTION_FIVE</option>
+			<option
+				value="0">COM_MEMBERSMANAGER_CONFIG_CHECK_TIMER_OPTION_SIX</option>
+		</field>
+		<field type="spacer" name="spacerAuthor" hr="true" />
+		<field
+			name="save_history"
+			type="radio"
+			class="btn-group btn-group-yesno"
+			default="1"
+			label="JGLOBAL_SAVE_HISTORY_OPTIONS_LABEL"
+			description="JGLOBAL_SAVE_HISTORY_OPTIONS_DESC"
+			>
+			<option value="1">JYES</option>
+			<option value="0">JNO</option>
+		</field>
+		<field
+			name="history_limit"
+			type="text"
+			filter="integer"
+			label="JGLOBAL_HISTORY_LIMIT_OPTIONS_LABEL"
+			description="JGLOBAL_HISTORY_LIMIT_OPTIONS_DESC"
+			default="10"
+		/>
+		<field type="spacer" name="spacerHistory" hr="true" />
+		<field name="autorTitle"
+			type="spacer"
+			label="COM_MEMBERSMANAGER_CONFIG_AUTHOR"
+		/>
+		<field name="autorName"
+			type="text"
+			label="COM_MEMBERSMANAGER_CONFIG_AUTHOR_NAME_LABEL"
+			description="COM_MEMBERSMANAGER_CONFIG_AUTHOR_NAME_DESC"
+			size="60"
+			default="Llewellyn van der Merwe"
+			readonly="true"
+			class="readonly"
+		/>
+		<field name="autorEmail"
+			type="email"
+			label="COM_MEMBERSMANAGER_CONFIG_AUTHOR_EMAIL_LABEL"
+			description="COM_MEMBERSMANAGER_CONFIG_AUTHOR_EMAIL_DESC"
+			size="60"
+			default="llewellyn@joomlacomponentbuilder.com"
+			readonly="true"
+			class="readonly"
+		/>
+	</fieldset>
+	<fieldset
+		name="group_config"
+		label="COM_MEMBERSMANAGER_CONFIG_GROUPS_LABEL"
+		description="COM_MEMBERSMANAGER_CONFIG_GROUPS_DESC">
+		<field name="memberuser"
+			type="usergroup"
+			label="COM_MEMBERSMANAGER_USER_GROUP"
+			description="COM_MEMBERSMANAGER_CONFIG_TARGET_GROUP_DESC"
+			multiple="true"
+		/>
+	</fieldset>
+	<fieldset
+		name="uikit_config"
+		label="COM_MEMBERSMANAGER_CONFIG_UIKIT_LABEL"
+		description="COM_MEMBERSMANAGER_CONFIG_UIKIT_DESC">
+		<field name="uikit_version"
+			type="radio"
+			label="COM_MEMBERSMANAGER_CONFIG_UIKIT_VERSION_LABEL"
+			description="COM_MEMBERSMANAGER_CONFIG_UIKIT_VERSION_DESC"
+			class="btn-group btn-group-yesno"
+			default="2">
+			<!-- Option Set. -->
+			<option value="2">
+				COM_MEMBERSMANAGER_CONFIG_UIKIT_V2</option>"
+			<option value="3">
+				COM_MEMBERSMANAGER_CONFIG_UIKIT_V3</option>"
+		</field>
+		<field name="uikit_load"
+			type="radio"
+			label="COM_MEMBERSMANAGER_CONFIG_UIKIT_LOAD_LABEL"
+			description="COM_MEMBERSMANAGER_CONFIG_UIKIT_LOAD_DESC"
+			class="btn-group btn-group-yesno"
+			default="">
+			<!-- Option Set. -->
+			<option value="">
+				COM_MEMBERSMANAGER_CONFIG_AUTO_LOAD</option>"
+			<option value="1">
+				COM_MEMBERSMANAGER_CONFIG_FORCE_LOAD</option>"
+			<option value="3">
+				COM_MEMBERSMANAGER_CONFIG_ONLY_EXTRA</option>"
+			<option value="2">
+				COM_MEMBERSMANAGER_CONFIG_DONT_LOAD</option>"
+		</field>
+		<field name="uikit_min"
+			type="radio"
+			label="COM_MEMBERSMANAGER_CONFIG_UIKIT_MIN_LABEL"
+			description="COM_MEMBERSMANAGER_CONFIG_UIKIT_MIN_DESC"
+			class="btn-group btn-group-yesno"
+			default="">
+			<!-- Option Set. -->
+			<option value="">
+				COM_MEMBERSMANAGER_CONFIG_NO</option>"
+			<option value=".min">
+				COM_MEMBERSMANAGER_CONFIG_YES</option>"
+		</field>
+		<field name="uikit_style"
+			type="radio"
+			label="COM_MEMBERSMANAGER_CONFIG_UIKIT_STYLE_LABEL"
+			description="COM_MEMBERSMANAGER_CONFIG_UIKIT_STYLE_DESC"
+			class="btn-group btn-group-yesno"
+			showon="uikit_version:2"
+			default="">
+			<!-- Option Set. -->
+			<option value="">
+				COM_MEMBERSMANAGER_CONFIG_FLAT_LOAD</option>"
+			<option value=".almost-flat">
+				COM_MEMBERSMANAGER_CONFIG_ALMOST_FLAT_LOAD</option>"
+			<option value=".gradient">
+				COM_MEMBERSMANAGER_CONFIG_GRADIANT_LOAD</option>"
+		</field>
+	</fieldset>
+	<fieldset
+		name="encryption_config"
+		label="COM_MEMBERSMANAGER_CONFIG_ENCRYPTION_LABEL"
+		description="COM_MEMBERSMANAGER_CONFIG_ENCRYPTION_DESC">
+		<field type="note" name="medium_key_note" class="alert alert-info" label="COM_MEMBERSMANAGER_CONFIG_MEDIUM_KEY_NOTE_LABEL" description="COM_MEMBERSMANAGER_CONFIG_MEDIUM_KEY_NOTE_DESC" />
+		<field name="medium_key_path"
+			type="text"
+			label="COM_MEMBERSMANAGER_CONFIG_MEDIUM_KEY_LABEL"
+			description="COM_MEMBERSMANAGER_CONFIG_MEDIUM_KEY_DESC"
+			size="160"
+			filter="PATH"
+			hint="/home/user/hiddenfolder123/"
+			default=""
+		/>
+	</fieldset>
+	<fieldset
+		name="profile_custom_config"
+		label="COM_MEMBERSMANAGER_CONFIG_PROFILE">
+
+		<!-- Image_formats Field. Type: List. (joomla) -->
+		<field
+			type="list"
+			name="image_formats"
+			label="COM_MEMBERSMANAGER_CONFIG_IMAGE_FORMATS_LABEL"
+			description="COM_MEMBERSMANAGER_CONFIG_IMAGE_FORMATS_DESCRIPTION"
+			class="list_class"
+			multiple="true"
+			filter="ARRAY">
+			<!-- Option Set. -->
+			<option value="jpg">
+				COM_MEMBERSMANAGER_CONFIG_JPG</option>
+			<option value="jpeg">
+				COM_MEMBERSMANAGER_CONFIG_JPEG</option>
+			<option value="gif">
+				COM_MEMBERSMANAGER_CONFIG_GIF</option>
+			<option value="png">
+				COM_MEMBERSMANAGER_CONFIG_PNG</option>
+		</field>
+		<!-- Crop_profile Field. Type: Radio. (joomla) -->
+		<field
+			type="radio"
+			name="crop_profile"
+			label="COM_MEMBERSMANAGER_CONFIG_CROP_PROFILE_LABEL"
+			description="COM_MEMBERSMANAGER_CONFIG_CROP_PROFILE_DESCRIPTION"
+			class="btn-group btn-group-yesno"
+			default="0">
+			<!-- Option Set. -->
+			<option value="1">
+				COM_MEMBERSMANAGER_CONFIG_YES</option>
+			<option value="0">
+				COM_MEMBERSMANAGER_CONFIG_NO</option>
+		</field>
+		<!-- Profile_height Field. Type: Text. (joomla) -->
+		<field
+			type="text"
+			name="profile_height"
+			label="COM_MEMBERSMANAGER_CONFIG_PROFILE_HEIGHT_LABEL"
+			size="50"
+			maxlength="150"
+			class="text_area"
+			filter="INT"
+			hint="COM_MEMBERSMANAGER_CONFIG_PROFILE_HEIGHT_HINT"
+			showon="crop_profile:1"
+			onchange="if(!jQuery(this).val().match(/^\d+$/)){jQuery(this).val('')};"
+		/>
+		<!-- Profile_width Field. Type: Text. (joomla) -->
+		<field
+			type="text"
+			name="profile_width"
+			label="COM_MEMBERSMANAGER_CONFIG_PROFILE_WIDTH_LABEL"
+			size="50"
+			maxlength="150"
+			class="text_area"
+			filter="INT"
+			hint="COM_MEMBERSMANAGER_CONFIG_PROFILE_WIDTH_HINT"
+			showon="crop_profile:1"
+			onchange="if(!jQuery(this).val().match(/^\d+$/)){jQuery(this).val('')};"
+		/>
+	</fieldset>
+	<fieldset
+		name="permissions"
+		label="JCONFIG_PERMISSIONS_LABEL"
+		description="JCONFIG_PERMISSIONS_DESC">
+		<field
+			name="rules"
+			type="rules"
+			label="JCONFIG_PERMISSIONS_LABEL"
+			class="inputbox"
+			validate="rules"
+			filter="rules"
+			component="com_membersmanager"
+			section="component"
+		/>
+	</fieldset>
+</config>
