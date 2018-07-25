@@ -1,10 +1,10 @@
 <?php
 /**
- * @package    Joomla.Component.Builder
+ * @package    Joomla.Members.Manager
  *
  * @created    6th September, 2015
  * @author     Llewellyn van der Merwe <https://www.joomlacomponentbuilder.com/>
- * @github     Joomla Component Builder <https://github.com/vdm-io/Joomla-Component-Builder>
+ * @github     Joomla Members Manager <https://github.com/vdm-io/Joomla-Members-Manager>
  * @copyright  Copyright (C) 2015. All Rights Reserved
  * @license    GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  */
@@ -55,7 +55,7 @@ class MembersmanagerControllerAjax extends JControllerLegacy
 					{
 						$returnRaw = $jinput->get('raw', false, 'BOOLEAN');
 						$fieldValue = $jinput->get('field', NULL, 'WORD');
-						$valueValue = $jinput->get('value', NULL, 'WORD');
+						$valueValue = $jinput->get('value', NULL, 'STRING');
 						if($fieldValue && $valueValue && $user->id != 0)
 						{
 							$result = $this->getModel('ajax')->checkUnique($fieldValue, $valueValue);
@@ -132,9 +132,10 @@ class MembersmanagerControllerAjax extends JControllerLegacy
 					{
 						$returnRaw = $jinput->get('raw', false, 'BOOLEAN');
 						$idValue = $jinput->get('id', NULL, 'INT');
-						if($idValue && $user->id != 0)
+						$shownameValue = $jinput->get('showname', NULL, 'INT');
+						if($idValue && $shownameValue && $user->id != 0)
 						{
-							$result = $this->getModel('ajax')->getUser($idValue);
+							$result = $this->getModel('ajax')->getUser($idValue, $shownameValue);
 						}
 						else
 						{

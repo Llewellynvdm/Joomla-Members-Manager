@@ -1,10 +1,10 @@
 <?php
 /**
- * @package    Joomla.Component.Builder
+ * @package    Joomla.Members.Manager
  *
  * @created    6th September, 2015
  * @author     Llewellyn van der Merwe <https://www.joomlacomponentbuilder.com/>
- * @github     Joomla Component Builder <https://github.com/vdm-io/Joomla-Component-Builder>
+ * @github     Joomla Members Manager <https://github.com/vdm-io/Joomla-Members-Manager>
  * @copyright  Copyright (C) 2015. All Rights Reserved
  * @license    GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  */
@@ -51,8 +51,22 @@ return $groups;
 	 */
 	protected function getExcluded()
 	{
-		// set the groups array
-$groups = JComponentHelper::getParams('com_membersmanager')->get('memberuser');
-return $groups;
+		// To ensure that there is only one record per user
+// Get a db connection.
+$db = JFactory::getDbo();
+// Create a new query object.
+$query = $db->getQuery(true);
+// Select all records from the #__membersmanager_member table from user column'.
+$query->select($db->quoteName('user'));
+$query->from($db->quoteName('#__membersmanager_member'));
+$db->setQuery($query);
+$db->execute();
+$found = $db->getNumRows();
+if ($found)
+{
+	// return all users already used
+	return array_unique($db->loadColumn());
+}
+return null;
 	}
 }

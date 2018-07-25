@@ -1,10 +1,10 @@
 <?php
 /**
- * @package    Joomla.Component.Builder
+ * @package    Joomla.Members.Manager
  *
  * @created    6th September, 2015
  * @author     Llewellyn van der Merwe <https://www.joomlacomponentbuilder.com/>
- * @github     Joomla Component Builder <https://github.com/vdm-io/Joomla-Component-Builder>
+ * @github     Joomla Members Manager <https://github.com/vdm-io/Joomla-Members-Manager>
  * @copyright  Copyright (C) 2015. All Rights Reserved
  * @license    GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  */
@@ -311,6 +311,135 @@ abstract class MembersmanagerHelper
 		}
 		return $options;
 	}
+
+	/**
+	* Get the html/link of the image
+	* 
+	* @param  object   $item    The item to get image for
+	* @param  string   $target   The target in the item to use
+	* @param  string   $name   The name target in item to use
+	* @param  string   $filelink   The file link
+	*
+	* @return  string    image html/link
+	* 
+	*/
+	public static function getImageLink(&$item, $target, $name = 'name', $filelink = null, $html = true)
+	{
+		// check that we have a value
+		if (isset($item->{$target}) && MembersmanagerHelper::checkString($item->{$target}))
+		{
+			// load the file link path if not set
+			if (!$filelink)
+			{
+				$filelink = self::getFolderPath('url');
+			}
+			// set image link
+			if (strpos($item->{$target}, '_') !== false)
+			{
+				$extention = explode('_', $item->{$target});
+				$actualName = self::safeString($target, 'w');
+				if (strpos($item->{$target}, 'VDM') !== false)
+				{
+					$fileNameArray = explode('VDM', $item->{$target});
+					if (isset($fileNameArray[1]) && MembersmanagerHelper::checkString($fileNameArray[1]))
+					{
+						$actualName = $fileNameArray[1];
+					}
+				}
+				// check if we have the extention
+				if (isset($extention[2]))
+				{
+					// set the link
+					$link = $filelink . $item->{$target} . '.' . $extention[2];
+					// return ready html
+					if ($html)
+					{
+						return '<img src="' . $link . '" alt="' . $actualName . ' ' . $item->{$name} . '" data-uk-tooltip title="' . $item->{$name} . '"/>';
+					}
+					// return just the link
+					else
+					{
+						return $link;
+					}
+				}
+			}
+		}
+		return false;
+	}
+
+	/**
+	* Get the edit button
+	* 
+	* @param  int        $item           The item to edit
+	* @param  string   $view           The type of item to edit
+	* @param  string   $views         The list view controller name
+	* @param  string   $ref              The return path
+	* @param  string   $headsup    The message to show on click of button
+	*
+	* @return  string    On success the full html edit button
+	* 
+	*/
+	public static function  getEditButton(&$item, $view, $views, $ref = '', $headsup = 'COM_MEMBERSMANAGER_ALL_UNSAVED_WORK_ON_THIS_PAGE_WILL_BE_LOST_ARE_YOU_SURE_YOU_WANT_TO_CONTINUE')
+	{
+		// check that we have the ID
+		if (self::checkObject($item) && isset($item->id))
+		{
+			$id = (int) $item->id;
+			// check if the checked_out is available
+			if (isset($item->checked_out))
+			{
+				$checked_out = (int) $item->checked_out;
+			}
+		}
+		elseif (self::checkArray($item) && isset($item['id']))
+		{
+			$id = (int) $item['id'];
+			// check if the checked_out is available
+			if (isset($item['checked_out']))
+			{
+				$checked_out = (int) $item['checked_out'];
+			}
+		}
+		elseif (is_numeric($item))
+		{
+			$id = (int) $item;
+		}
+		// check ID
+		if (isset($id) && $id > 0)
+		{
+			// can edit
+			if (JFactory::getUser()->authorise($view.'.edit', 'com_membersmanager.'.$view.'.' . (int) $id))
+			{
+				// set the edit link
+				$edit = "index.php?option=com_membersmanager&view=".$views."&task=".$view.".edit&id=".$id.$ref;
+				// set the link title
+				$title = self::safeString(JText::_('COM_MEMBERSMANAGER_EDIT').' '.$view, 'W');
+				// check that there is a check message
+				if (self::checkString($headsup))
+				{
+					$href = 'onclick="UIkit.modal.confirm(\''.JText::_($headsup).'\', function(){ window.location.href = \'' . $edit . '\' })"  href="javascript:void(0)"';
+				}
+				else
+				{
+					$href = 'href="' . $edit . '"';
+				}
+				// check if it is checked out
+				if (isset($checked_out) && $checked_out > 0)
+				{
+					// is this user the one who checked it out
+					if ($checked_out == JFactory::getUser()->id)
+					{
+						return ' <a ' . $href . ' class="uk-icon-lock" title="' . $title . '"></a>';
+					}
+					return ' <a href="#" disabled class="uk-icon-lock" title="' . JText::sprintf('COM_MEMBERSMANAGER__HAS_BEEN_CHECKED_OUT_BY_S', self::safeString($view, 'W'), JFactory::getUser($checked_out)->name) . '"></a>'; 
+				}
+				// return normal edit link
+				return ' <a ' . $href . ' class="uk-icon-pencil" title="' . $title . '"></a>';
+			}
+		}
+		return '';
+	}
+
 	/**
 	*	Load the Component xml manifest.
 	**/
@@ -960,16 +1089,16 @@ abstract class MembersmanagerHelper
 					{
 						if ($external)
 						{
-							if ($name = self::getVar(null, $val, $id, $name, '=', $table))
+							if ($_name = self::getVar(null, $val, $id, $name, '=', $table))
 							{
-								$names[] = $name;
+								$names[] = $_name;
 							}
 						}
 						else
 						{
-							if ($name = self::getVar($table, $val, $id, $name))
+							if ($_name = self::getVar($table, $val, $id, $name))
 							{
-								$names[] = $name;
+								$names[] = $_name;
 							}
 						}
 					}
@@ -1691,7 +1820,7 @@ abstract class MembersmanagerHelper
 	*
 	*	@returns string on success
 	**/
-	public static function safeString($string, $type = 'L', $spacer = '_', $replaceNumbers = true)
+	public static function safeString($string, $type = 'L', $spacer = '_', $replaceNumbers = true, $keepOnlyCharacters = true)
 	{
 		if ($replaceNumbers === true)
 		{
@@ -1720,7 +1849,16 @@ abstract class MembersmanagerHelper
 			$string = trim($string);
 			$string = preg_replace('/'.$spacer.'+/', ' ', $string);
 			$string = preg_replace('/\s+/', ' ', $string);
-			$string = preg_replace("/[^A-Za-z ]/", '', $string);
+			// remove all and keep only characters
+			if ($keepOnlyCharacters)
+			{
+				$string = preg_replace("/[^A-Za-z ]/", '', $string);
+			}
+			// keep both numbers and characters
+			else
+			{
+				$string = preg_replace("/[^A-Za-z0-9 ]/", '', $string);
+			}
 			// select final adaptations
 			if ($type === 'L' || $type === 'strtolower')
 			{

@@ -1,10 +1,10 @@
 <?php
 /**
- * @package    Joomla.Component.Builder
+ * @package    Joomla.Members.Manager
  *
  * @created    6th September, 2015
  * @author     Llewellyn van der Merwe <https://www.joomlacomponentbuilder.com/>
- * @github     Joomla Component Builder <https://github.com/vdm-io/Joomla-Component-Builder>
+ * @github     Joomla Members Manager <https://github.com/vdm-io/Joomla-Members-Manager>
  * @copyright  Copyright (C) 2015. All Rights Reserved
  * @license    GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  */
@@ -138,10 +138,10 @@ class JFormFieldMainmembers extends JFormFieldList
 	{
 		$db = JFactory::getDBO();
 $query = $db->getQuery(true);
-$query->select($db->quoteName(array('a.id','a.user'),array('id','main_member_user')));
+$query->select($db->quoteName(array('a.id','a.user','a.account','a.name','a.email'),array('id','main_member_user','account','name','email')));
 $query->from($db->quoteName('#__membersmanager_member', 'a'));
 $query->where($db->quoteName('a.published') . ' >= 1');
-$query->where($db->quoteName('a.account') . ' = 1');
+$query->where($db->quoteName('a.account') . ' = 1 OR ' . $db->quoteName('a.account') . ' = 2');
 $query->order('a.user ASC');
 $db->setQuery((string)$query);
 $items = $db->loadObjectList();
@@ -151,7 +151,14 @@ if ($items)
 	$options[] = JHtml::_('select.option', '', JText::_('COM_MEMBERSMANAGER_SELECT_AN_OPTION'));
 	foreach($items as $item)
 	{
-		$options[] = JHtml::_('select.option', $item->id, JFactory::getUser((int) $item->main_member_user)->name . ' ' . JFactory::getUser((int) $item->main_member_user)->email);
+		if ($item->account == 1)
+		{
+			$options[] = JHtml::_('select.option', $item->id, JFactory::getUser((int) $item->main_member_user)->name . ' ' . JFactory::getUser((int) $item->main_member_user)->email);
+		}
+		else
+		{
+			$options[] = JHtml::_('select.option', $item->id, $item->name . ' ' . $item->email);
+		}
 	}
 }
 return $options;

@@ -1,10 +1,10 @@
 <?php
 /**
- * @package    Joomla.Component.Builder
+ * @package    Joomla.Members.Manager
  *
  * @created    6th September, 2015
  * @author     Llewellyn van der Merwe <https://www.joomlacomponentbuilder.com/>
- * @github     Joomla Component Builder <https://github.com/vdm-io/Joomla-Component-Builder>
+ * @github     Joomla Members Manager <https://github.com/vdm-io/Joomla-Members-Manager>
  * @copyright  Copyright (C) 2015. All Rights Reserved
  * @license    GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  */
@@ -204,6 +204,8 @@ class MembersmanagerViewMember extends JViewLegacy
 		$this->document->addScript( JURI::root(true) .'/media/com_membersmanager/uikit-v2/js/components/upload.min.js', (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/css');
 		// add var key
 		$this->document->addScriptDeclaration("var vastDevMod = '".$this->get('VDM')."';");
+		// need to add some language strings
+		JText::script('COM_MEMBERSMANAGER_VALUE_ALREADY_TAKEN_PLEASE_TRY_AGAIN');
 		JText::script('view not acceptable. Error');
 	}
 }

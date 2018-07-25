@@ -1,10 +1,10 @@
 <?php
 /**
- * @package    Joomla.Component.Builder
+ * @package    Joomla.Members.Manager
  *
  * @created    6th September, 2015
  * @author     Llewellyn van der Merwe <https://www.joomlacomponentbuilder.com/>
- * @github     Joomla Component Builder <https://github.com/vdm-io/Joomla-Component-Builder>
+ * @github     Joomla Members Manager <https://github.com/vdm-io/Joomla-Members-Manager>
  * @copyright  Copyright (C) 2015. All Rights Reserved
  * @license    GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  */
@@ -44,6 +44,7 @@ $componentParams = JComponentHelper::getParams('com_membersmanager');
 <div id="membersmanager_loader" style="display: none;">
 <form action="<?php echo JRoute::_('index.php?option=com_membersmanager&layout=edit&id='.(int) $this->item->id.$this->referral); ?>" method="post" name="adminForm" id="adminForm" class="form-validate" enctype="multipart/form-data">
 
+	<?php echo JLayoutHelper::render('member.details_above', $this); ?>
 <div class="form-horizontal">
 
 	<?php echo JHtml::_('bootstrap.startTabSet', 'memberTab', array('active' => 'details')); ?>
@@ -117,14 +118,14 @@ $componentParams = JComponentHelper::getParams('com_membersmanager');
 // #jform_account listeners for account_vvvvvvv function
 jQuery('#jform_account').on('keyup',function()
 {
-	var account_vvvvvvv = jQuery("#jform_account input[type='radio']:checked").val();
+	var account_vvvvvvv = jQuery("#jform_account").val();
 	vvvvvvv(account_vvvvvvv);
 
 });
 jQuery('#adminForm').on('change', '#jform_account',function (e)
 {
 	e.preventDefault();
-	var account_vvvvvvv = jQuery("#jform_account input[type='radio']:checked").val();
+	var account_vvvvvvv = jQuery("#jform_account").val();
 	vvvvvvv(account_vvvvvvv);
 
 });
@@ -132,14 +133,14 @@ jQuery('#adminForm').on('change', '#jform_account',function (e)
 // #jform_account listeners for account_vvvvvvw function
 jQuery('#jform_account').on('keyup',function()
 {
-	var account_vvvvvvw = jQuery("#jform_account input[type='radio']:checked").val();
+	var account_vvvvvvw = jQuery("#jform_account").val();
 	vvvvvvw(account_vvvvvvw);
 
 });
 jQuery('#adminForm').on('change', '#jform_account',function (e)
 {
 	e.preventDefault();
-	var account_vvvvvvw = jQuery("#jform_account input[type='radio']:checked").val();
+	var account_vvvvvvw = jQuery("#jform_account").val();
 	vvvvvvw(account_vvvvvvw);
 
 });
@@ -147,14 +148,14 @@ jQuery('#adminForm').on('change', '#jform_account',function (e)
 // #jform_account listeners for account_vvvvvvx function
 jQuery('#jform_account').on('keyup',function()
 {
-	var account_vvvvvvx = jQuery("#jform_account input[type='radio']:checked").val();
+	var account_vvvvvvx = jQuery("#jform_account").val();
 	vvvvvvx(account_vvvvvvx);
 
 });
 jQuery('#adminForm').on('change', '#jform_account',function (e)
 {
 	e.preventDefault();
-	var account_vvvvvvx = jQuery("#jform_account input[type='radio']:checked").val();
+	var account_vvvvvvx = jQuery("#jform_account").val();
 	vvvvvvx(account_vvvvvvx);
 
 });
@@ -198,8 +199,8 @@ jQuery(function($){
 		}
 };
 
-var select = UIkit.uploadSelect($("#upload-select-profile-image"), settings),
-	drop   = UIkit.uploadDrop($("#upload-drop-profile-image"), settings);
+var select = UIkit2.uploadSelect($("#upload-select-profile-image"), settings),
+	drop   = UIkit2.uploadDrop($("#upload-drop-profile-image"), settings);
 });
 jQuery('#profile-image-formats').html('<b><?php echo implode(', ', $formats); ?></b>');
 <?php if ($resize = $componentParams->get('crop_profile', null)) : ?>
@@ -226,7 +227,13 @@ jQuery('#adminForm').on('change', '#jform_user_id',function (e)
 {
 	e.preventDefault();
 	var user_id = jQuery("#jform_user_id").val();
-	getUser(user_id);
+	var showname = 1;
+	// check if the user id was found
+	if (!isSet(user_id)) {
+		var user_id =$("#jform_user").val();
+		var showname = 2;
+	}
+	getUser(user_id, showname);
 });
 
 jQuery(document).ready(function(){
@@ -234,18 +241,22 @@ jQuery(document).ready(function(){
     jQuery("body").css('background', 'transparent');
   });
 });
-jQuery('#adminForm').on('change', '#jform_account',function (e)
-{
+jQuery('#adminForm').on('change', '#jform_token',function (e) {
 	e.preventDefault();
-	var account = jQuery("#jform_account input[type='radio']:checked").val();
-	if (1 == account || 3 == account) {
+	var tokenValue = jQuery('#jform_token').val();
+	// check if this token value is used
+	checkUnique(tokenValue, 'token', 1);
+});
+jQuery('#adminForm').on('change', '#jform_account',function (e) {
+	e.preventDefault();
+	var account = jQuery("#jform_account").val();
+	if (1 == account || 4 == account) {
 		jQuery('#user_info').show();
 	} else {
 		jQuery('#user_info').hide();	
 	}
 });
-jQuery('#adminForm').on('change', '#jform_country',function (e)
-{
+jQuery('#adminForm').on('change', '#jform_country',function (e) {
 	e.preventDefault();
 	getRegion();
 });

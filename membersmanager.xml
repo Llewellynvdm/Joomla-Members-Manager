@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension type="component" version="3.2" method="upgrade">
 	<name>COM_MEMBERSMANAGER</name>
-	<creationDate>11th July, 2018</creationDate>
+	<creationDate>25th July, 2018</creationDate>
 	<author>Llewellyn van der Merwe</author>
 	<authorEmail>llewellyn@joomlacomponentbuilder.com</authorEmail>
 	<authorUrl>https://www.joomlacomponentbuilder.com/</authorUrl>
@@ -51,9 +51,23 @@ Watch this [tutorial](https://youtu.be/lkE0ZiSWufg) to see how.</p>
 		</schemas>
 	</update>
 
-	
+	<files folder="site">
+		<filename>controller.php</filename>
+		<filename>index.html</filename>
+		<filename>router.php</filename>
+		<filename>membersmanager.php</filename>
+		<folder>assets</folder>
+		<folder>helpers</folder>
+		<folder>controllers</folder>
+		<folder>models</folder>
+		<folder>views</folder>
+		<folder>layouts</folder>
+	</files>
 
-	
+	<languages folder="site">
+		<language tag="en-GB">language/en-GB/en-GB.com_membersmanager.ini</language>
+		<language tag="en-GB">language/en-GB/en-GB.com_membersmanager.sys.ini</language>
+	</languages>
 
 	<administration>
 		<menu>COM_MEMBERSMANAGER_MENU</menu>
@@ -83,4 +97,7 @@ Watch this [tutorial](https://youtu.be/lkE0ZiSWufg) to see how.</p>
 		</languages>
 
 	</administration>
+	<updateservers>
+		<server type="extension" enabled="1" element="com_membersmanager" name="Members Manager">https://raw.githubusercontent.com/vdm-io/Joomla-Members-Manager/master/membersmanager_server.xml</server>
+	</updateservers>
 </extension>

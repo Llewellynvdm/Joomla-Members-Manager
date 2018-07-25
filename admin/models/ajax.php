@@ -1,10 +1,10 @@
 <?php
 /**
- * @package    Joomla.Component.Builder
+ * @package    Joomla.Members.Manager
  *
  * @created    6th September, 2015
  * @author     Llewellyn van der Merwe <https://www.joomlacomponentbuilder.com/>
- * @github     Joomla Component Builder <https://github.com/vdm-io/Joomla-Component-Builder>
+ * @github     Joomla Members Manager <https://github.com/vdm-io/Joomla-Members-Manager>
  * @copyright  Copyright (C) 2015. All Rights Reserved
  * @license    GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  */
@@ -38,7 +38,7 @@ class MembersmanagerModelAjax extends JModelList
 
 	// allowed types
 	protected $types = array('image' => 'image');
- 
+
 	// set some buckets
 	protected $target;
 	protected $targetType;
@@ -553,18 +553,54 @@ class MembersmanagerModelAjax extends JModelList
 		return false;
 	}
 
+
 	public function checkUnique($field, $value)
 	{
-		if ($found = MembersmanagerHelper::getVar('organizer', $value, $field, 'id'))
+		// Get the database object and a new query object.
+		$db = \JFactory::getDbo();
+		$query = $db->getQuery(true);
+
+		// convert to camel case naming
+		$valueArray = (array) $this->splitAtUpperCase(trim($value));
+		$value = MembersmanagerHelper::safeString(trim(implode(' ', $valueArray), '-'), 'L', '-', false, false);
+
+		$view = $this->getViewID();
+		if (isset($view['a_id']) && MembersmanagerHelper::checkString($view['a_view']))
 		{
-			$view = $this->getViewID();
-			if (!isset($view['a_id']) || $found != $view['a_id'])
+			// Build the query.
+			$query->select('COUNT(*)')
+				->from('#__membersmanager_' . (string) $view['a_view'])
+				->where($db->quoteName($field) . ' = ' . $db->quote($value));
+
+			// remove this item from the list
+			if ($view['a_id'] > 0)
 			{
-				return true;
+				$query->where($db->quoteName('id') . ' <> ' . (int) $view['a_id']);
 			}
+
+			// Set and query the database.
+			$db->setQuery($query);
+			$duplicate = (bool) $db->loadResult();
+
+			if ($duplicate)
+			{
+				return array (
+					'message' => JText::sprintf('COM_MEMBERSMANAGER_BSB_IS_ALREADY_IN_USE_PLEASE_TRY_ANOTHER', $value),
+					'status' => 'danger');
+			}
+			return array (
+				'value' => $value,
+				'message' => JText::sprintf('COM_MEMBERSMANAGER_GREAT_SS_IS_AVAILABLE', $field, $value),
+				'status' => 'success');
 		}
 		return false;
 	}
+
+	protected function splitAtUpperCase($string)
+	{
+		return preg_split('/(?=[A-Z])/', $string, -1, PREG_SPLIT_NO_EMPTY);
+	}
+
 
 	public function getRegion($country)
 	{
@@ -739,7 +775,7 @@ class MembersmanagerModelAjax extends JModelList
 		return false;
 	}
 
-	public function getUser($id)
+	public function getUser($id, $showname = 0)
 	{
 		$user = JFactory::getUser($id);
 		if ($user->id)
@@ -748,7 +784,7 @@ class MembersmanagerModelAjax extends JModelList
 			// start the block
 			$fields[] = '<div id="user_info" >';
 
-			$fields[] = $this->getUserFields($user);
+			$fields[] = $this->getUserFields($user, false, (2 === (int) $showname));
 
 			$view = $this->getKey();
 			$access = array(1 => 'member.access', 2 => 'other.access');
@@ -779,7 +815,7 @@ class MembersmanagerModelAjax extends JModelList
 		return false;
 	}
 
-	protected function getUserFields(&$user, $permission = false)
+	protected function getUserFields(&$user, $permission = false, $showname = false)
 	{
 		// set read only
 		$readOnly = ' readonly="" class="readonly"';
@@ -790,13 +826,19 @@ class MembersmanagerModelAjax extends JModelList
 			$fields[] = '<div style="padding: 10px;">';
 
 			$readOnly = ' id="vdm_name"';
+		}
 
+		if($permission || $showname)
+		{
 			// load name			
 			$fields[] = '<div class="control-group">';
 			$fields[] = '<div class="control-label"><label title="">'.JText::_('COM_MEMBERSMANAGER_NAME').'</label></div>';
 			$fields[] = '<div class="controls"><input type="text" size="8"'.$readOnly.' value="'.$user->name.'"></div>';
 			$fields[] = '</div>';
+		}
 
+		if($permission)
+		{
 			$readOnly = ' id="vdm_username"';
 		}
 

@@ -1,10 +1,10 @@
 <?php
 /**
- * @package    Joomla.Component.Builder
+ * @package    Joomla.Members.Manager
  *
  * @created    6th September, 2015
  * @author     Llewellyn van der Merwe <https://www.joomlacomponentbuilder.com/>
- * @github     Joomla Component Builder <https://github.com/vdm-io/Joomla-Component-Builder>
+ * @github     Joomla Members Manager <https://github.com/vdm-io/Joomla-Members-Manager>
  * @copyright  Copyright (C) 2015. All Rights Reserved
  * @license    GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  */
@@ -172,6 +172,7 @@ class MembersmanagerModelRegion extends JModelAdmin
 			$form->setFieldAttribute('name', 'disabled', 'true');
 			// Disable fields for display.
 			$form->setFieldAttribute('name', 'readonly', 'true');
+			// If there is no value continue.
 			if (!$form->getValue('name'))
 			{
 				// Disable fields while saving.
@@ -188,6 +189,7 @@ class MembersmanagerModelRegion extends JModelAdmin
 			$form->setFieldAttribute('country', 'disabled', 'true');
 			// Disable fields for display.
 			$form->setFieldAttribute('country', 'readonly', 'true');
+			// If there is no value continue.
 			if (!$form->getValue('country'))
 			{
 				// Disable fields while saving.
@@ -204,6 +206,7 @@ class MembersmanagerModelRegion extends JModelAdmin
 			$form->setFieldAttribute('alias', 'disabled', 'true');
 			// Disable fields for display.
 			$form->setFieldAttribute('alias', 'readonly', 'true');
+			// If there is no value continue.
 			if (!$form->getValue('alias'))
 			{
 				// Disable fields while saving.

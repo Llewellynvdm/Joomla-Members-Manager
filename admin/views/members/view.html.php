@@ -1,10 +1,10 @@
 <?php
 /**
- * @package    Joomla.Component.Builder
+ * @package    Joomla.Members.Manager
  *
  * @created    6th September, 2015
  * @author     Llewellyn van der Merwe <https://www.joomlacomponentbuilder.com/>
- * @github     Joomla Component Builder <https://github.com/vdm-io/Joomla-Component-Builder>
+ * @github     Joomla Members Manager <https://github.com/vdm-io/Joomla-Members-Manager>
  * @copyright  Copyright (C) 2015. All Rights Reserved
  * @license    GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  */
@@ -253,28 +253,6 @@ class MembersmanagerViewMembers extends JViewLegacy
 			}
 		}
 
-		// Set Region Name Selection
-		$this->regionNameOptions = JFormHelper::loadFieldType('Regions')->getOptions();
-		if ($this->regionNameOptions)
-		{
-			// Region Name Filter
-			JHtmlSidebar::addFilter(
-				'- Select '.JText::_('COM_MEMBERSMANAGER_MEMBER_REGION_LABEL').' -',
-				'filter_region',
-				JHtml::_('select.options', $this->regionNameOptions, 'value', 'text', $this->state->get('filter.region'))
-			);
-
-			if ($this->canBatch && $this->canCreate && $this->canEdit)
-			{
-				// Region Name Batch Selection
-				JHtmlBatch_::addListSelection(
-					'- Keep Original '.JText::_('COM_MEMBERSMANAGER_MEMBER_REGION_LABEL').' -',
-					'batch[region]',
-					JHtml::_('select.options', $this->regionNameOptions, 'value', 'text')
-				);
-			}
-		}
-
 		// Set City Selection
 		$this->cityOptions = $this->getTheCitySelections();
 		if ($this->cityOptions)
@@ -293,6 +271,28 @@ class MembersmanagerViewMembers extends JViewLegacy
 					'- Keep Original '.JText::_('COM_MEMBERSMANAGER_MEMBER_CITY_LABEL').' -',
 					'batch[city]',
 					JHtml::_('select.options', $this->cityOptions, 'value', 'text')
+				);
+			}
+		}
+
+		// Set Region Name Selection
+		$this->regionNameOptions = JFormHelper::loadFieldType('Regions')->getOptions();
+		if ($this->regionNameOptions)
+		{
+			// Region Name Filter
+			JHtmlSidebar::addFilter(
+				'- Select '.JText::_('COM_MEMBERSMANAGER_MEMBER_REGION_LABEL').' -',
+				'filter_region',
+				JHtml::_('select.options', $this->regionNameOptions, 'value', 'text', $this->state->get('filter.region'))
+			);
+
+			if ($this->canBatch && $this->canCreate && $this->canEdit)
+			{
+				// Region Name Batch Selection
+				JHtmlBatch_::addListSelection(
+					'- Keep Original '.JText::_('COM_MEMBERSMANAGER_MEMBER_REGION_LABEL').' -',
+					'batch[region]',
+					JHtml::_('select.options', $this->regionNameOptions, 'value', 'text')
 				);
 			}
 		}

@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS `#__membersmanager_member` (
 	`profile_image` TEXT NOT NULL,
 	`region` INT(11) NOT NULL DEFAULT 0,
 	`street` VARCHAR(255) NOT NULL DEFAULT '',
+	`token` VARCHAR(255) NOT NULL DEFAULT '',
 	`type` INT(11) NOT NULL DEFAULT 0,
 	`user` INT(11) NOT NULL DEFAULT 0,
 	`website` VARCHAR(255) NOT NULL DEFAULT '',
@@ -37,6 +38,7 @@ CREATE TABLE IF NOT EXISTS `#__membersmanager_member` (
 	KEY `idx_state` (`published`),
 	KEY `idx_user` (`user`),
 	KEY `idx_account` (`account`),
+	KEY `idx_token` (`token`),
 	KEY `idx_country` (`country`),
 	KEY `idx_region` (`region`),
 	KEY `idx_name` (`name`)
@@ -170,6 +172,15 @@ CREATE TABLE IF NOT EXISTS `#__membersmanager_currency` (
 	KEY `idx_numericcode` (`numericcode`),
 	KEY `idx_alias` (`alias`)
 ) ENGINE=MyISAM AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `#__membersmanager_region`
+--
+
+INSERT INTO `#__membersmanager_region` (`id`, `asset_id`, `alias`, `country`, `name`, `params`, `published`, `created_by`, `modified_by`, `created`, `modified`, `checked_out`, `checked_out_time`, `version`, `hits`, `access`, `ordering`) VALUES
+(1, 26816, 'khomas', 146, 'Khomas', '', 1, 450, '', '2016-05-17 05:01:46', '0000-00-00 00:00:00', '', '0000-00-00 00:00:00', 1, '', 1, 1),
+(2, 26817, 'karas', 146, 'Karas', '', 1, 450, '', '2016-05-17 05:01:57', '0000-00-00 00:00:00', '', '0000-00-00 00:00:00', 1, '', 1, 2),
+(3, 33181, 'region', 13, 'Region', '', 1, 450, '', '2016-11-15 04:52:45', '0000-00-00 00:00:00', '', '0000-00-00 00:00:00', 1, '', 1, 3);
 
 --
 -- Dumping data for table `#__membersmanager_country`

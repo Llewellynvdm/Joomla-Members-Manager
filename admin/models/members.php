@@ -1,10 +1,10 @@
 <?php
 /**
- * @package    Joomla.Component.Builder
+ * @package    Joomla.Members.Manager
  *
  * @created    6th September, 2015
  * @author     Llewellyn van der Merwe <https://www.joomlacomponentbuilder.com/>
- * @github     Joomla Component Builder <https://github.com/vdm-io/Joomla-Component-Builder>
+ * @github     Joomla Members Manager <https://github.com/vdm-io/Joomla-Members-Manager>
  * @copyright  Copyright (C) 2015. All Rights Reserved
  * @license    GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  */
@@ -34,8 +34,8 @@ class MembersmanagerModelMembers extends JModelList
 				'a.type','type',
 				'a.account','account',
 				'a.country','country',
-				'a.region','region',
 				'a.city','city',
+				'a.region','region',
 				'a.main_member','main_member'
 			);
 		}
@@ -69,11 +69,11 @@ class MembersmanagerModelMembers extends JModelList
 		$country = $this->getUserStateFromRequest($this->context . '.filter.country', 'filter_country');
 		$this->setState('filter.country', $country);
 
-		$region = $this->getUserStateFromRequest($this->context . '.filter.region', 'filter_region');
-		$this->setState('filter.region', $region);
-
 		$city = $this->getUserStateFromRequest($this->context . '.filter.city', 'filter_city');
 		$this->setState('filter.city', $city);
+
+		$region = $this->getUserStateFromRequest($this->context . '.filter.region', 'filter_region');
+		$this->setState('filter.region', $region);
 
 		$main_member = $this->getUserStateFromRequest($this->context . '.filter.main_member', 'filter_main_member');
 		$this->setState('filter.main_member', $main_member);
@@ -125,6 +125,16 @@ class MembersmanagerModelMembers extends JModelList
 					continue;
 				}
 
+				// Mobile Phone (not-required)
+				if ($item->mobile_phone)
+				{
+					$item->mobile_phone = JText::_('COM_MEMBERSMANAGER_MOBILE') . ': ' . $item->mobile_phone;
+				}
+				// Landline Phone
+				if ($item->landline_phone)
+				{
+					$item->landline_phone = JText::_('COM_MEMBERSMANAGER_TEL') . ': ' . $item->landline_phone;
+				}
 			}
 		}
 
@@ -164,9 +174,10 @@ class MembersmanagerModelMembers extends JModelList
 		if ($name === 'account')
 		{
 			$accountArray = array(
-				1 => 'COM_MEMBERSMANAGER_MEMBER_MAIN',
-				2 => 'COM_MEMBERSMANAGER_MEMBER_SUB',
-				3 => 'COM_MEMBERSMANAGER_MEMBER_SUB_LOGIN'
+				1 => 'COM_MEMBERSMANAGER_MEMBER_MAIN_LOGIN',
+				2 => 'COM_MEMBERSMANAGER_MEMBER_MAIN',
+				3 => 'COM_MEMBERSMANAGER_MEMBER_SUB',
+				4 => 'COM_MEMBERSMANAGER_MEMBER_SUB_LOGIN'
 			);
 			// Now check if value is found in this array
 			if (isset($accountArray[$value]) && MembersmanagerHelper::checkString($accountArray[$value]))
@@ -252,7 +263,7 @@ class MembersmanagerModelMembers extends JModelList
 			else
 			{
 				$search = $db->quote('%' . $db->escape($search) . '%');
-				$query->where('(a.user LIKE '.$search.' OR g.name LIKE '.$search.' OR a.landline_phone LIKE '.$search.' OR a.type LIKE '.$search.' OR h.name LIKE '.$search.' OR a.account LIKE '.$search.' OR a.country LIKE '.$search.' OR a.region LIKE '.$search.' OR a.city LIKE '.$search.' OR a.postal LIKE '.$search.' OR a.street LIKE '.$search.' OR a.website LIKE '.$search.' OR a.main_member LIKE '.$search.' OR a.email LIKE '.$search.' OR a.name LIKE '.$search.' OR a.postalcode LIKE '.$search.' OR a.mobile_phone LIKE '.$search.')');
+				$query->where('(a.user LIKE '.$search.' OR g.name LIKE '.$search.' OR a.landline_phone LIKE '.$search.' OR a.type LIKE '.$search.' OR h.name LIKE '.$search.' OR a.account LIKE '.$search.' OR a.token LIKE '.$search.' OR a.country LIKE '.$search.' OR a.postalcode LIKE '.$search.' OR a.city LIKE '.$search.' OR a.region LIKE '.$search.' OR a.street LIKE '.$search.' OR a.postal LIKE '.$search.' OR a.mobile_phone LIKE '.$search.' OR a.name LIKE '.$search.' OR a.website LIKE '.$search.' OR a.email LIKE '.$search.' OR a.main_member LIKE '.$search.')');
 			}
 		}
 
@@ -271,15 +282,15 @@ class MembersmanagerModelMembers extends JModelList
 		{
 			$query->where('a.country = ' . $db->quote($db->escape($country)));
 		}
-		// Filter by region.
-		if ($region = $this->getState('filter.region'))
-		{
-			$query->where('a.region = ' . $db->quote($db->escape($region)));
-		}
 		// Filter by City.
 		if ($city = $this->getState('filter.city'))
 		{
 			$query->where('a.city = ' . $db->quote($db->escape($city)));
+		}
+		// Filter by region.
+		if ($region = $this->getState('filter.region'))
+		{
+			$query->where('a.region = ' . $db->quote($db->escape($region)));
 		}
 		// Filter by main_member.
 		if ($main_member = $this->getState('filter.main_member'))
@@ -356,6 +367,16 @@ class MembersmanagerModelMembers extends JModelList
 							continue;
 						}
 
+						// Mobile Phone (not-required)
+						if ($item->mobile_phone)
+						{
+							$item->mobile_phone = JText::_('COM_MEMBERSMANAGER_MOBILE') . ': ' . $item->mobile_phone;
+						}
+						// Landline Phone
+						if ($item->landline_phone)
+						{
+							$item->landline_phone = JText::_('COM_MEMBERSMANAGER_TEL') . ': ' . $item->landline_phone;
+						}
 						if ($mediumkey && !is_numeric($item->profile_image) && $item->profile_image === base64_encode(base64_decode($item->profile_image, true)))
 						{
 							// decrypt profile_image
@@ -435,8 +456,8 @@ class MembersmanagerModelMembers extends JModelList
 		$id .= ':' . $this->getState('filter.type');
 		$id .= ':' . $this->getState('filter.account');
 		$id .= ':' . $this->getState('filter.country');
-		$id .= ':' . $this->getState('filter.region');
 		$id .= ':' . $this->getState('filter.city');
+		$id .= ':' . $this->getState('filter.region');
 		$id .= ':' . $this->getState('filter.main_member');
 
 		return parent::getStoreId($id);
