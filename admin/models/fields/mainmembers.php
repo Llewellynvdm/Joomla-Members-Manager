@@ -60,9 +60,15 @@ class JFormFieldMainmembers extends JFormFieldList
 			$refJ = '';
 			if (!is_null($values['id']) && strlen($values['view']))
 			{
-				// only load referal if not new item.
+				// only load referral if not new item.
 				$ref = '&amp;ref=' . $values['view'] . '&amp;refid=' . $values['id'];
 				$refJ = '&ref=' . $values['view'] . '&refid=' . $values['id'];
+				// get the return value.
+				$_uri = (string) JUri::getInstance();
+				$_return = urlencode(base64_encode($_uri));
+				// load return value.
+				$ref .= '&amp;return=' . $_return;
+				$refJ .= '&return=' . $_return;
 			}
 			$user = JFactory::getUser();
 			// only add if user allowed to create member
@@ -136,31 +142,90 @@ class JFormFieldMainmembers extends JFormFieldList
 	 */
 	public function getOptions()
 	{
+				// load the db opbject
 		$db = JFactory::getDBO();
-$query = $db->getQuery(true);
-$query->select($db->quoteName(array('a.id','a.user','a.account','a.name','a.email'),array('id','main_member_user','account','name','email')));
-$query->from($db->quoteName('#__membersmanager_member', 'a'));
-$query->where($db->quoteName('a.published') . ' >= 1');
-$query->where($db->quoteName('a.account') . ' = 1 OR ' . $db->quoteName('a.account') . ' = 2');
-$query->order('a.user ASC');
-$db->setQuery((string)$query);
-$items = $db->loadObjectList();
-$options = array();
-if ($items)
-{
-	$options[] = JHtml::_('select.option', '', JText::_('COM_MEMBERSMANAGER_SELECT_AN_OPTION'));
-	foreach($items as $item)
-	{
-		if ($item->account == 1)
+		// get the input from url
+		$jinput = JFactory::getApplication()->input;
+		// get the id
+		$id = $jinput->getInt('id', 0);
+		if ($id > 0)
 		{
-			$options[] = JHtml::_('select.option', $item->id, JFactory::getUser((int) $item->main_member_user)->name . ' ' . JFactory::getUser((int) $item->main_member_user)->email);
+			$main_member = MembersmanagerHelper::getVar('member', $id, 'id', 'main_member');
 		}
-		else
+		// get the user
+		$my = JFactory::getUser();
+		// start the query
+		$query = $db->getQuery(true);
+		$query->select($db->quoteName(array('a.id','a.user','a.account','a.name','a.email','a.token'),array('id','main_member_user','account','name','email','token')));
+		$query->from($db->quoteName('#__membersmanager_member', 'a'));
+		$query->where($db->quoteName('a.published') . ' >= 1');
+		$query->where($db->quoteName('a.account') . ' = 1 OR ' . $db->quoteName('a.account') . ' = 2');
+		// check if current user is a supper admin
+		if (!$my->authorise('core.admin'))
 		{
-			$options[] = JHtml::_('select.option', $item->id, $item->name . ' ' . $item->email);
+			// get user access groups
+			$user_access_types =  MembersmanagerHelper::getAccess($my);
+			// user must have access
+			if (isset($user_access_types) && MembersmanagerHelper::checkArray($user_access_types))
+			{
+				// only get members of the type this user has access to
+				$query->where('a.type IN (' . implode(',', $user_access_types) . ')');
+				// get current member type
+				if (($type=  MembersmanagerHelper::getVar('member', $id, 'id', 'type')) !== false)
+				{
+					// check if this member is in the user access types
+					if (in_array($type, $user_access_types))
+					{
+						// no need to load this member
+						$main_member = 0;
+					}
+				}
+			}
+			elseif (isset($main_member) && $main_member > 0)
+			{
+				// load this main member only
+				$query->where($db->quoteName('a.id') . ' = ' . (int) $main_member);
+			}
+			else
+			{
+				return false;
+			}
 		}
-	}
-}
-return $options;
+		$query->order('a.user ASC');
+		$db->setQuery((string)$query);
+		$items = $db->loadObjectList();
+		$options = array();
+		if ($items)
+		{
+			// only add if more then one value found
+			if (count( (array) $items) > 1)
+			{
+				$options[] = JHtml::_('select.option', '', 'Select a main member');
+			}
+			foreach($items as $item)
+			{
+				// check if we current member
+				if (isset($main_member) && $main_member == $item->id)
+				{
+					// remove ID
+					$main_member = 0;
+				}
+				if ($item->account == 1)
+				{
+					$options[] = JHtml::_('select.option', $item->id, JFactory::getUser((int) $item->main_member_user)->name . ' ' . JFactory::getUser((int) $item->main_member_user)->email . ' ( ' . $item->token . ' )');
+				}
+				else
+				{
+					$options[] = JHtml::_('select.option', $item->id, $item->name . ' ' . $item->email . ' ( ' . $item->token . ' )');
+				}
+			}
+		}
+		// add the current user (TODO this is not suppose to happen)
+		if (isset($main_member) && $main_member > 0)
+		{
+			// load the current member manual
+			$options[] = JHtml::_('select.option', (int) $main_member, MembersmanagerHelper::getMemberName($main_member));
+		}
+		return $options;
 	}
 }

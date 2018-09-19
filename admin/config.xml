@@ -70,17 +70,6 @@
 		/>
 	</fieldset>
 	<fieldset
-		name="group_config"
-		label="COM_MEMBERSMANAGER_CONFIG_GROUPS_LABEL"
-		description="COM_MEMBERSMANAGER_CONFIG_GROUPS_DESC">
-		<field name="memberuser"
-			type="usergroup"
-			label="COM_MEMBERSMANAGER_USER_GROUP"
-			description="COM_MEMBERSMANAGER_CONFIG_TARGET_GROUP_DESC"
-			multiple="true"
-		/>
-	</fieldset>
-	<fieldset
 		name="uikit_config"
 		label="COM_MEMBERSMANAGER_CONFIG_UIKIT_LABEL"
 		description="COM_MEMBERSMANAGER_CONFIG_UIKIT_DESC">
@@ -154,6 +143,22 @@
 			hint="/home/user/hiddenfolder123/"
 			default=""
 		/>
+
+		<!-- Dynamic_salt Field. Type: Text. (joomla) -->
+		<field
+			type="text"
+			name="dynamic_salt"
+			label="COM_MEMBERSMANAGER_CONFIG_DYNAMIC_SALT_LABEL"
+			size="10"
+			maxlength="50"
+			default="1->!,3->E,4->A"
+			description="COM_MEMBERSMANAGER_CONFIG_DYNAMIC_SALT_DESCRIPTION"
+			class="text_area"
+			required="true"
+			filter="STRING"
+			message="COM_MEMBERSMANAGER_CONFIG_DYNAMIC_SALT_MESSAGE"
+			hint="COM_MEMBERSMANAGER_CONFIG_DYNAMIC_SALT_HINT"
+		/>
 	</fieldset>
 	<fieldset
 		name="profile_custom_config"
@@ -217,6 +222,221 @@
 			hint="COM_MEMBERSMANAGER_CONFIG_PROFILE_WIDTH_HINT"
 			showon="crop_profile:1"
 			onchange="if(!jQuery(this).val().match(/^\d+$/)){jQuery(this).val('')};"
+		/>
+	</fieldset>
+	<fieldset
+		name="company_details_custom_config"
+		label="COM_MEMBERSMANAGER_CONFIG_COMPANY_DETAILS">
+
+		<!-- Companyname Field. Type: Text. (joomla) -->
+		<field
+			type="text"
+			name="companyname"
+			label="COM_MEMBERSMANAGER_CONFIG_COMPANYNAME_LABEL"
+			size="40"
+			maxlength="150"
+			description="COM_MEMBERSMANAGER_CONFIG_COMPANYNAME_DESCRIPTION"
+			class="text_area"
+			readonly="false"
+			disabled="false"
+			required="true"
+			filter="STRING"
+			message="COM_MEMBERSMANAGER_CONFIG_COMPANYNAME_MESSAGE"
+			hint="COM_MEMBERSMANAGER_CONFIG_COMPANYNAME_HINT"
+		/>
+		<!-- Companylogo Field. Type: Media. (joomla) -->
+		<field
+			type="media"
+			name="companylogo"
+			label="COM_MEMBERSMANAGER_CONFIG_COMPANYLOGO_LABEL"
+			description="COM_MEMBERSMANAGER_CONFIG_COMPANYLOGO_DESCRIPTION"
+			directory=""
+			preview="tooltip"
+		/>
+		<!-- Public_details_note Field. Type: Note. A None Database Field. (joomla) -->
+		<field type="note" name="public_details_note" description="COM_MEMBERSMANAGER_CONFIG_PUBLIC_DETAILS_NOTE_DESCRIPTION" class="alert alert-info, public_details_note" />
+		<!-- Website Field. Type: Url. (joomla) -->
+		<field
+			type="url"
+			name="website"
+			label="COM_MEMBERSMANAGER_CONFIG_WEBSITE_LABEL"
+			size="60"
+			maxlength="150"
+			description="COM_MEMBERSMANAGER_CONFIG_WEBSITE_DESCRIPTION"
+			class="text_area"
+			filter="url"
+			validated="url"
+			scheme="http,https"
+			message="COM_MEMBERSMANAGER_CONFIG_WEBSITE_MESSAGE"
+			hint="COM_MEMBERSMANAGER_CONFIG_WEBSITE_HINT"
+		/>
+		<!-- Email Field. Type: Text. (joomla) -->
+		<field
+			type="text"
+			name="email"
+			label="COM_MEMBERSMANAGER_CONFIG_EMAIL_LABEL"
+			size="10"
+			maxlength="50"
+			description="COM_MEMBERSMANAGER_CONFIG_EMAIL_DESCRIPTION"
+			class="text_area"
+			required="false"
+			filter="STRING"
+			validate="email"
+			message="COM_MEMBERSMANAGER_CONFIG_EMAIL_MESSAGE"
+			hint="COM_MEMBERSMANAGER_CONFIG_EMAIL_HINT"
+		/>
+		<!-- Phone Field. Type: Tel. (joomla) -->
+		<field
+			type="tel"
+			name="phone"
+			label="COM_MEMBERSMANAGER_CONFIG_PHONE_LABEL"
+			size="60"
+			maxlength="150"
+			description="COM_MEMBERSMANAGER_CONFIG_PHONE_DESCRIPTION"
+			class="text_area"
+			required="false"
+			filter="STRING"
+			validated="tel"
+			message="COM_MEMBERSMANAGER_CONFIG_PHONE_MESSAGE"
+			hint="COM_MEMBERSMANAGER_CONFIG_PHONE_HINT"
+		/>
+		<!-- Mobile_phone Field. Type: Tel. (joomla) -->
+		<field
+			type="tel"
+			name="mobile_phone"
+			label="COM_MEMBERSMANAGER_CONFIG_MOBILE_PHONE_LABEL"
+			size="10"
+			maxlength="50"
+			description="COM_MEMBERSMANAGER_CONFIG_MOBILE_PHONE_DESCRIPTION"
+			class="text_area"
+			filter="STRING"
+			validated="tel"
+			message="COM_MEMBERSMANAGER_CONFIG_MOBILE_PHONE_MESSAGE"
+			hint="COM_MEMBERSMANAGER_CONFIG_MOBILE_PHONE_HINT"
+		/>
+		<!-- Fax Field. Type: Tel. (joomla) -->
+		<field
+			type="tel"
+			name="fax"
+			label="COM_MEMBERSMANAGER_CONFIG_FAX_LABEL"
+			size="60"
+			maxlength="150"
+			description="COM_MEMBERSMANAGER_CONFIG_FAX_DESCRIPTION"
+			class="text_area"
+			filter="STRING"
+			validated="tel"
+			message="COM_MEMBERSMANAGER_CONFIG_FAX_MESSAGE"
+			hint="COM_MEMBERSMANAGER_CONFIG_FAX_HINT"
+		/>
+		<!-- Street Field. Type: Text. (joomla) -->
+		<field
+			type="text"
+			name="street"
+			label="COM_MEMBERSMANAGER_CONFIG_STREET_LABEL"
+			size="60"
+			maxlength="150"
+			description="COM_MEMBERSMANAGER_CONFIG_STREET_DESCRIPTION"
+			class="text_area"
+			filter="STRING"
+			message="COM_MEMBERSMANAGER_CONFIG_STREET_MESSAGE"
+			hint="COM_MEMBERSMANAGER_CONFIG_STREET_HINT"
+		/>
+		<!-- Postal Field. Type: Text. (joomla) -->
+		<field
+			type="text"
+			name="postal"
+			label="COM_MEMBERSMANAGER_CONFIG_POSTAL_LABEL"
+			size="60"
+			maxlength="150"
+			description="COM_MEMBERSMANAGER_CONFIG_POSTAL_DESCRIPTION"
+			class="text_area"
+			filter="STRING"
+			message="COM_MEMBERSMANAGER_CONFIG_POSTAL_MESSAGE"
+			hint="COM_MEMBERSMANAGER_CONFIG_POSTAL_HINT"
+		/>
+		<!-- City Field. Type: Text. (joomla) -->
+		<field
+			type="text"
+			name="city"
+			label="COM_MEMBERSMANAGER_CONFIG_CITY_LABEL"
+			size="60"
+			maxlength="150"
+			description="COM_MEMBERSMANAGER_CONFIG_CITY_DESCRIPTION"
+			class="text_area"
+			filter="STRING"
+			message="COM_MEMBERSMANAGER_CONFIG_CITY_MESSAGE"
+			hint="COM_MEMBERSMANAGER_CONFIG_CITY_HINT"
+		/>
+		<!-- Region Field. Type: Text. (joomla) -->
+		<field
+			type="text"
+			name="region"
+			label="COM_MEMBERSMANAGER_CONFIG_REGION_LABEL"
+			size="60"
+			maxlength="150"
+			description="COM_MEMBERSMANAGER_CONFIG_REGION_DESCRIPTION"
+			class="text_area"
+			filter="STRING"
+			message="COM_MEMBERSMANAGER_CONFIG_REGION_MESSAGE"
+			hint="COM_MEMBERSMANAGER_CONFIG_REGION_HINT"
+		/>
+		<!-- Postalcode Field. Type: Text. (joomla) -->
+		<field
+			type="text"
+			name="postalcode"
+			label="COM_MEMBERSMANAGER_CONFIG_POSTALCODE_LABEL"
+			size="60"
+			maxlength="150"
+			description="COM_MEMBERSMANAGER_CONFIG_POSTALCODE_DESCRIPTION"
+			class="text_area"
+			filter="STRING"
+			message="COM_MEMBERSMANAGER_CONFIG_POSTALCODE_MESSAGE"
+			hint="COM_MEMBERSMANAGER_CONFIG_POSTALCODE_HINT"
+		/>
+		<!-- Country Field. Type: Text. (joomla) -->
+		<field
+			type="text"
+			name="country"
+			label="COM_MEMBERSMANAGER_CONFIG_COUNTRY_LABEL"
+			size="50"
+			maxlength="150"
+			default="Namibia"
+			description="COM_MEMBERSMANAGER_CONFIG_COUNTRY_DESCRIPTION"
+			class="text_area"
+			filter="STRING"
+			message="COM_MEMBERSMANAGER_CONFIG_COUNTRY_MESSAGE"
+			hint="COM_MEMBERSMANAGER_CONFIG_COUNTRY_HINT"
+			autocomplete="on"
+		/>
+		<!-- Note_document_placeholders Field. Type: Note. A None Database Field. (joomla) -->
+		<field type="note" name="note_document_placeholders" label="COM_MEMBERSMANAGER_CONFIG_NOTE_DOCUMENT_PLACEHOLDERS_LABEL" description="COM_MEMBERSMANAGER_CONFIG_NOTE_DOCUMENT_PLACEHOLDERS_DESCRIPTION" heading="h3" class="note_document_placeholders" />
+		<!-- Doc_header Field. Type: Textarea. (joomla) -->
+		<field
+			type="textarea"
+			name="doc_header"
+			label="COM_MEMBERSMANAGER_CONFIG_DOC_HEADER_LABEL"
+			rows="10"
+			cols="12"
+			description="COM_MEMBERSMANAGER_CONFIG_DOC_HEADER_DESCRIPTION"
+			message="COM_MEMBERSMANAGER_CONFIG_DOC_HEADER_MESSAGE"
+			class="text_area span12"
+			filter="SAFEHTML"
+			hint="COM_MEMBERSMANAGER_CONFIG_DOC_HEADER_HINT"
+			required="true"
+		/>
+		<!-- Doc_footer Field. Type: Textarea. (joomla) -->
+		<field
+			type="textarea"
+			name="doc_footer"
+			label="COM_MEMBERSMANAGER_CONFIG_DOC_FOOTER_LABEL"
+			rows="10"
+			cols="12"
+			description="COM_MEMBERSMANAGER_CONFIG_DOC_FOOTER_DESCRIPTION"
+			message="COM_MEMBERSMANAGER_CONFIG_DOC_FOOTER_MESSAGE"
+			class="text_area span12"
+			filter="SAFEHTML"
+			hint="COM_MEMBERSMANAGER_CONFIG_DOC_FOOTER_HINT"
+			required="true"
 		/>
 	</fieldset>
 	<fieldset

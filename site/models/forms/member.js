@@ -46,26 +46,27 @@ function vvvvvvv(account_vvvvvvv)
 	// set this function logic
 	if (account)
 	{
-		jQuery('#jform_user').closest('.control-group').show();
+		jQuery('#jform_main_member').closest('.control-group').show();
+		// add required attribute to main_member field
 		if (jform_vvvvvvvvvv_required)
 		{
-			updateFieldRequired('user',0);
-			jQuery('#jform_user').prop('required','required');
-			jQuery('#jform_user').attr('aria-required',true);
-			jQuery('#jform_user').addClass('required');
+			updateFieldRequired('main_member',0);
+			jQuery('#jform_main_member').prop('required','required');
+			jQuery('#jform_main_member').attr('aria-required',true);
+			jQuery('#jform_main_member').addClass('required');
 			jform_vvvvvvvvvv_required = false;
 		}
-
 	}
 	else
 	{
-		jQuery('#jform_user').closest('.control-group').hide();
+		jQuery('#jform_main_member').closest('.control-group').hide();
+		// remove required attribute from main_member field
 		if (!jform_vvvvvvvvvv_required)
 		{
-			updateFieldRequired('user',1);
-			jQuery('#jform_user').removeAttr('required');
-			jQuery('#jform_user').removeAttr('aria-required');
-			jQuery('#jform_user').removeClass('required');
+			updateFieldRequired('main_member',1);
+			jQuery('#jform_main_member').removeAttr('required');
+			jQuery('#jform_main_member').removeAttr('aria-required');
+			jQuery('#jform_main_member').removeClass('required');
 			jform_vvvvvvvvvv_required = true;
 		}
 	}
@@ -75,7 +76,7 @@ function vvvvvvv(account_vvvvvvv)
 function account_vvvvvvv_SomeFunc(account_vvvvvvv)
 {
 	// set the function logic
-	if (account_vvvvvvv == 1 || account_vvvvvvv == 4)
+	if (account_vvvvvvv == 3 || account_vvvvvvv == 4)
 	{
 		return true;
 	}
@@ -101,47 +102,55 @@ function vvvvvvw(account_vvvvvvw)
 	// set this function logic
 	if (account)
 	{
-		jQuery('#jform_email').closest('.control-group').show();
+		jQuery('#jform_password_check').closest('.control-group').show();
+		jQuery('#jform_useremail').closest('.control-group').show();
+		// add required attribute to useremail field
 		if (jform_vvvvvvwvvw_required)
 		{
-			updateFieldRequired('email',0);
-			jQuery('#jform_email').prop('required','required');
-			jQuery('#jform_email').attr('aria-required',true);
-			jQuery('#jform_email').addClass('required');
+			updateFieldRequired('useremail',0);
+			jQuery('#jform_useremail').prop('required','required');
+			jQuery('#jform_useremail').attr('aria-required',true);
+			jQuery('#jform_useremail').addClass('required');
 			jform_vvvvvvwvvw_required = false;
 		}
-
-		jQuery('#jform_name').closest('.control-group').show();
+		jQuery('#jform_username').closest('.control-group').show();
+		// add required attribute to username field
 		if (jform_vvvvvvwvvx_required)
 		{
-			updateFieldRequired('name',0);
-			jQuery('#jform_name').prop('required','required');
-			jQuery('#jform_name').attr('aria-required',true);
-			jQuery('#jform_name').addClass('required');
+			updateFieldRequired('username',0);
+			jQuery('#jform_username').prop('required','required');
+			jQuery('#jform_username').attr('aria-required',true);
+			jQuery('#jform_username').addClass('required');
 			jform_vvvvvvwvvx_required = false;
 		}
-
+		jQuery('#jform_password').closest('.control-group').show();
+		jQuery('#jform_user').closest('.control-group').show();
 	}
 	else
 	{
-		jQuery('#jform_email').closest('.control-group').hide();
+		jQuery('#jform_password_check').closest('.control-group').hide();
+		jQuery('#jform_useremail').closest('.control-group').hide();
+		// remove required attribute from useremail field
 		if (!jform_vvvvvvwvvw_required)
 		{
-			updateFieldRequired('email',1);
-			jQuery('#jform_email').removeAttr('required');
-			jQuery('#jform_email').removeAttr('aria-required');
-			jQuery('#jform_email').removeClass('required');
+			updateFieldRequired('useremail',1);
+			jQuery('#jform_useremail').removeAttr('required');
+			jQuery('#jform_useremail').removeAttr('aria-required');
+			jQuery('#jform_useremail').removeClass('required');
 			jform_vvvvvvwvvw_required = true;
 		}
-		jQuery('#jform_name').closest('.control-group').hide();
+		jQuery('#jform_username').closest('.control-group').hide();
+		// remove required attribute from username field
 		if (!jform_vvvvvvwvvx_required)
 		{
-			updateFieldRequired('name',1);
-			jQuery('#jform_name').removeAttr('required');
-			jQuery('#jform_name').removeAttr('aria-required');
-			jQuery('#jform_name').removeClass('required');
+			updateFieldRequired('username',1);
+			jQuery('#jform_username').removeAttr('required');
+			jQuery('#jform_username').removeAttr('aria-required');
+			jQuery('#jform_username').removeClass('required');
 			jform_vvvvvvwvvx_required = true;
 		}
+		jQuery('#jform_password').closest('.control-group').hide();
+		jQuery('#jform_user').closest('.control-group').hide();
 	}
 }
 
@@ -149,7 +158,7 @@ function vvvvvvw(account_vvvvvvw)
 function account_vvvvvvw_SomeFunc(account_vvvvvvw)
 {
 	// set the function logic
-	if (account_vvvvvvw == 2 || account_vvvvvvw == 3)
+	if (account_vvvvvvw == 1 || account_vvvvvvw == 4)
 	{
 		return true;
 	}
@@ -175,26 +184,27 @@ function vvvvvvx(account_vvvvvvx)
 	// set this function logic
 	if (account)
 	{
-		jQuery('#jform_main_member').closest('.control-group').show();
+		jQuery('#jform_email').closest('.control-group').show();
+		// add required attribute to email field
 		if (jform_vvvvvvxvvy_required)
 		{
-			updateFieldRequired('main_member',0);
-			jQuery('#jform_main_member').prop('required','required');
-			jQuery('#jform_main_member').attr('aria-required',true);
-			jQuery('#jform_main_member').addClass('required');
+			updateFieldRequired('email',0);
+			jQuery('#jform_email').prop('required','required');
+			jQuery('#jform_email').attr('aria-required',true);
+			jQuery('#jform_email').addClass('required');
 			jform_vvvvvvxvvy_required = false;
 		}
-
 	}
 	else
 	{
-		jQuery('#jform_main_member').closest('.control-group').hide();
+		jQuery('#jform_email').closest('.control-group').hide();
+		// remove required attribute from email field
 		if (!jform_vvvvvvxvvy_required)
 		{
-			updateFieldRequired('main_member',1);
-			jQuery('#jform_main_member').removeAttr('required');
-			jQuery('#jform_main_member').removeAttr('aria-required');
-			jQuery('#jform_main_member').removeClass('required');
+			updateFieldRequired('email',1);
+			jQuery('#jform_email').removeAttr('required');
+			jQuery('#jform_email').removeAttr('aria-required');
+			jQuery('#jform_email').removeClass('required');
 			jform_vvvvvvxvvy_required = true;
 		}
 	}
@@ -204,7 +214,7 @@ function vvvvvvx(account_vvvvvvx)
 function account_vvvvvvx_SomeFunc(account_vvvvvvx)
 {
 	// set the function logic
-	if (account_vvvvvvx == 3 || account_vvvvvvx == 4)
+	if (account_vvvvvvx == 2 || account_vvvvvvx == 3)
 	{
 		return true;
 	}
@@ -260,6 +270,35 @@ jQuery(document).ready(function($)
 		setFile(profile, false, 'profile', 'image')
 	}
 });
+function getUserDetails(user){
+	getUserDetails_server(user).done(function(result) {
+		if (result) {
+			setUserDetails(result);
+		}
+	});
+}
+function getUserDetails_server(user){
+	var getUrl = JRouter("index.php?option=com_membersmanager&task=ajax.getUserDetails&format=json&vdm="+vastDevMod);
+	if(token.length > 0 && user > 0){
+		var request = 'token='+token+'&user='+user;
+	}
+	return jQuery.ajax({
+		type: 'GET',
+		url: getUrl,
+		dataType: 'jsonp',
+		data: request,
+		jsonp: 'callback'
+	});
+}
+function setUserDetails(result){
+	if (result.name) {
+		for (var key in result) {
+			if (result.hasOwnProperty(key)) {
+				jQuery('#jform_' + key).val(result[key]);
+			}
+		}
+	}
+}
 
 function setFilekey(filename, fileFormat, target, type){
 	var currentFileName = jQuery("#jform_"+target+"_"+type).val();
@@ -318,8 +357,12 @@ function setFile(filename, fileFormat, target, type){
 	return true;
 }
 
-function removeFileCheck(clearServer, target, type){
-	UIkit.modal.confirm('Are you sure you want to delete this '+target+'?', function(){ removeFile(clearServer, target, 1, type);	});
+function removeFileCheck(clearServer, target, type, uiVer){
+	if (3 == uiVer) {
+		UIkit.modal.confirm('Are you sure you want to delete this '+target+'?').then(function(){ removeFile(clearServer, target, 1, type); });
+	} else {
+		UIkit2.modal.confirm('Are you sure you want to delete this '+target+'?', function(){ removeFile(clearServer, target, 1, type); });
+	}
 }
 
 function removeFile(clearServer, target, flush, type){
@@ -493,140 +536,4 @@ function setRegion(array){
 		jQuery('#jform_region').append('<option value="">'+create_a_region+'</option>');
 	}
 	jQuery('#jform_region').trigger('liszt:updated');
-}
-
-jQuery(document).ready(function($)
-{
-	var user_id = $("#jform_user_id").val();
-	var showname = 1;
-	// check if the user id was found
-	if (!isSet(user_id)) {
-		var user_id =$("#jform_user").val();
-		var showname = 2;
-	}
-	getUser(user_id, showname);
-});
-function getUser_server(id, showname){
-	var getUrl = JRouter("index.php?option=com_membersmanager&task=ajax.getUser&format=json&vdm="+vastDevMod);
-	if(token.length > 0 && id > 0 && showname > 0){
-		var request = 'token='+token+'&id='+id+'&showname='+showname;
-	}
-	return jQuery.ajax({
-		type: 'GET',
-		url: getUrl,
-		dataType: 'jsonp',
-		data: request,
-		jsonp: 'callback'
-	});
-}
-function getUser(id, showname){
-	getUser_server(id, showname).done(function(result) {
-		jQuery('#user_info').remove();
-		if(result) {
-			loadUser(result);
-		} else {
-			getCreateUserFields(1);
-		}
-	})
-}
-function getCreateUserFields_server(id){
-	var getUrl = JRouter("index.php?option=com_membersmanager&task=ajax.getCreateUserFields&format=json&vdm="+vastDevMod);
-	if(token.length > 0 && id > 0){
-		var request = 'token='+token+'&id='+id;
-	}
-	return jQuery.ajax({
-		type: 'GET',
-		url: getUrl,
-		dataType: 'jsonp',
-		data: request,
-		jsonp: 'callback'
-	});
-}
-function getCreateUserFields(id) {
-	getCreateUserFields_server(id).done(function(result) {
-		jQuery('#user_info').remove();
-		if(result) {
-			loadUser(result);
-		}
-	});
-}
-// user values
-var userArray = {};
-function setUser_server(id){
-	var getUrl = JRouter("index.php?option=com_membersmanager&task=ajax.setUser&format=json&vdm="+vastDevMod);
-	if (token.length > 0 && id > 0) {
-		var request = 'token='+token+'&id='+id+'&data='+JSON.stringify(userArray);
-	}
-	return jQuery.ajax({
-		type: 'GET',
-		url: getUrl,
-		dataType: 'jsonp',
-		data: request,
-		jsonp: 'callback'
-	});
-}
-function setUser(){
-	// get the id
-	var id = jQuery("#jform_user_id").val();
-	// check if the user id was found
-	if (!isSet(id)) {
-		var id = jQuery("#jform_user").val();
-	}
-	// get the values
-	userArray['var'] = encodeURIComponent(jQuery("#vdm_name").val());
-	userArray['uvar'] = encodeURIComponent(jQuery("#vdm_username").val());
-	userArray['evar'] = encodeURIComponent(jQuery("#vdm_email").val());
-	userArray['dvar'] = encodeURIComponent(jQuery("#vdm_password").val());
-	// set the values
-	setUser_server(id).done(function(result) {
-		if(result.html) {
-			jQuery('#user_info').remove();
-			loadUser(result.html);
-			jQuery('#system-message-container').html(result.success);
-		} else if (result.error) {
-			jQuery('#system-message-container').html(result.error);
-		}
-	});
-}
-// user values
-var userCArray = {};
-function createUser_server(){
-	var getUrl = JRouter("index.php?option=com_membersmanager&task=ajax.createUser&format=json&vdm="+vastDevMod);
-	if (token.length > 0) {
-		var request = 'token='+token+'&key=1&data='+JSON.stringify(userCArray);
-	}
-	return jQuery.ajax({
-		type: 'GET',
-		url: getUrl,
-		dataType: 'jsonp',
-		data: request,
-		jsonp: 'callback'
-	});
-}
-function createUser() {
-	// get the values
-	userCArray['var'] = encodeURIComponent(jQuery("#vdm_c_name").val());
-	userCArray['uvar'] = encodeURIComponent(jQuery("#vdm_c_username").val());
-	userCArray['evar'] = encodeURIComponent(jQuery("#vdm_c_email").val());
-	userCArray['dvar'] = encodeURIComponent(jQuery("#vdm_c_password").val());
-	// this takes long so show spinner
-	jQuery("#loading").show();
-	// set the values
-	createUser_server().done(function(result) {
-		if (result.html) {
-			jQuery('#user_info').remove();
-			loadUser(result.html);
-			jQuery('#system-message-container').html(result.success);
-		} else if (result.error) {
-			jQuery('#system-message-container').html(result.error);
-		}
-		jQuery("#loading").hide();
-	});
-}
-function loadUser(result){
-	// first check the system type
-	var account = jQuery("#jform_account").val();
-	if (1 == account || 4 == account) {
-		jQuery('#jform_user').closest('.span6').append(result);
-	}
 } 

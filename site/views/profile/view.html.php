@@ -11,9 +11,6 @@
 
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
-
-// import Joomla view library
-jimport('joomla.application.component.view');
 jimport('joomla.application.module.helper');
 
 /**
@@ -30,6 +27,8 @@ class MembersmanagerViewProfile extends JViewLegacy
 		$this->menu = $this->app->getMenu()->getActive();
 		// get the user object
 		$this->user = JFactory::getUser();
+		// Initialise dispatcher.
+		$dispatcher = JEventDispatcher::getInstance();
 		// Initialise variables.
 		$this->item = $this->get('Item');
 
@@ -44,6 +43,21 @@ class MembersmanagerViewProfile extends JViewLegacy
 		{
 			throw new Exception(implode("\n", $errors), 500);
 		}
+		// Process the content plugins.
+		JPluginHelper::importPlugin('content');
+		// Setup Event Object.
+		$this->item->event = new stdClass;
+		// Check if item has params, or pass global params
+		$params = (isset($this->item->params) && MembersmanagerHelper::checkJson($this->item->params)) ? json_decode($this->item->params) : $this->params;
+		// onContentAfterTitle Event Trigger.
+		$results = $dispatcher->trigger('onContentAfterTitle', array('com_membersmanager.member', &$this->item, &$params, 0));
+		$this->item->event->onContentAfterTitle = trim(implode("\n", $results));
+		// onContentBeforeDisplay Event Trigger.
+		$results = $dispatcher->trigger('onContentBeforeDisplay', array('com_membersmanager.member', &$this->item, &$params, 0));
+		$this->item->event->onContentBeforeDisplay = trim(implode("\n", $results));
+		// onContentAfterDisplay Event Trigger.
+		$results = $dispatcher->trigger('onContentAfterDisplay', array('com_membersmanager.member', &$this->item, &$params, 0));
+		$this->item->event->onContentAfterDisplay = trim(implode("\n", $results));
 
 		parent::display($tpl);
 	}
@@ -59,7 +73,10 @@ class MembersmanagerViewProfile extends JViewLegacy
 		// Load the header checker class.
 		require_once( JPATH_COMPONENT_SITE.'/helpers/headercheck.php' );
 		// Initialize the header checker.
-		$HeaderCheck = new membersmanagerHeaderCheck; 
+		$HeaderCheck = new membersmanagerHeaderCheck;
+
+		// Add View JavaScript File
+		$this->document->addScript(JURI::root(true) . "/components/com_membersmanager/assets/js/profile.js", (MembersmanagerHelper::jVersion()->isCompatible("3.8.0")) ? array("version" => "auto") : "text/javascript");
 
 		// Load uikit options.
 		$uikit = $this->params->get('uikit_load');
@@ -126,9 +143,46 @@ class MembersmanagerViewProfile extends JViewLegacy
 			{
 				$this->document->addScript(JURI::root(true) .'/media/com_membersmanager/uikit-v3/js/uikit'.$size.'.js', (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/javascript');
 			}
-		}     
+		}
+		
+		// Add the JavaScript for JStore
+		$this->document->addScript(JURI::root() .'media/com_membersmanager/js/jquery.json.min.js');
+		$this->document->addScript(JURI::root() .'media/com_membersmanager/js/jstorage.min.js');
+		// check if we should use browser storage
+		$setBrowserStorage = $this->params->get('set_browser_storage', null);
+		if ($setBrowserStorage)
+		{
+			// check what (Time To Live) we should use
+			$storageTimeToLive = $this->params->get('storage_time_to_live', 'global');
+			if ('global' == $storageTimeToLive)
+			{
+				// use the global session time
+				$session = JFactory::getSession();
+				// must have itin milliseconds
+				$expire = ($session->getExpire()*60)* 1000;
+			}
+			else
+			{
+				// use the Membersmanager Global setting
+				if (0 !=  $storageTimeToLive)
+				{
+					// this will convert the time into milliseconds
+					$storageTimeToLive =  $storageTimeToLive * 1000;
+				}
+				$expire = $storageTimeToLive;
+			}
+		}
+		else
+		{
+			// set to use no storage
+			$expire = 10;
+		}
+		// Set the Time To Live To JavaScript
+		$this->document->addScriptDeclaration("var expire = ". (int) $expire.";");
+		// add javascript lang strings
+		JText::script('COM_MEMBERSMANAGER_THERE_WAS_NO_REPORT_FOUND'); 
 		// add the document default css file
-		$this->document->addStyleSheet(JURI::root(true) .'/components/com_membersmanager/assets/css/profile.css', (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/css'); 
+		$this->document->addStyleSheet(JURI::root(true) .'/components/com_membersmanager/assets/css/profile.css', (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/css');
 	}
 
 	/**

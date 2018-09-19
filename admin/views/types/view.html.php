@@ -12,9 +12,6 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
-// import Joomla view library
-jimport('joomla.application.component.view');
-
 /**
  * Membersmanager View class for the Types
  */
@@ -119,7 +116,7 @@ class MembersmanagerViewTypes extends JViewLegacy
 				// add the button to the page
 				$dhtml = $layout->render(array('title' => $title));
 				$bar->appendButton('Custom', $dhtml, 'batch');
-			} 
+			}
 
 			if ($this->state->get('filter.published') == -2 && ($this->canState && $this->canDelete))
 			{
@@ -134,7 +131,7 @@ class MembersmanagerViewTypes extends JViewLegacy
 			{
 				JToolBarHelper::custom('types.exportData', 'download', '', 'COM_MEMBERSMANAGER_EXPORT_DATA', true);
 			}
-		} 
+		}
 
 		if ($this->canDo->get('core.import') && $this->canDo->get('type.import'))
 		{
@@ -185,7 +182,7 @@ class MembersmanagerViewTypes extends JViewLegacy
 				'batch[access]',
 				JHtml::_('select.options', JHtml::_('access.assetgroups'), 'value', 'text')
 			);
-		} 
+		}
 	}
 
 	/**

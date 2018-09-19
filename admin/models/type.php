@@ -14,9 +14,6 @@ defined('_JEXEC') or die('Restricted access');
 
 use Joomla\Registry\Registry;
 
-// import Joomla modelform library
-jimport('joomla.application.component.modeladmin');
-
 /**
  * Membersmanager Type Model
  */
@@ -49,6 +46,9 @@ class MembersmanagerModelType extends JModelAdmin
 	 */
 	public function getTable($type = 'type', $prefix = 'MembersmanagerTable', $config = array())
 	{
+		// add table path for when model gets used from other component
+		$this->addTablePath(JPATH_ADMINISTRATOR . '/components/com_membersmanager/tables');
+		// get instance of the table
 		return JTable::getInstance($type, $prefix, $config);
 	}
     
@@ -80,6 +80,18 @@ class MembersmanagerModelType extends JModelAdmin
 				$registry->loadString($item->metadata);
 				$item->metadata = $registry->toArray();
 			}
+
+			if (!empty($item->groups_target))
+			{
+				// JSON Decode groups_target.
+				$item->groups_target = json_decode($item->groups_target,true);
+			}
+
+			if (!empty($item->groups_access))
+			{
+				// JSON Decode groups_access.
+				$item->groups_access = json_decode($item->groups_access,true);
+			}
 			
 			if (!empty($item->id))
 			{
@@ -89,22 +101,25 @@ class MembersmanagerModelType extends JModelAdmin
 		}
 
 		return $item;
-	} 
+	}
 
 	/**
 	 * Method to get the record form.
 	 *
 	 * @param   array    $data      Data for the form.
 	 * @param   boolean  $loadData  True if the form is to load its own data (default case), false if not.
+	 * @param   array    $options   Optional array of options for the form creation.
 	 *
 	 * @return  mixed  A JForm object on success, false on failure
 	 *
 	 * @since   1.6
 	 */
-	public function getForm($data = array(), $loadData = true)
+	public function getForm($data = array(), $loadData = true, $options = array('control' => 'jform'))
 	{
+		// set load data option
+		$options['load_data'] = $loadData;
 		// Get the form.
-		$form = $this->loadForm('com_membersmanager.type', 'type', array('control' => 'jform', 'load_data' => $loadData));
+		$form = $this->loadForm('com_membersmanager.type', 'type', $options);
 
 		if (empty($form))
 		{
@@ -198,13 +213,51 @@ class MembersmanagerModelType extends JModelAdmin
 				$form->setFieldAttribute('description', 'required', 'false');
 			}
 		}
+		// Modify the form based on Edit Groups Target access controls.
+		if ($id != 0 && (!$user->authorise('type.edit.groups_target', 'com_membersmanager.type.' . (int) $id))
+			|| ($id == 0 && !$user->authorise('type.edit.groups_target', 'com_membersmanager')))
+		{
+			// Disable fields for display.
+			$form->setFieldAttribute('groups_target', 'disabled', 'true');
+			// Disable fields for display.
+			$form->setFieldAttribute('groups_target', 'readonly', 'true');
+			// If there is no value continue.
+			if (!$form->getValue('groups_target'))
+			{
+				// Disable fields while saving.
+				$form->setFieldAttribute('groups_target', 'filter', 'unset');
+				// Disable fields while saving.
+				$form->setFieldAttribute('groups_target', 'required', 'false');
+			}
+		}
+		// Modify the form based on Edit Groups Access access controls.
+		if ($id != 0 && (!$user->authorise('type.edit.groups_access', 'com_membersmanager.type.' . (int) $id))
+			|| ($id == 0 && !$user->authorise('type.edit.groups_access', 'com_membersmanager')))
+		{
+			// Disable fields for display.
+			$form->setFieldAttribute('groups_access', 'disabled', 'true');
+			// Disable fields for display.
+			$form->setFieldAttribute('groups_access', 'readonly', 'true');
+			// If there is no value continue.
+			if (!$form->getValue('groups_access'))
+			{
+				// Disable fields while saving.
+				$form->setFieldAttribute('groups_access', 'filter', 'unset');
+				// Disable fields while saving.
+				$form->setFieldAttribute('groups_access', 'required', 'false');
+			}
+		}
 		// Only load these values if no id is found
 		if (0 == $id)
 		{
-			// Set redirected field name
-			$redirectedField = $jinput->get('ref', null, 'STRING');
-			// Set redirected field value
-			$redirectedValue = $jinput->get('refid', 0, 'INT');
+			// Set redirected view name
+			$redirectedView = $jinput->get('ref', null, 'STRING');
+			// Set field name (or fall back to view name)
+			$redirectedField = $jinput->get('field', $redirectedView, 'STRING');
+			// Set redirected view id
+			$redirectedId = $jinput->get('refid', 0, 'INT');
+			// Set field id (or fall back to redirected view id)
+			$redirectedValue = $jinput->get('field_id', $redirectedId, 'INT');
 			if (0 != $redirectedValue && $redirectedField)
 			{
 				// Now set the local-redirected field default value
@@ -369,7 +422,7 @@ class MembersmanagerModelType extends JModelAdmin
 		}
 
 		return $data;
-	} 
+	}
 
 	/**
 	 * Method to get the unique fields of this table.
@@ -654,7 +707,7 @@ class MembersmanagerModelType extends JModelAdmin
 		$this->cleanCache();
 
 		return $newIds;
-	} 
+	}
 
 	/**
 	 * Batch move items to a new category
@@ -786,7 +839,19 @@ class MembersmanagerModelType extends JModelAdmin
 			$metadata = new JRegistry;
 			$metadata->loadArray($data['metadata']);
 			$data['metadata'] = (string) $metadata;
-		} 
+		}
+
+		// Set the groups_target string to JSON string.
+		if (isset($data['groups_target']))
+		{
+			$data['groups_target'] = (string) json_encode($data['groups_target']);
+		}
+
+		// Set the groups_access string to JSON string.
+		if (isset($data['groups_access']))
+		{
+			$data['groups_access'] = (string) json_encode($data['groups_access']);
+		}
         
 		// Set the Params Items to data
 		if (isset($data['params']) && is_array($data['params']))

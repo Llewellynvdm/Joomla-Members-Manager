@@ -10,7 +10,7 @@
  */
 
 // No direct access to this file
-defined('_JEXEC') or die('Restricted access'); 
+defined('_JEXEC') or die('Restricted access');
 
 ?>
 <tr>
@@ -34,6 +34,12 @@ defined('_JEXEC') or die('Restricted access');
 	</th>
 	<th class="nowrap hidden-phone" >
 			<?php echo JText::_('COM_MEMBERSMANAGER_TYPE_DESCRIPTION_LABEL'); ?>
+	</th>
+	<th class="nowrap hidden-phone" >
+			<?php echo JText::_('COM_MEMBERSMANAGER_TYPE_GROUPS_TARGET_LABEL'); ?>
+	</th>
+	<th class="nowrap hidden-phone" >
+			<?php echo JText::_('COM_MEMBERSMANAGER_TYPE_GROUPS_ACCESS_LABEL'); ?>
 	</th>
 	<?php if ($this->canState): ?>
 		<th width="10" class="nowrap center" >

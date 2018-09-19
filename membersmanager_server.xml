@@ -7,7 +7,7 @@
 		<version>1.0.3</version>
 		<infourl title="Members Manager!">https://www.joomlacomponentbuilder.com/</infourl>
 		<downloads>
-			<downloadurl type="full" format="zip">https://github.com/vdm-io/Joomla-Members-Manager/releases/download/v1.0.7/JMM_v1.0.7.zip</downloadurl>
+			<downloadurl type="full" format="zip">https://github.com/vdm-io/Joomla-Members-Manager/releases/download/v2.0.0/JMM_v2.0.0.zip</downloadurl>
 		</downloads>
 		<tags>
 			<tag>stable</tag>
@@ -24,24 +24,7 @@
 		<version>1.0.4</version>
 		<infourl title="Members Manager!">https://www.joomlacomponentbuilder.com/</infourl>
 		<downloads>
-			<downloadurl type="full" format="zip">https://github.com/vdm-io/Joomla-Members-Manager/releases/download/v1.0.7/JMM_v1.0.7.zip</downloadurl>
-		</downloads>
-		<tags>
-			<tag>stable</tag>
-		</tags>
-		<maintainer>Llewellyn van der Merwe</maintainer>
-		<maintainerurl>https://www.joomlacomponentbuilder.com/</maintainerurl>
-		<targetplatform name="joomla" version="3.*"/>
-	</update>
-	<update>
-		<name>Members Manager</name>
-		<description>Members Manager</description>
-		<element>com_membersmanager</element>
-		<type>component</type>
-		<version>1.0.5</version>
-		<infourl title="Members Manager!">https://www.joomlacomponentbuilder.com/</infourl>
-		<downloads>
-			<downloadurl type="full" format="zip">https://github.com/vdm-io/Joomla-Members-Manager/releases/download/v1.0.7/JMM_v1.0.7.zip</downloadurl>
+			<downloadurl type="full" format="zip">https://github.com/vdm-io/Joomla-Members-Manager/releases/download/v2.0.0/JMM_v2.0.0.zip</downloadurl>
 		</downloads>
 		<tags>
 			<tag>stable</tag>
@@ -58,7 +41,7 @@
 		<version>1.0.6</version>
 		<infourl title="Members Manager!">https://www.joomlacomponentbuilder.com/</infourl>
 		<downloads>
-			<downloadurl type="full" format="zip">https://github.com/vdm-io/Joomla-Members-Manager/releases/download/v1.0.7/JMM_v1.0.7.zip</downloadurl>
+			<downloadurl type="full" format="zip">https://github.com/vdm-io/Joomla-Members-Manager/releases/download/v2.0.0/JMM_v2.0.0.zip</downloadurl>
 		</downloads>
 		<tags>
 			<tag>stable</tag>
@@ -75,7 +58,75 @@
 		<version>1.0.7</version>
 		<infourl title="Members Manager!">https://www.joomlacomponentbuilder.com/</infourl>
 		<downloads>
-			<downloadurl type="full" format="zip">https://github.com/vdm-io/Joomla-Members-Manager/releases/download/v1.0.7/JMM_v1.0.7.zip</downloadurl>
+			<downloadurl type="full" format="zip">https://github.com/vdm-io/Joomla-Members-Manager/releases/download/v2.0.0/JMM_v2.0.0.zip</downloadurl>
+		</downloads>
+		<tags>
+			<tag>stable</tag>
+		</tags>
+		<maintainer>Llewellyn van der Merwe</maintainer>
+		<maintainerurl>https://www.joomlacomponentbuilder.com/</maintainerurl>
+		<targetplatform name="joomla" version="3.*"/>
+	</update>
+	<update>
+		<name>Members Manager</name>
+		<description>Members Manager</description>
+		<element>com_membersmanager</element>
+		<type>component</type>
+		<version>1.0.11</version>
+		<infourl title="Members Manager!">https://www.joomlacomponentbuilder.com/</infourl>
+		<downloads>
+			<downloadurl type="full" format="zip">https://github.com/vdm-io/Joomla-Members-Manager/releases/download/v2.0.0/JMM_v2.0.0.zip</downloadurl>
+		</downloads>
+		<tags>
+			<tag>stable</tag>
+		</tags>
+		<maintainer>Llewellyn van der Merwe</maintainer>
+		<maintainerurl>https://www.joomlacomponentbuilder.com/</maintainerurl>
+		<targetplatform name="joomla" version="3.*"/>
+	</update>
+	<update>
+		<name>Members Manager</name>
+		<description>Members Manager</description>
+		<element>com_membersmanager</element>
+		<type>component</type>
+		<version>1.0.12</version>
+		<infourl title="Members Manager!">https://www.joomlacomponentbuilder.com/</infourl>
+		<downloads>
+			<downloadurl type="full" format="zip">https://github.com/vdm-io/Joomla-Members-Manager/releases/download/v2.0.0/JMM_v2.0.0.zip</downloadurl>
+		</downloads>
+		<tags>
+			<tag>stable</tag>
+		</tags>
+		<maintainer>Llewellyn van der Merwe</maintainer>
+		<maintainerurl>https://www.joomlacomponentbuilder.com/</maintainerurl>
+		<targetplatform name="joomla" version="3.*"/>
+	</update>
+	<update>
+		<name>Members Manager</name>
+		<description>Members Manager</description>
+		<element>com_membersmanager</element>
+		<type>component</type>
+		<version>1.0.13</version>
+		<infourl title="Members Manager!">https://www.joomlacomponentbuilder.com/</infourl>
+		<downloads>
+			<downloadurl type="full" format="zip">https://github.com/vdm-io/Joomla-Members-Manager/releases/download/v2.0.0/JMM_v2.0.0.zip</downloadurl>
+		</downloads>
+		<tags>
+			<tag>stable</tag>
+		</tags>
+		<maintainer>Llewellyn van der Merwe</maintainer>
+		<maintainerurl>https://www.joomlacomponentbuilder.com/</maintainerurl>
+		<targetplatform name="joomla" version="3.*"/>
+	</update>
+	<update>
+		<name>Members Manager</name>
+		<description>Members Manager</description>
+		<element>com_membersmanager</element>
+		<type>component</type>
+		<version>2.0.0</version>
+		<infourl title="Members Manager!">https://www.joomlacomponentbuilder.com/</infourl>
+		<downloads>
+			<downloadurl type="full" format="zip">https://github.com/vdm-io/Joomla-Members-Manager/releases/download/v2.0.0/JMM_v2.0.0.zip</downloadurl>
 		</downloads>
 		<tags>
 			<tag>stable</tag>

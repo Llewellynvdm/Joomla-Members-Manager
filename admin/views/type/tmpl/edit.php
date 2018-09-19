@@ -17,7 +17,7 @@ JHtml::_('behavior.tooltip');
 JHtml::_('behavior.formvalidation');
 JHtml::_('formbehavior.chosen', 'select');
 JHtml::_('behavior.keepalive');
-$componentParams = JComponentHelper::getParams('com_membersmanager');
+$componentParams = $this->params; // will be removed just use $this->params instead
 ?>
 <script type="text/javascript">
 	// waiting spinner
@@ -42,7 +42,7 @@ $componentParams = JComponentHelper::getParams('com_membersmanager');
 	});
 </script>
 <div id="membersmanager_loader" style="display: none;">
-<form action="<?php echo JRoute::_('index.php?option=com_membersmanager&layout=edit&id='.(int) $this->item->id.$this->referral); ?>" method="post" name="adminForm" id="adminForm" class="form-validate" enctype="multipart/form-data">
+<form action="<?php echo JRoute::_('index.php?option=com_membersmanager&layout=edit&id='. (int) $this->item->id . $this->referral); ?>" method="post" name="adminForm" id="adminForm" class="form-validate" enctype="multipart/form-data">
 
 	<?php echo JLayoutHelper::render('type.details_above', $this); ?>
 <div class="form-horizontal">
@@ -51,6 +51,12 @@ $componentParams = JComponentHelper::getParams('com_membersmanager');
 
 	<?php echo JHtml::_('bootstrap.addTab', 'typeTab', 'details', JText::_('COM_MEMBERSMANAGER_TYPE_DETAILS', true)); ?>
 		<div class="row-fluid form-horizontal-desktop">
+			<div class="span6">
+				<?php echo JLayoutHelper::render('type.details_left', $this); ?>
+			</div>
+			<div class="span6">
+				<?php echo JLayoutHelper::render('type.details_right', $this); ?>
+			</div>
 		</div>
 		<div class="row-fluid form-horizontal-desktop">
 			<div class="span12">
@@ -58,6 +64,10 @@ $componentParams = JComponentHelper::getParams('com_membersmanager');
 			</div>
 		</div>
 	<?php echo JHtml::_('bootstrap.endTab'); ?>
+
+	<?php $this->ignore_fieldsets = array('details','metadata','vdmmetadata','accesscontrol'); ?>
+	<?php $this->tab_name = 'typeTab'; ?>
+	<?php echo JLayoutHelper::render('joomla.edit.params', $this); ?>
 
 	<?php if ($this->canDo->get('type.delete') || $this->canDo->get('type.edit.created_by') || $this->canDo->get('type.edit.state') || $this->canDo->get('type.edit.created')) : ?>
 	<?php echo JHtml::_('bootstrap.addTab', 'typeTab', 'publishing', JText::_('COM_MEMBERSMANAGER_TYPE_PUBLISHING', true)); ?>

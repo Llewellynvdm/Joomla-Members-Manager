@@ -12,9 +12,6 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
-// import the Joomla modellist library
-jimport('joomla.application.component.modellist');
-
 /**
  * Members Model
  */
@@ -30,13 +27,9 @@ class MembersmanagerModelMembers extends JModelList
 				'a.ordering','ordering',
 				'a.created_by','created_by',
 				'a.modified_by','modified_by',
-				'a.user','user',
-				'a.type','type',
 				'a.account','account',
-				'a.country','country',
-				'a.city','city',
-				'a.region','region',
-				'a.main_member','main_member'
+				'a.main_member','main_member',
+				'a.type','type'
 			);
 		}
 
@@ -57,26 +50,14 @@ class MembersmanagerModelMembers extends JModelList
 		{
 			$this->context .= '.' . $layout;
 		}
-		$user = $this->getUserStateFromRequest($this->context . '.filter.user', 'filter_user');
-		$this->setState('filter.user', $user);
-
-		$type = $this->getUserStateFromRequest($this->context . '.filter.type', 'filter_type');
-		$this->setState('filter.type', $type);
-
 		$account = $this->getUserStateFromRequest($this->context . '.filter.account', 'filter_account');
 		$this->setState('filter.account', $account);
 
-		$country = $this->getUserStateFromRequest($this->context . '.filter.country', 'filter_country');
-		$this->setState('filter.country', $country);
-
-		$city = $this->getUserStateFromRequest($this->context . '.filter.city', 'filter_city');
-		$this->setState('filter.city', $city);
-
-		$region = $this->getUserStateFromRequest($this->context . '.filter.region', 'filter_region');
-		$this->setState('filter.region', $region);
-
 		$main_member = $this->getUserStateFromRequest($this->context . '.filter.main_member', 'filter_main_member');
 		$this->setState('filter.main_member', $main_member);
+
+		$type = $this->getUserStateFromRequest($this->context . '.filter.type', 'filter_type');
+		$this->setState('filter.type', $type);
         
 		$sorting = $this->getUserStateFromRequest($this->context . '.filter.sorting', 'filter_sorting', 0, 'int');
 		$this->setState('filter.sorting', $sorting);
@@ -106,7 +87,7 @@ class MembersmanagerModelMembers extends JModelList
 	 * @return  mixed  An array of data items on success, false on failure.
 	 */
 	public function getItems()
-	{ 
+	{
 		// check in items
 		$this->checkInNow();
 
@@ -125,15 +106,17 @@ class MembersmanagerModelMembers extends JModelList
 					continue;
 				}
 
-				// Mobile Phone (not-required)
-				if ($item->mobile_phone)
+				// if linked to user get active name
+				if ($item->user > 0 && isset($item->user_name))
 				{
-					$item->mobile_phone = JText::_('COM_MEMBERSMANAGER_MOBILE') . ': ' . $item->mobile_phone;
+					$item->name = $item->user_name;
 				}
-				// Landline Phone
-				if ($item->landline_phone)
+				// always add surname
+				$item->name = $item->name . ' ' . $item->surname;
+				// if linked to user get active name
+				if ($item->user > 0)
 				{
-					$item->landline_phone = JText::_('COM_MEMBERSMANAGER_TEL') . ': ' . $item->landline_phone;
+					$item->email = JFactory::getUser($item->user)->email;
 				}
 			}
 		}
@@ -146,7 +129,7 @@ class MembersmanagerModelMembers extends JModelList
 				// keep account type value
 				$item->account_id = $item->account;
 			}
-		} 
+		}
 
 		// set selection value to a translatable value
 		if (MembersmanagerHelper::checkArray($items))
@@ -157,7 +140,7 @@ class MembersmanagerModelMembers extends JModelList
 				$item->account = $this->selectionTranslation($item->account, 'account');
 			}
 		}
- 
+
         
 		// return items
 		return $items;
@@ -211,21 +194,13 @@ class MembersmanagerModelMembers extends JModelList
 		$query->select($db->quoteName('g.name','user_name'));
 		$query->join('LEFT', $db->quoteName('#__users', 'g') . ' ON (' . $db->quoteName('a.user') . ' = ' . $db->quoteName('g.id') . ')');
 
-		// From the membersmanager_type table.
-		$query->select($db->quoteName('h.name','type_name'));
-		$query->join('LEFT', $db->quoteName('#__membersmanager_type', 'h') . ' ON (' . $db->quoteName('a.type') . ' = ' . $db->quoteName('h.id') . ')');
-
-		// From the membersmanager_country table.
-		$query->select($db->quoteName('i.name','country_name'));
-		$query->join('LEFT', $db->quoteName('#__membersmanager_country', 'i') . ' ON (' . $db->quoteName('a.country') . ' = ' . $db->quoteName('i.id') . ')');
-
-		// From the membersmanager_region table.
-		$query->select($db->quoteName('j.name','region_name'));
-		$query->join('LEFT', $db->quoteName('#__membersmanager_region', 'j') . ' ON (' . $db->quoteName('a.region') . ' = ' . $db->quoteName('j.id') . ')');
-
 		// From the membersmanager_member table.
-		$query->select($db->quoteName('k.user','main_member_user'));
-		$query->join('LEFT', $db->quoteName('#__membersmanager_member', 'k') . ' ON (' . $db->quoteName('a.main_member') . ' = ' . $db->quoteName('k.id') . ')');
+		$query->select($db->quoteName('h.user','main_member_user'));
+		$query->join('LEFT', $db->quoteName('#__membersmanager_member', 'h') . ' ON (' . $db->quoteName('a.main_member') . ' = ' . $db->quoteName('h.id') . ')');
+
+		// From the membersmanager_type table.
+		$query->select($db->quoteName('i.name','type_name'));
+		$query->join('LEFT', $db->quoteName('#__membersmanager_type', 'i') . ' ON (' . $db->quoteName('a.type') . ' = ' . $db->quoteName('i.id') . ')');
 
 		// Filter by published state
 		$published = $this->getState('filter.published');
@@ -263,39 +238,24 @@ class MembersmanagerModelMembers extends JModelList
 			else
 			{
 				$search = $db->quote('%' . $db->escape($search) . '%');
-				$query->where('(a.user LIKE '.$search.' OR g.name LIKE '.$search.' OR a.landline_phone LIKE '.$search.' OR a.type LIKE '.$search.' OR h.name LIKE '.$search.' OR a.account LIKE '.$search.' OR a.token LIKE '.$search.' OR a.country LIKE '.$search.' OR a.postalcode LIKE '.$search.' OR a.city LIKE '.$search.' OR a.region LIKE '.$search.' OR a.street LIKE '.$search.' OR a.postal LIKE '.$search.' OR a.mobile_phone LIKE '.$search.' OR a.name LIKE '.$search.' OR a.website LIKE '.$search.' OR a.email LIKE '.$search.' OR a.main_member LIKE '.$search.')');
+				$query->where('(a.name LIKE '.$search.' OR a.email LIKE '.$search.' OR a.account LIKE '.$search.' OR a.user LIKE '.$search.' OR a.token LIKE '.$search.' OR a.main_member LIKE '.$search.' OR a.useremail LIKE '.$search.' OR a.username LIKE '.$search.' OR a.surname LIKE '.$search.' OR a.type LIKE '.$search.')');
 			}
 		}
 
-		// Filter by type.
-		if ($type = $this->getState('filter.type'))
-		{
-			$query->where('a.type = ' . $db->quote($db->escape($type)));
-		}
 		// Filter by Account.
 		if ($account = $this->getState('filter.account'))
 		{
 			$query->where('a.account = ' . $db->quote($db->escape($account)));
 		}
-		// Filter by country.
-		if ($country = $this->getState('filter.country'))
-		{
-			$query->where('a.country = ' . $db->quote($db->escape($country)));
-		}
-		// Filter by City.
-		if ($city = $this->getState('filter.city'))
-		{
-			$query->where('a.city = ' . $db->quote($db->escape($city)));
-		}
-		// Filter by region.
-		if ($region = $this->getState('filter.region'))
-		{
-			$query->where('a.region = ' . $db->quote($db->escape($region)));
-		}
 		// Filter by main_member.
 		if ($main_member = $this->getState('filter.main_member'))
 		{
 			$query->where('a.main_member = ' . $db->quote($db->escape($main_member)));
+		}
+		// Filter by type.
+		if ($type = $this->getState('filter.type'))
+		{
+			$query->where('a.type = ' . $db->quote($db->escape($type)));
 		}
 
 		// Add the list ordering clause.
@@ -367,15 +327,17 @@ class MembersmanagerModelMembers extends JModelList
 							continue;
 						}
 
-						// Mobile Phone (not-required)
-						if ($item->mobile_phone)
+						// if linked to user get active name
+						if ($item->user > 0 && isset($item->user_name))
 						{
-							$item->mobile_phone = JText::_('COM_MEMBERSMANAGER_MOBILE') . ': ' . $item->mobile_phone;
+							$item->name = $item->user_name;
 						}
-						// Landline Phone
-						if ($item->landline_phone)
+						// always add surname
+						$item->name = $item->name . ' ' . $item->surname;
+						// if linked to user get active name
+						if ($item->user > 0)
 						{
-							$item->landline_phone = JText::_('COM_MEMBERSMANAGER_TEL') . ': ' . $item->landline_phone;
+							$item->email = JFactory::getUser($item->user)->email;
 						}
 						if ($mediumkey && !is_numeric($item->profile_image) && $item->profile_image === base64_encode(base64_decode($item->profile_image, true)))
 						{
@@ -435,7 +397,7 @@ class MembersmanagerModelMembers extends JModelList
 			return $headers;
 		}
 		return false;
-	} 
+	}
 	
 	/**
 	 * Method to get a store id based on model configuration state.
@@ -452,13 +414,9 @@ class MembersmanagerModelMembers extends JModelList
 		$id .= ':' . $this->getState('filter.ordering');
 		$id .= ':' . $this->getState('filter.created_by');
 		$id .= ':' . $this->getState('filter.modified_by');
-		$id .= ':' . $this->getState('filter.user');
-		$id .= ':' . $this->getState('filter.type');
 		$id .= ':' . $this->getState('filter.account');
-		$id .= ':' . $this->getState('filter.country');
-		$id .= ':' . $this->getState('filter.city');
-		$id .= ':' . $this->getState('filter.region');
 		$id .= ':' . $this->getState('filter.main_member');
+		$id .= ':' . $this->getState('filter.type');
 
 		return parent::getStoreId($id);
 	}

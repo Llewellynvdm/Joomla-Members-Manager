@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<metadata>
+	<layout title="COM_MEMBERSMANAGER_MENU_CPANEL_TITLE" option="COM_MEMBERSMANAGER_MENU_CPANEL_OPTION">
+		<message>
+			<![CDATA[COM_MEMBERSMANAGER_MENU_CPANEL_DESC]]>
+		</message>
+	</layout>
+</metadata>

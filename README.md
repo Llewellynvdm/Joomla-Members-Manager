@@ -13,38 +13,38 @@ Watch this [tutorial](https://youtu.be/lkE0ZiSWufg) to see how.
 + *Author*: [Llewellyn van der Merwe](mailto:llewellyn@joomlacomponentbuilder.com)
 + *Name*: [Members Manager](https://www.joomlacomponentbuilder.com/)
 + *First Build*: 6th September, 2015
-+ *Last Build*: 25th July, 2018
-+ *Version*: 1.0.x
++ *Last Build*: 19th September, 2018
++ *Version*: 2.0.x
 + *Copyright*: Copyright (C) 2015. All Rights Reserved
 + *License*: GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
 
 ## Build Time
 
-**103 Hours** or **13 Eight Hour Days** (actual time the author saved -
+**90 Hours** or **11 Eight Hour Days** (actual time the author saved -
 due to [Automated Component Builder](http://joomlacomponentbuilder.com))
 
 > (if creating a folder and file took **5 seconds** and writing one line of code took **10 seconds**,
 > never making one mistake or taking any coffee break.)
 
-+ *Line count*: **36982**
-+ *File count*: **264**
-+ *Folder count*: **69**
++ *Line count*: **32177**
++ *File count*: **205**
++ *Folder count*: **59**
 
-**68 Hours** or **8 Eight Hour Days** (the actual time the author spent)
+**59 Hours** or **8 Eight Hour Days** (the actual time the author spent)
 
 > (with the following break down:
-> **debugging @26hours** = codingtime / 4;
-> **planning @15hours** = codingtime / 7;
-> **mapping @10hours** = codingtime / 10;
-> **office @17hours** = codingtime / 6;)
+> **debugging @22hours** = codingtime / 4;
+> **planning @13hours** = codingtime / 7;
+> **mapping @9hours** = codingtime / 10;
+> **office @15hours** = codingtime / 6;)
 
-**171 Hours** or **21 Eight Hour Days**
+**149 Hours** or **19 Eight Hour Days**
 (a total of the realistic time frame for this project)
 
 > (if creating a folder and file took **5 seconds** and writing one line of code took **10 seconds**,
 > with the normal everyday realities at the office, that includes the component planning, mapping & debugging.)
 
-Project duration: **4.2 weeks** or **0.9 months**
+Project duration: **3.8 weeks** or **0.8 months**
 
 > This **component** was build with a Joomla [Automated Component Builder](http://joomlacomponentbuilder.com).
 > Developed by [Llewellyn van der Merwe](mailto:llewellyn@joomlacomponentbuilder.com)

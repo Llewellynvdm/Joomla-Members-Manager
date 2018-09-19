@@ -12,4 +12,6 @@
 .no-click {
 	pointer-events: none;
 }
-
+.field-calendar input {
+	font:caption !important;
+}

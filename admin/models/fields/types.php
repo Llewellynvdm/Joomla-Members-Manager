@@ -60,9 +60,15 @@ class JFormFieldTypes extends JFormFieldList
 			$refJ = '';
 			if (!is_null($values['id']) && strlen($values['view']))
 			{
-				// only load referal if not new item.
+				// only load referral if not new item.
 				$ref = '&amp;ref=' . $values['view'] . '&amp;refid=' . $values['id'];
 				$refJ = '&ref=' . $values['view'] . '&refid=' . $values['id'];
+				// get the return value.
+				$_uri = (string) JUri::getInstance();
+				$_return = urlencode(base64_encode($_uri));
+				// load return value.
+				$ref .= '&amp;return=' . $_return;
+				$refJ .= '&return=' . $_return;
 			}
 			$user = JFactory::getUser();
 			// only add if user allowed to create type
@@ -136,24 +142,54 @@ class JFormFieldTypes extends JFormFieldList
 	 */
 	public function getOptions()
 	{
+				// load the db opbject
 		$db = JFactory::getDBO();
-$query = $db->getQuery(true);
-$query->select($db->quoteName(array('a.id','a.name'),array('id','type_name')));
-$query->from($db->quoteName('#__membersmanager_type', 'a'));
-$query->where($db->quoteName('a.published') . ' >= 1');
-$query->order('a.name ASC');
-$db->setQuery((string)$query);
-$items = $db->loadObjectList();
-$options = array();
-if ($items)
-{
-	$options[] = JHtml::_('select.option', '', JText::_('COM_MEMBERSMANAGER_SELECT_AN_OPTION'));
-	foreach($items as $item)
-	{
-		$options[] = JHtml::_('select.option', $item->id, $item->type_name);
-	}
-}
-
-return $options;
+		// get the user
+		$user = JFactory::getUser();
+		// access types
+		$accessTypes = MembersmanagerHelper::getAccess($user);
+		// start query
+		$query = $db->getQuery(true);
+		$query->select($db->quoteName(array('a.id','a.name'),array('id','type_name')));
+		$query->from($db->quoteName('#__membersmanager_type', 'a'));
+		$query->where($db->quoteName('a.published') . ' >= 1');
+		// check if current user is a supper admin
+		if (!$user->authorise('core.admin'))
+		{		
+			// get the input from url
+			$jinput = JFactory::getApplication()->input;
+			// get the id
+			$id = $jinput->getInt('id', 0);
+			if ($id > 0)
+			{
+				$type = MembersmanagerHelper::getVar('member', $id, 'id', 'type');
+				// check if part of user access
+				if (!MembersmanagerHelper::checkArray($accessTypes) || !in_array($type, $accessTypes))
+				{
+					$accessTypes[] = $type;
+				}
+			}
+			// filter by access type
+			if (MembersmanagerHelper::checkArray($accessTypes))
+			{
+				$query->where($db->quoteName('a.id') . ' in (' . implode(',', $accessTypes) . ')');
+			}
+			else
+			{
+				return false;
+			}
+		}
+		$query->order('a.name ASC');
+		$db->setQuery((string)$query);
+		$items = $db->loadObjectList();
+		$options = array();
+		if ($items)
+		{
+			foreach($items as $item)
+			{
+				$options[] = JHtml::_('select.option', $item->id, $item->type_name);
+			}
+		}
+		return $options;
 	}
 }

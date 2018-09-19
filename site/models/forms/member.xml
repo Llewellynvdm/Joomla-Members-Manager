@@ -85,39 +85,36 @@
 			filter="unset"
 		/>
 		<!-- Dynamic Fields. -->
-		<!-- User Field. Type: Memberuser. (custom) -->
+		<!-- Name Field. Type: Text. (joomla) -->
 		<field
-			type="memberuser"
-			name="user"
-			label="COM_MEMBERSMANAGER_MEMBER_USER_LABEL"
-			description="JFIELD_TITLE_DESC"
-			required="true"
-			hint="COM_MEMBERSMANAGER_MEMBER_USER_HINT"
-		/>
-		<!-- Landline_phone Field. Type: Tel. (joomla) -->
-		<field
-			type="tel"
-			name="landline_phone"
-			label="COM_MEMBERSMANAGER_MEMBER_LANDLINE_PHONE_LABEL"
-			size="60"
+			type="text"
+			name="name"
+			label="COM_MEMBERSMANAGER_MEMBER_NAME_LABEL"
+			size="40"
 			maxlength="150"
-			description="COM_MEMBERSMANAGER_MEMBER_LANDLINE_PHONE_DESCRIPTION"
+			description="COM_MEMBERSMANAGER_MEMBER_NAME_DESCRIPTION"
 			class="text_area"
+			readonly="false"
+			disabled="false"
+			required="true"
 			filter="STRING"
-			validated="tel"
-			message="COM_MEMBERSMANAGER_MEMBER_LANDLINE_PHONE_MESSAGE"
-			hint="COM_MEMBERSMANAGER_MEMBER_LANDLINE_PHONE_HINT"
+			message="COM_MEMBERSMANAGER_MEMBER_NAME_MESSAGE"
+			hint="COM_MEMBERSMANAGER_MEMBER_NAME_HINT"
 		/>
-		<!-- Type Field. Type: Types. (custom) -->
+		<!-- Email Field. Type: Text. (joomla) -->
 		<field
-			type="types"
-			name="type"
-			label="COM_MEMBERSMANAGER_MEMBER_TYPE_LABEL"
-			description="COM_MEMBERSMANAGER_MEMBER_TYPE_DESCRIPTION"
-			class="list_class"
-			multiple="false"
+			type="text"
+			name="email"
+			label="COM_MEMBERSMANAGER_MEMBER_EMAIL_LABEL"
+			size="10"
+			maxlength="50"
+			description="COM_MEMBERSMANAGER_MEMBER_EMAIL_DESCRIPTION"
+			class="text_area"
 			required="false"
-			button="true"
+			filter="STRING"
+			validate="email"
+			message="COM_MEMBERSMANAGER_MEMBER_EMAIL_MESSAGE"
+			hint="COM_MEMBERSMANAGER_MEMBER_EMAIL_HINT"
 		/>
 		<!-- Account Field. Type: List. (joomla) -->
 		<field
@@ -140,8 +137,16 @@
 			<option value="4">
 				COM_MEMBERSMANAGER_MEMBER_SUB_LOGIN</option>
 		</field>
-		<!-- Profile_image_uploader Field. Type: Note. A None Database Field. (joomla) -->
-		<field type="note" name="profile_image_uploader" label="COM_MEMBERSMANAGER_MEMBER_PROFILE_IMAGE_UPLOADER_LABEL" description="COM_MEMBERSMANAGER_MEMBER_PROFILE_IMAGE_UPLOADER_DESCRIPTION" class="profile_image_uploader" />
+		<!-- User Field. Type: Memberuser. (custom) -->
+		<field
+			type="memberuser"
+			name="user"
+			label="COM_MEMBERSMANAGER_MEMBER_USER_LABEL"
+			class="list_class"
+			multiple="false"
+			validate="number"
+			button="false"
+		/>
 		<!-- Token Field. Type: Text. (joomla) -->
 		<field
 			type="text"
@@ -160,125 +165,8 @@
 			hint="COM_MEMBERSMANAGER_MEMBER_TOKEN_HINT"
 			autocomplete="off"
 		/>
-		<!-- Country Field. Type: Countries. (custom) -->
-		<field
-			type="countries"
-			name="country"
-			label="COM_MEMBERSMANAGER_MEMBER_COUNTRY_LABEL"
-			description="COM_MEMBERSMANAGER_MEMBER_COUNTRY_DESCRIPTION"
-			class="list_class"
-			multiple="false"
-			required="false"
-			button="false"
-		/>
-		<!-- Postalcode Field. Type: Text. (joomla) -->
-		<field
-			type="text"
-			name="postalcode"
-			label="COM_MEMBERSMANAGER_MEMBER_POSTALCODE_LABEL"
-			size="60"
-			maxlength="150"
-			description="COM_MEMBERSMANAGER_MEMBER_POSTALCODE_DESCRIPTION"
-			class="text_area"
-			filter="STRING"
-			message="COM_MEMBERSMANAGER_MEMBER_POSTALCODE_MESSAGE"
-			hint="COM_MEMBERSMANAGER_MEMBER_POSTALCODE_HINT"
-		/>
-		<!-- City Field. Type: Text. (joomla) -->
-		<field
-			type="text"
-			name="city"
-			label="COM_MEMBERSMANAGER_MEMBER_CITY_LABEL"
-			size="60"
-			maxlength="150"
-			description="COM_MEMBERSMANAGER_MEMBER_CITY_DESCRIPTION"
-			class="text_area"
-			filter="STRING"
-			message="COM_MEMBERSMANAGER_MEMBER_CITY_MESSAGE"
-			hint="COM_MEMBERSMANAGER_MEMBER_CITY_HINT"
-		/>
-		<!-- Region Field. Type: Regions. (custom) -->
-		<field
-			type="regions"
-			name="region"
-			label="COM_MEMBERSMANAGER_MEMBER_REGION_LABEL"
-			description="COM_MEMBERSMANAGER_MEMBER_REGION_DESCRIPTION"
-			class="list_class"
-			multiple="false"
-			default="0"
-			button="true"
-		/>
-		<!-- Street Field. Type: Text. (joomla) -->
-		<field
-			type="text"
-			name="street"
-			label="COM_MEMBERSMANAGER_MEMBER_STREET_LABEL"
-			size="60"
-			maxlength="150"
-			description="COM_MEMBERSMANAGER_MEMBER_STREET_DESCRIPTION"
-			class="text_area"
-			filter="STRING"
-			message="COM_MEMBERSMANAGER_MEMBER_STREET_MESSAGE"
-			hint="COM_MEMBERSMANAGER_MEMBER_STREET_HINT"
-		/>
-		<!-- Postal Field. Type: Text. (joomla) -->
-		<field
-			type="text"
-			name="postal"
-			label="COM_MEMBERSMANAGER_MEMBER_POSTAL_LABEL"
-			size="60"
-			maxlength="150"
-			description="COM_MEMBERSMANAGER_MEMBER_POSTAL_DESCRIPTION"
-			class="text_area"
-			filter="STRING"
-			message="COM_MEMBERSMANAGER_MEMBER_POSTAL_MESSAGE"
-			hint="COM_MEMBERSMANAGER_MEMBER_POSTAL_HINT"
-		/>
-		<!-- Mobile_phone Field. Type: Tel. (joomla) -->
-		<field
-			type="tel"
-			name="mobile_phone"
-			label="COM_MEMBERSMANAGER_MEMBER_MOBILE_PHONE_LABEL"
-			size="10"
-			maxlength="50"
-			description="COM_MEMBERSMANAGER_MEMBER_MOBILE_PHONE_DESCRIPTION"
-			class="text_area"
-			filter="STRING"
-			validated="tel"
-			message="COM_MEMBERSMANAGER_MEMBER_MOBILE_PHONE_MESSAGE"
-			hint="COM_MEMBERSMANAGER_MEMBER_MOBILE_PHONE_HINT"
-		/>
-		<!-- Name Field. Type: Text. (joomla) -->
-		<field
-			type="text"
-			name="name"
-			label="COM_MEMBERSMANAGER_MEMBER_NAME_LABEL"
-			size="40"
-			maxlength="150"
-			description="COM_MEMBERSMANAGER_MEMBER_NAME_DESCRIPTION"
-			class="text_area"
-			readonly="false"
-			disabled="false"
-			required="true"
-			filter="STRING"
-			message="COM_MEMBERSMANAGER_MEMBER_NAME_MESSAGE"
-			hint="COM_MEMBERSMANAGER_MEMBER_NAME_HINT"
-		/>
-		<!-- Website Field. Type: Url. (joomla) -->
-		<field
-			type="url"
-			name="website"
-			label="COM_MEMBERSMANAGER_MEMBER_WEBSITE_LABEL"
-			size="60"
-			maxlength="150"
-			description="COM_MEMBERSMANAGER_MEMBER_WEBSITE_DESCRIPTION"
-			class="text_area"
-			filter="url"
-			validated="url"
-			scheme="http,https"
-			message="COM_MEMBERSMANAGER_MEMBER_WEBSITE_MESSAGE"
-			hint="COM_MEMBERSMANAGER_MEMBER_WEBSITE_HINT"
-		/>
+		<!-- Profile_image_uploader Field. Type: Note. A None Database Field. (joomla) -->
+		<field type="note" name="profile_image_uploader" label="COM_MEMBERSMANAGER_MEMBER_PROFILE_IMAGE_UPLOADER_LABEL" description="COM_MEMBERSMANAGER_MEMBER_PROFILE_IMAGE_UPLOADER_DESCRIPTION" class="profile_image_uploader" />
 		<!-- Profile_image Field. Type: Hidden. (joomla) -->
 		<field
 			type="hidden"
@@ -291,21 +179,6 @@
 			name="not_required"
 			default="[]"
 		/>
-		<!-- Email Field. Type: Text. (joomla) -->
-		<field
-			type="text"
-			name="email"
-			label="COM_MEMBERSMANAGER_MEMBER_EMAIL_LABEL"
-			size="10"
-			maxlength="50"
-			description="COM_MEMBERSMANAGER_MEMBER_EMAIL_DESCRIPTION"
-			class="text_area"
-			required="false"
-			filter="STRING"
-			validate="email"
-			message="COM_MEMBERSMANAGER_MEMBER_EMAIL_MESSAGE"
-			hint="COM_MEMBERSMANAGER_MEMBER_EMAIL_HINT"
-		/>
 		<!-- Main_member Field. Type: Mainmembers. (custom) -->
 		<field
 			type="mainmembers"
@@ -315,6 +188,89 @@
 			class="list_class"
 			multiple="false"
 			required="true"
+			button="true"
+		/>
+		<!-- Password_check Field. Type: Password. (joomla) -->
+		<field
+			type="password"
+			name="password_check"
+			label="COM_MEMBERSMANAGER_MEMBER_PASSWORD_CHECK_LABEL"
+			size="50"
+			description="COM_MEMBERSMANAGER_MEMBER_PASSWORD_CHECK_DESCRIPTION"
+			message="Error! The passwords you entered do not match. Please enter your desired password in the password field and confirm your entry by entering it in the confirm password field."
+			class="text_area"
+			validate="equals"
+			field="password"
+			filter="raw"
+			autocomplete="off"
+		/>
+		<!-- Password Field. Type: Password. (joomla) -->
+		<field
+			type="password"
+			name="password"
+			label="COM_MEMBERSMANAGER_MEMBER_PASSWORD_LABEL"
+			size="50"
+			description="COM_MEMBERSMANAGER_MEMBER_PASSWORD_DESCRIPTION"
+			message="Error! Please add password here."
+			class="text_area"
+			validate="password"
+			filter="raw"
+			autocomplete="off"
+		/>
+		<!-- Useremail Field. Type: Email. (joomla) -->
+		<field
+			type="email"
+			name="useremail"
+			label="COM_MEMBERSMANAGER_MEMBER_USEREMAIL_LABEL"
+			size="30"
+			maxlength="150"
+			description="COM_MEMBERSMANAGER_MEMBER_USEREMAIL_DESCRIPTION"
+			class="inputbox"
+			required="true"
+			filter="STRING"
+			validate="memberuseremail"
+			unique="true"
+			message="COM_MEMBERSMANAGER_MEMBER_USEREMAIL_MESSAGE"
+			hint="COM_MEMBERSMANAGER_MEMBER_USEREMAIL_HINT"
+			autocomplete="off"
+		/>
+		<!-- Username Field. Type: Text. (joomla) -->
+		<field
+			type="text"
+			name="username"
+			label="COM_MEMBERSMANAGER_MEMBER_USERNAME_LABEL"
+			size="50"
+			maxlength="150"
+			description="COM_MEMBERSMANAGER_MEMBER_USERNAME_DESCRIPTION"
+			class="text_area"
+			required="true"
+			filter="WORD"
+			validate="memberloginname"
+			message="COM_MEMBERSMANAGER_MEMBER_USERNAME_MESSAGE"
+			autocomplete="off"
+		/>
+		<!-- Surname Field. Type: Text. (joomla) -->
+		<field
+			type="text"
+			name="surname"
+			label="COM_MEMBERSMANAGER_MEMBER_SURNAME_LABEL"
+			size="30"
+			maxlength="150"
+			description="COM_MEMBERSMANAGER_MEMBER_SURNAME_DESCRIPTION"
+			class="text_area"
+			filter="STRING"
+			message="COM_MEMBERSMANAGER_MEMBER_SURNAME_MESSAGE"
+			hint="COM_MEMBERSMANAGER_MEMBER_SURNAME_HINT"
+		/>
+		<!-- Type Field. Type: Types. (custom) -->
+		<field
+			type="types"
+			name="type"
+			label="COM_MEMBERSMANAGER_MEMBER_TYPE_LABEL"
+			description="COM_MEMBERSMANAGER_MEMBER_TYPE_DESCRIPTION"
+			class="list_class"
+			multiple="false"
+			required="false"
 			button="true"
 		/>
 	</fieldset>

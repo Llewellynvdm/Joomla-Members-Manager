@@ -61,16 +61,7 @@ $edit = "index.php?option=com_membersmanager&view=members&task=member.edit";
 		<?php endif; ?>
 		</td>
 		<td class="nowrap">
-			<div><?php if (1 == $item->account_id || 4 == $item->account_id): ?>
-			<?php if ($canDo->get('member.edit')): ?>
-				<a href="<?php echo $edit; ?>&id=<?php echo $item->id; ?>"><?php echo JFactory::getUser((int)$item->user)->name; ?></a>
-				<?php if ($item->checked_out): ?>
-					<?php echo JHtml::_('jgrid.checkedout', $i, $userChkOut->name, $item->checked_out_time, 'members.', $canCheckin); ?>
-				<?php endif; ?>
-			<?php else: ?>
-				<?php echo JFactory::getUser((int)$item->user)->name; ?>
-			<?php endif; ?>
-			<?php else: ?>
+			<div>
 			<?php if ($canDo->get('member.edit')): ?>
 				<a href="<?php echo $edit; ?>&id=<?php echo $item->id; ?>"><?php echo $this->escape($item->name); ?></a>
 				<?php if ($item->checked_out): ?>
@@ -79,82 +70,32 @@ $edit = "index.php?option=com_membersmanager&view=members&task=member.edit";
 			<?php else: ?>
 				<?php echo $this->escape($item->name); ?>
 			<?php endif; ?>
-			<?php endif; ?>
 			<?php if (3 == $item->account_id || 4 == $item->account_id): ?>
-			<br /><small><?php echo JText::_('COM_MEMBERSMANAGER_MAIN_MEMBER'); ?>:
-			<?php if ($item->main_member_user > 0): ?>
-			<?php if ($this->user->authorise('member.edit', 'com_membersmanager.member.' . (int)$item->main_member)): ?>
-				<a href="index.php?option=com_membersmanager&view=members&task=member.edit&id=<?php echo $item->main_member; ?>&ref=members"><?php echo JFactory::getUser((int)$item->main_member_user)->name; ?></a>
-			<?php else: ?>
-				<?php echo JFactory::getUser((int)$item->main_member_user)->name; ?>
-			<?php endif; ?>
-			<?php else: ?>
-			<?php if ($canDo->get('member.edit')): ?>
-			<a href="<?php echo $edit; ?>&id=<?php echo $item->main_member; ?>"><?php echo MembersmanagerHelper::getVar('member', $item->main_member, 'id', 'name'); ?></a>
-			<?php if ($item->checked_out): ?>
-			<?php echo JHtml::_('jgrid.checkedout', $i, $userChkOut->name, $item->checked_out_time, 'members.', $canCheckin); ?>
-			<?php endif; ?>
-			<?php else: ?>
-			<?php echo MembersmanagerHelper::getVar('member', $item->main_member, 'id', 'name'); ?>
-			<?php endif; ?>
-			<?php endif; ?>
-			</small>
-			<?php endif; ?>
-			<?php if (MembersmanagerHelper::checkString($item->street)): ?>
-			<br />
-			<?php echo $this->escape($item->street); ?>
-			<?php endif; ?>
-			<?php if (MembersmanagerHelper::checkString($item->city)): ?>
-			<br />
-			<?php echo $this->escape($item->city); ?>
-			<?php endif; ?>
-			<?php if ($item->region > 0): ?>
-			<br />
-			<?php if ($this->user->authorise('region.edit', 'com_membersmanager.region.' . (int)$item->region)): ?>
-				<a href="index.php?option=com_membersmanager&view=regions&task=region.edit&id=<?php echo $item->region; ?>&ref=members"><?php echo $this->escape($item->region_name); ?></a>
-			<?php else: ?>
-				<?php echo $this->escape($item->region_name); ?>
-			<?php endif; ?>
-			<?php endif; ?>
-			<?php if ($item->country > 0): ?>
-			<br />
-			<?php if ($this->user->authorise('country.edit', 'com_membersmanager.country.' . (int)$item->country)): ?>
-				<a href="index.php?option=com_membersmanager&view=countries&task=country.edit&id=<?php echo $item->country; ?>&ref=members"><?php echo $this->escape($item->country_name); ?></a>
-			<?php else: ?>
-				<?php echo $this->escape($item->country_name); ?>
-			<?php endif; ?>
-			<?php endif; ?>
-			<?php if (MembersmanagerHelper::checkString($item->website)): ?>
-			<br />
-			<?php echo $this->escape($item->website); ?>
+				<br /><small><?php echo JText::_('COM_MEMBERSMANAGER_MAIN_MEMBER'); ?>:
+				<?php if ($this->user->authorise('member.edit', 'com_membersmanager.member.' . (int)$item->main_member)): ?>
+					<a href="index.php?option=com_membersmanager&view=members&task=member.edit&id=<?php echo $item->main_member; ?>&ref=members">
+						<?php echo MembersmanagerHelper::getMemberName($item->main_member, $item->main_member_user); ?>
+					</a>
+				<?php else: ?>
+					<?php echo MembersmanagerHelper::getMemberName($item->main_member, $item->main_member_user); ?>
+				<?php endif; ?>
+				</small>
 			<?php endif; ?>
 			</div>
 		</td>
 		<td class="hidden-phone">
-			<div><?php if (MembersmanagerHelper::checkString($item->landline_phone)): ?>
-			<?php echo $this->escape($item->landline_phone); ?>
-			<?php endif; ?>
-			<?php if (MembersmanagerHelper::checkString($item->mobile_phone)): ?>
-			<?php if (MembersmanagerHelper::checkString($item->landline_phone)): ?><br />
-			<?php endif; ?>
-			<?php echo $this->escape($item->mobile_phone); ?>
-			<?php endif; ?>
-			</div>
+			<?php echo $this->escape($item->email); ?>
 		</td>
-		<td class="nowrap">
-			<div><?php echo JText::_('COM_MEMBERSMANAGER_TYPE'); ?>: 
+		<td class="hidden-phone">
+			<div>
 			<?php if ($this->user->authorise('type.edit', 'com_membersmanager.type.' . (int)$item->type)): ?>
 				<a href="index.php?option=com_membersmanager&view=types&task=type.edit&id=<?php echo $item->type; ?>&ref=members"><?php echo $this->escape($item->type_name); ?></a>
 			<?php else: ?>
 				<?php echo $this->escape($item->type_name); ?>
-			<?php endif; ?>
-			</div>
-		</td>
-		<td class="hidden-phone">
-			<div><?php echo JText::_('COM_MEMBERSMANAGER_TYPE'); ?>: <b>
+			<?php endif; ?>: <b>
 			<?php echo JText::_($item->account); ?></b><br />
-<?php echo JText::_('TOKEN'); ?>: <b>
-			<?php echo $this->escape($item->token); ?></b>
+<em>
+			<?php echo $this->escape($item->token); ?></em>
 			</div>
 		</td>
 		<td class="center">

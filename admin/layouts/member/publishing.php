@@ -10,13 +10,13 @@
  */
 
 // No direct access to this file
-
 defined('_JEXEC') or die('Restricted access');
 
 $app = JFactory::getApplication();
 $form = $displayData->getForm();
 
 $fields = $displayData->get('fields') ?: array(
+	'user',
 	'created',
 	'created_by',
 	'modified',

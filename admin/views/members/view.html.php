@@ -12,9 +12,6 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
-// import Joomla view library
-jimport('joomla.application.component.view');
-
 /**
  * Membersmanager View class for the Members
  */
@@ -119,7 +116,7 @@ class MembersmanagerViewMembers extends JViewLegacy
 				// add the button to the page
 				$dhtml = $layout->render(array('title' => $title));
 				$bar->appendButton('Custom', $dhtml, 'batch');
-			} 
+			}
 
 			if ($this->state->get('filter.published') == -2 && ($this->canState && $this->canDelete))
 			{
@@ -134,7 +131,7 @@ class MembersmanagerViewMembers extends JViewLegacy
 			{
 				JToolBarHelper::custom('members.exportData', 'download', '', 'COM_MEMBERSMANAGER_EXPORT_DATA', true);
 			}
-		} 
+		}
 
 		if ($this->canDo->get('core.import') && $this->canDo->get('member.import'))
 		{
@@ -185,28 +182,6 @@ class MembersmanagerViewMembers extends JViewLegacy
 				'batch[access]',
 				JHtml::_('select.options', JHtml::_('access.assetgroups'), 'value', 'text')
 			);
-		} 
-
-		// Set Type Name Selection
-		$this->typeNameOptions = JFormHelper::loadFieldType('Types')->getOptions();
-		if ($this->typeNameOptions)
-		{
-			// Type Name Filter
-			JHtmlSidebar::addFilter(
-				'- Select '.JText::_('COM_MEMBERSMANAGER_MEMBER_TYPE_LABEL').' -',
-				'filter_type',
-				JHtml::_('select.options', $this->typeNameOptions, 'value', 'text', $this->state->get('filter.type'))
-			);
-
-			if ($this->canBatch && $this->canCreate && $this->canEdit)
-			{
-				// Type Name Batch Selection
-				JHtmlBatch_::addListSelection(
-					'- Keep Original '.JText::_('COM_MEMBERSMANAGER_MEMBER_TYPE_LABEL').' -',
-					'batch[type]',
-					JHtml::_('select.options', $this->typeNameOptions, 'value', 'text')
-				);
-			}
 		}
 
 		// Set Account Selection
@@ -231,72 +206,6 @@ class MembersmanagerViewMembers extends JViewLegacy
 			}
 		}
 
-		// Set Country Name Selection
-		$this->countryNameOptions = JFormHelper::loadFieldType('Countries')->getOptions();
-		if ($this->countryNameOptions)
-		{
-			// Country Name Filter
-			JHtmlSidebar::addFilter(
-				'- Select '.JText::_('COM_MEMBERSMANAGER_MEMBER_COUNTRY_LABEL').' -',
-				'filter_country',
-				JHtml::_('select.options', $this->countryNameOptions, 'value', 'text', $this->state->get('filter.country'))
-			);
-
-			if ($this->canBatch && $this->canCreate && $this->canEdit)
-			{
-				// Country Name Batch Selection
-				JHtmlBatch_::addListSelection(
-					'- Keep Original '.JText::_('COM_MEMBERSMANAGER_MEMBER_COUNTRY_LABEL').' -',
-					'batch[country]',
-					JHtml::_('select.options', $this->countryNameOptions, 'value', 'text')
-				);
-			}
-		}
-
-		// Set City Selection
-		$this->cityOptions = $this->getTheCitySelections();
-		if ($this->cityOptions)
-		{
-			// City Filter
-			JHtmlSidebar::addFilter(
-				'- Select '.JText::_('COM_MEMBERSMANAGER_MEMBER_CITY_LABEL').' -',
-				'filter_city',
-				JHtml::_('select.options', $this->cityOptions, 'value', 'text', $this->state->get('filter.city'))
-			);
-
-			if ($this->canBatch && $this->canCreate && $this->canEdit)
-			{
-				// City Batch Selection
-				JHtmlBatch_::addListSelection(
-					'- Keep Original '.JText::_('COM_MEMBERSMANAGER_MEMBER_CITY_LABEL').' -',
-					'batch[city]',
-					JHtml::_('select.options', $this->cityOptions, 'value', 'text')
-				);
-			}
-		}
-
-		// Set Region Name Selection
-		$this->regionNameOptions = JFormHelper::loadFieldType('Regions')->getOptions();
-		if ($this->regionNameOptions)
-		{
-			// Region Name Filter
-			JHtmlSidebar::addFilter(
-				'- Select '.JText::_('COM_MEMBERSMANAGER_MEMBER_REGION_LABEL').' -',
-				'filter_region',
-				JHtml::_('select.options', $this->regionNameOptions, 'value', 'text', $this->state->get('filter.region'))
-			);
-
-			if ($this->canBatch && $this->canCreate && $this->canEdit)
-			{
-				// Region Name Batch Selection
-				JHtmlBatch_::addListSelection(
-					'- Keep Original '.JText::_('COM_MEMBERSMANAGER_MEMBER_REGION_LABEL').' -',
-					'batch[region]',
-					JHtml::_('select.options', $this->regionNameOptions, 'value', 'text')
-				);
-			}
-		}
-
 		// Set Main Member User Selection
 		$this->main_memberUserOptions = JFormHelper::loadFieldType('Mainmembers')->getOptions();
 		if ($this->main_memberUserOptions)
@@ -315,6 +224,28 @@ class MembersmanagerViewMembers extends JViewLegacy
 					'- Keep Original '.JText::_('COM_MEMBERSMANAGER_MEMBER_MAIN_MEMBER_LABEL').' -',
 					'batch[main_member]',
 					JHtml::_('select.options', $this->main_memberUserOptions, 'value', 'text')
+				);
+			}
+		}
+
+		// Set Type Name Selection
+		$this->typeNameOptions = JFormHelper::loadFieldType('Types')->getOptions();
+		if ($this->typeNameOptions)
+		{
+			// Type Name Filter
+			JHtmlSidebar::addFilter(
+				'- Select '.JText::_('COM_MEMBERSMANAGER_MEMBER_TYPE_LABEL').' -',
+				'filter_type',
+				JHtml::_('select.options', $this->typeNameOptions, 'value', 'text', $this->state->get('filter.type'))
+			);
+
+			if ($this->canBatch && $this->canCreate && $this->canEdit)
+			{
+				// Type Name Batch Selection
+				JHtmlBatch_::addListSelection(
+					'- Keep Original '.JText::_('COM_MEMBERSMANAGER_MEMBER_TYPE_LABEL').' -',
+					'batch[type]',
+					JHtml::_('select.options', $this->typeNameOptions, 'value', 'text')
 				);
 			}
 		}
@@ -363,8 +294,6 @@ class MembersmanagerViewMembers extends JViewLegacy
 		return array(
 			'a.sorting' => JText::_('JGRID_HEADING_ORDERING'),
 			'a.published' => JText::_('JSTATUS'),
-			'g.name' => JText::_('COM_MEMBERSMANAGER_MEMBER_USER_LABEL'),
-			'h.name' => JText::_('COM_MEMBERSMANAGER_MEMBER_TYPE_LABEL'),
 			'a.account' => JText::_('COM_MEMBERSMANAGER_MEMBER_ACCOUNT_LABEL'),
 			'a.id' => JText::_('JGRID_HEADING_ID')
 		);
@@ -400,38 +329,6 @@ class MembersmanagerViewMembers extends JViewLegacy
 				$text = $model->selectionTranslation($account,'account');
 				// Now add the account and its text to the options array
 				$_filter[] = JHtml::_('select.option', $account, JText::_($text));
-			}
-			return $_filter;
-		}
-		return false;
-	}
-
-	protected function getTheCitySelections()
-	{
-		// Get a db connection.
-		$db = JFactory::getDbo();
-
-		// Create a new query object.
-		$query = $db->getQuery(true);
-
-		// Select the text.
-		$query->select($db->quoteName('city'));
-		$query->from($db->quoteName('#__membersmanager_member'));
-		$query->order($db->quoteName('city') . ' ASC');
-
-		// Reset the query using our newly populated query object.
-		$db->setQuery($query);
-
-		$results = $db->loadColumn();
-
-		if ($results)
-		{
-			$results = array_unique($results);
-			$_filter = array();
-			foreach ($results as $city)
-			{
-				// Now add the city and its text to the options array
-				$_filter[] = JHtml::_('select.option', $city, $city);
 			}
 			return $_filter;
 		}

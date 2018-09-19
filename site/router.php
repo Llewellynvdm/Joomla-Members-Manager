@@ -68,11 +68,11 @@ class MembersmanagerRouter extends JComponentRouterBase
 			return $segments;
 		}
 
-		if (isset($view) && isset($query['id']) && ($view === 'member' || $view === 'profile'))
+		if (isset($view) && isset($query['id']) && ($view === 'member' || $view === 'cpanel' || $view === 'profile'))
 		{
 			if ($mId != (int) $query['id'] || $mView != $view)
 			{
-				if (($view === 'member' || $view === 'profile'))
+				if (($view === 'member' || $view === 'cpanel' || $view === 'profile'))
 				{
 					$segments[] = $view;
 					$id = explode(':', $query['id']);
@@ -124,7 +124,23 @@ class MembersmanagerRouter extends JComponentRouterBase
 					$vars['id'] = (int) $segments[$count-1];
 				}
 				break;
+			case 'cpanel':
+				$vars['view'] = 'cpanel';
+				if (is_numeric($segments[$count-1]))
+				{
+					$vars['id'] = (int) $segments[$count-1];
+				}
+				elseif ($segments[$count-1])
+				{
+					$id = $this->getVar('cpanel', $segments[$count-1], 'alias', 'id');
+					if($id)
+					{
+						$vars['id'] = $id;
+					}
+				}
+				break;
 			case 'profile':
+				// default script in switch for this view
 				$vars['view'] = 'profile';
 				if (is_numeric($segments[$count-1]))
 				{
@@ -132,7 +148,7 @@ class MembersmanagerRouter extends JComponentRouterBase
 				}
 				elseif ($segments[$count-1])
 				{
-					$id = $this->getVar('member', $segments[$count-1], 'alias', 'id');
+					$id = $this->getVar('member', $segments[$count-1], 'token', 'id');
 					if($id)
 					{
 						$vars['id'] = $id;

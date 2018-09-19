@@ -19,36 +19,32 @@ JHtml::_('formbehavior.chosen', 'select');
 JHtml::_('behavior.keepalive');
 JHtml::_('behavior.tabstate');
 JHtml::_('behavior.calendar');
-$componentParams = JComponentHelper::getParams('com_membersmanager');
+$componentParams = $this->params; // will be removed just use $this->params instead
 ?>
 <?php echo $this->toolbar->render(); ?>
-<form action="<?php echo JRoute::_('index.php?option=com_membersmanager&layout=edit&id='.(int) $this->item->id.$this->referral); ?>" method="post" name="adminForm" id="adminForm" class="form-validate" enctype="multipart/form-data">
+<form action="<?php echo JRoute::_('index.php?option=com_membersmanager&layout=edit&id='. (int) $this->item->id . $this->referral); ?>" method="post" name="adminForm" id="adminForm" class="form-validate" enctype="multipart/form-data">
 
-	<?php echo JLayoutHelper::render('member.details_above', $this); ?>
+	<?php echo JLayoutHelper::render('member.membership_above', $this); ?>
 <div class="form-horizontal">
 
-	<?php echo JHtml::_('bootstrap.startTabSet', 'memberTab', array('active' => 'details')); ?>
+	<?php echo JHtml::_('bootstrap.startTabSet', 'memberTab', array('active' => 'membership')); ?>
 
-	<?php echo JHtml::_('bootstrap.addTab', 'memberTab', 'details', JText::_('COM_MEMBERSMANAGER_MEMBER_DETAILS', true)); ?>
+	<?php echo JHtml::_('bootstrap.addTab', 'memberTab', 'membership', JText::_('COM_MEMBERSMANAGER_MEMBER_MEMBERSHIP', true)); ?>
 		<div class="row-fluid form-horizontal-desktop">
 			<div class="span6">
-				<?php echo JLayoutHelper::render('member.details_left', $this); ?>
+				<?php echo JLayoutHelper::render('member.membership_left', $this); ?>
 			</div>
 			<div class="span6">
-				<?php echo JLayoutHelper::render('member.details_right', $this); ?>
+				<?php echo JLayoutHelper::render('member.membership_right', $this); ?>
 			</div>
 		</div>
 	<?php echo JHtml::_('bootstrap.endTab'); ?>
 
-	<?php echo JHtml::_('bootstrap.addTab', 'memberTab', 'image', JText::_('COM_MEMBERSMANAGER_MEMBER_IMAGE', true)); ?>
-		<div class="row-fluid form-horizontal-desktop">
-		</div>
-		<div class="row-fluid form-horizontal-desktop">
-			<div class="span12">
-				<?php echo JLayoutHelper::render('member.image_fullwidth', $this); ?>
-			</div>
-		</div>
-	<?php echo JHtml::_('bootstrap.endTab'); ?>
+	<?php echo MembersmanagerHelper::loadDynamicTabs($this->item, 'member', $this->referral); // Auto adding of bootstrap.addTab ?>
+
+	<?php $this->ignore_fieldsets = array('details','metadata','vdmmetadata','accesscontrol'); ?>
+	<?php $this->tab_name = 'memberTab'; ?>
+	<?php echo JLayoutHelper::render('joomla.edit.params', $this); ?>
 
 	<?php if ($this->canDo->get('member.delete') || $this->canDo->get('member.edit.created_by') || $this->canDo->get('member.edit.state') || $this->canDo->get('member.edit.created')) : ?>
 	<?php echo JHtml::_('bootstrap.addTab', 'memberTab', 'publishing', JText::_('COM_MEMBERSMANAGER_MEMBER_PUBLISHING', true)); ?>
@@ -142,79 +138,153 @@ jQuery('#adminForm').on('change', '#jform_account',function (e)
 
 
 
-<?php if ($formats = $componentParams->get('image_formats', null)) : ?>
-jQuery(function($){
-	var progressbar = $("#progressbar-profile-image"),
-	bar         = progressbar.find('.uk-progress-bar'),
-	settings    = {
+<?php if ($formats = $this->params->get('image_formats', null)) : ?>
+	<?php $uikitVersion = $this->params->get('uikit_version', 2);  // get Uikit Version ?>
+	// set some details
+	var sizeNotice = '';
+	<?php if ($resize = $this->params->get('crop_profile', null)) : ?>
+		var sizeprofile = '(';
+		<?php if ($width = $this->params->get('profile_width', null)): ?>
+			sizeprofile += 'width: <?php echo $width; ?>px';
+		<?php else: ?>
+			sizeprofile += 'width: <?php echo JText::_('COM_MEMBERSMANAGER_PROPORTIONALLY'); ?>';
+		<?php endif; ?>
+		<?php if ($height = $this->params->get('profile_height', null)): ?>
+			sizeprofile += '  height: <?php echo $height; ?>px';
+		<?php else: ?>
+			sizeprofile += '  height: <?php echo JText::_('COM_MEMBERSMANAGER_PROPORTIONALLY'); ?>';
+		<?php endif; ?>
+		sizeprofile += ')';
+		<?php if (2 == $uikitVersion) : ?>
+			sizeNotice = '<span data-uk-tooltip title="<?php echo JText::_('COM_MEMBERSMANAGER_THE_PROFILE_WILL_BE_CROPPED_TO_THIS_SIZE'); ?>">'+sizeprofile+'</span>';
+		<?php else: ?>
+			sizeNotice = '<span uk-tooltip title="<?php echo JText::_('COM_MEMBERSMANAGER_THE_PROFILE_WILL_BE_CROPPED_TO_THIS_SIZE'); ?>">'+sizeprofile+'</span>';
+		<?php endif; ?>
+	<?php endif; ?>
+	// load the UIKIT script
+	<?php if (2 == $uikitVersion) : ?>
+	// load uikit 2 uploader script
+	jQuery(function($){
+		// prep the placeholder uploading divs
+		$('#uikittwo-profile-image-uploader').show();
+		$('#uikitthree-profile-image-uploader').remove();
+		$('#error-profile-image-uploader').remove();
+		$('#size-profile').html(sizeNotice);
+		$('#profile-image-formats').html('<b><?php echo implode(', ', $formats); ?></b>');
+		// get progressbar
+		var progressbar = $("#uikittwo-progressbar-profile-image"),
+		bar         = progressbar.find('.uk-progress-bar'),
+		settings    = {
 
-		action: JRouter('index.php?option=com_membersmanager&task=ajax.uploadfile&format=json&type=image&target=profile&raw=true&token='+token+'&vdm='+vastDevMod), // upload url
+			action: JRouter('index.php?option=com_membersmanager&task=ajax.uploadfile&format=json&type=image&target=profile&raw=true&token='+token+'&vdm='+vastDevMod), // upload url
 
-		allow : '*.(<?php echo implode('|', $formats); ?>)', // allow uploads
+			allow : '*.(<?php echo implode('|', $formats); ?>)', // allow uploads
 
-		loadstart: function() {
-			jQuery(".success-profile-image-8768").remove();
-			bar.css("width", "0%").text("0%");
-			progressbar.removeClass("uk-hidden");
-		},
+			loadstart: function() {
+				jQuery(".success-profile-image-8768").remove();
+				bar.css("width", "0%").text("0%");
+				progressbar.removeClass("uk-hidden");
+			},
 
-		progress: function(percent) {
-			percent = Math.ceil(percent);
-			bar.css("width", percent+"%").text(percent+"%");
-		},
+			progress: function(percent) {
+				percent = Math.ceil(percent);
+				bar.css("width", percent+"%").text(percent+"%");
+			},
 
-		allcomplete: function(response) {
-			bar.css("width", "100%").text("100%");
-			response = JSON.parse(response);
-			setTimeout(function(){
-				progressbar.addClass("uk-hidden");
-			}, 250);
-			if (response.error){
-				alert(response.error);
-			} else if (response.success) {
-				// set the new file name and if another is found delete it
-				setFilekey(response.success, response.fileformat, 'profile', 'image');
+			allcomplete: function(response) {
+				bar.css("width", "100%").text("100%");
+				response = JSON.parse(response);
+				setTimeout(function(){
+					progressbar.addClass("uk-hidden");
+				}, 250);
+				if (response.error){
+					alert(response.error);
+				} else if (response.success) {
+					// set the new file name and if another is found delete it
+					setFilekey(response.success, response.fileformat, 'profile', 'image');
+				}
 			}
-		}
-};
+		};
 
-var select = UIkit2.uploadSelect($("#upload-select-profile-image"), settings),
-	drop   = UIkit2.uploadDrop($("#upload-drop-profile-image"), settings);
-});
-jQuery('#profile-image-formats').html('<b><?php echo implode(', ', $formats); ?></b>');
-<?php if ($resize = $componentParams->get('crop_profile', null)) : ?>
-	var sizeprofile = '(';
-	<?php if ($width = $componentParams->get('profile_width', null)): ?>
-		sizeprofile += 'width: <?php echo $width; ?>px';
+		var select = UIkit2.uploadSelect($("#uikittwo-upload-select-profile-image"), settings),
+		drop   = UIkit2.uploadDrop($("#uikittwo-upload-drop-profile-image"), settings);
+	});
 	<?php else: ?>
-		sizeprofile += 'width: <?php echo JText::_('COM_MEMBERSMANAGER_PROPORTIONALLY'); ?>';
+	// load uikit 3 uploader script
+	jQuery(function($){
+		// prep the placeholder uploading divs
+		$('#uikitthree-profile-image-uploader').show();
+		$('#uikittwo-profile-image-uploader').remove();
+		$('#error-profile-image-uploader').remove();
+		$('#size-profile').html(sizeNotice);
+		$('#profile-image-formats').html('<b><?php echo implode(', ', $formats); ?></b>');
+		// get progressbar
+		var bar = document.getElementById('uikitthree-progressbar-profile-image');
+		UIkit.upload('#uikitthree-upload-profile-image', {
+
+	 		url: JRouter('index.php?option=com_membersmanager&task=ajax.uploadfile&format=json&type=image&target=profile&raw=true&token='+token+'&vdm='+vastDevMod), // upload url
+			multiple: true,
+			allow : '*.(<?php echo implode('|', $formats); ?>)', // allow uploads
+
+	 		beforeSend: function (environment) {
+				// console.log('beforeSend', arguments);
+
+				// The environment object can still be modified here. 
+				// var {data, method, headers, xhr, responseType} = environment;
+			},
+			beforeAll: function () {
+	       			// console.log('beforeAll', arguments);
+			},
+			load: function () {
+				// console.log('load', arguments);
+			},
+			error: function () {
+				// console.log('error', arguments);
+			},
+			complete: function () {
+				// console.log('complete', arguments);
+			},
+
+			loadStart: function (e) {
+				jQuery(".success-profile-image-8768").remove();
+
+				bar.removeAttribute('hidden');
+				bar.max = e.total;
+				bar.value = e.loaded;
+			},
+
+			progress: function (e) {
+				bar.max = e.total;
+				bar.value = e.loaded;
+			},
+
+			loadEnd: function (e) {
+				bar.max = e.total;
+				bar.value = e.loaded;
+			},
+
+			completeAll: function (response) {
+				setTimeout(function () {
+	 				bar.setAttribute('hidden', 'hidden');
+				}, 250);
+				// act upon the response
+				if (response.response) {
+					response = JSON.parse(response.response);
+					if (response.error){
+						alert(response.error);
+					} else if (response.success) {
+						// set the new file name and if another is found delete it
+						setFilekey(response.success, response.fileformat, 'profile', 'image');
+					}
+				}
+	  		}
+
+		});
+	});
 	<?php endif; ?>
-	<?php if ($height = $componentParams->get('profile_height', null)): ?>
-		sizeprofile += '  height: <?php echo $height; ?>px';
-	<?php else: ?>
-		sizeprofile += '  height: <?php echo JText::_('COM_MEMBERSMANAGER_PROPORTIONALLY'); ?>';
-	<?php endif; ?>
-	sizeprofile += ')';
-	sizeNotice = '<span data-uk-tooltip title="<?php echo JText::_('COM_MEMBERSMANAGER_THE_PROFILE_WILL_BE_CROPPED_TO_THIS_SIZE'); ?>">'+sizeprofile+'</span>';
-	jQuery('#size-profile').html(sizeNotice);
-<?php endif; ?>
 <?php else: ?>
-jQuery('#upload-drop-profile-image').html('<b><?php echo JText::_('COM_MEMBERSMANAGER_ALLOWED_IMAGE_FORMATS_ARE_NOT_SET_IN_THE_GLOBAL_SETTINGS_PLEASE_NOTIFY_YOUR_SYSTEM_ADMINISTRATOR'); ?></b>');
+	jQuery('#error-profile-image-uploader').html('<b><?php echo JText::_('COM_MEMBERSMANAGER_ALLOWED_IMAGE_FORMATS_ARE_NOT_SET_IN_THE_GLOBAL_SETTINGS_PLEASE_NOTIFY_YOUR_SYSTEM_ADMINISTRATOR'); ?></b>');
 <?php endif; ?>
-
-jQuery('#adminForm').on('change', '#jform_user_id',function (e)
-{
-	e.preventDefault();
-	var user_id = jQuery("#jform_user_id").val();
-	var showname = 1;
-	// check if the user id was found
-	if (!isSet(user_id)) {
-		var user_id =$("#jform_user").val();
-		var showname = 2;
-	}
-	getUser(user_id, showname);
-});
-
 jQuery(document).ready(function(){
   jQuery(window).load(function () {
     jQuery("body").css('background', 'transparent');
@@ -226,16 +296,13 @@ jQuery('#adminForm').on('change', '#jform_token',function (e) {
 	// check if this token value is used
 	checkUnique(tokenValue, 'token', 1);
 });
-jQuery('#adminForm').on('change', '#jform_account',function (e) {
+jQuery('#adminForm').on('change', '#jform_user',function (e) {
 	e.preventDefault();
-	var account = jQuery("#jform_account").val();
-	if (1 == account || 4 == account) {
-		jQuery('#user_info').show();
-	} else {
-		jQuery('#user_info').hide();	
-	}
+	var userValue = jQuery('#jform_user').val();
+	// check if this token value is used
+	getUserDetails(userValue);
 });
-jQuery('#adminForm').on('change', '#jform_country',function (e) {
+jQuery('#adminForm').on('change', '#contact_country',function (e) {
 	e.preventDefault();
 	getRegion();
 });
@@ -264,12 +331,14 @@ function JURI(link) {
 }
 
 function getFile(filename, fileFormat, target, type){
+	// set uikit version
+	var uiVer = <?php echo (int) $this->params->get('uikit_version', 2); ?>;
 	// set the link
 	var link = '<?php echo MembersmanagerHelper::getFolderPath('url'); ?>';
 	// build the return
 	if (type === 'image') {
 		var thePath = link+filename+'.'+fileFormat;
-		var thedelete = '<button onclick="removeFileCheck(\''+filename+'\', \''+target+'\', \''+type+'\')" type="button" class="uk-button uk-width-1-1 uk-button-small uk-margin-small-bottom uk-button-danger"><i class="uk-icon-trash"></i> <?php echo JText::_('COM_MEMBERSMANAGER_REMOVE'); ?> '+target+' '+type+'</button></div>';
+		var thedelete = '<button onclick="removeFileCheck(\''+filename+'\', \''+target+'\', \''+type+'\', \''+uiVer+'\')" type="button" class="uk-button uk-width-1-1 uk-button-small uk-margin-small-bottom uk-button-danger"><i class="uk-icon-trash"></i> <?php echo JText::_('COM_MEMBERSMANAGER_REMOVE'); ?> '+target+' '+type+'</button></div>';
 		return '<img alt="'+target+' Image" src="'+thePath+'" /><br /><br />'+thedelete;
 	} else if (type === 'images') {
 		var imageNum = filename.length;
@@ -289,7 +358,7 @@ function getFile(filename, fileFormat, target, type){
 			imagesBox += '<div class="uk-panel">';
 			var fileFormat = item.split('_')[2];
 			var thePath = link+item+'.'+fileFormat;
-			var thedelete = '<button onclick="removeFileCheck(\''+item+'\', \''+target+'\', \''+type+'\')" type="button" class="uk-button uk-width-1-1 uk-button-small uk-margin-small-bottom uk-button-danger"><i class="uk-icon-trash"></i> <?php echo JText::_('COM_MEMBERSMANAGER_REMOVE'); ?> '+target+' '+type+'</button>';
+			var thedelete = '<button onclick="removeFileCheck(\''+item+'\', \''+target+'\', \''+type+'\', \''+uiVer+'\')" type="button" class="uk-button uk-width-1-1 uk-button-small uk-margin-small-bottom uk-button-danger"><i class="uk-icon-trash"></i> <?php echo JText::_('COM_MEMBERSMANAGER_REMOVE'); ?> '+target+' '+type+'</button>';
 			imagesBox += '<img alt="'+target+' Image" src="'+thePath+'" /><br /><br />'+thedelete; 
 			if (perRow == counter) {
 				counter = 0;
@@ -330,7 +399,7 @@ function getFile(filename, fileFormat, target, type){
 			if (documentsLinks.hasOwnProperty(item)) {
 				thedownload = '<a href="'+JRouter(documentsLinks[item])+'" class="uk-button uk-width-1-1 uk-button-small uk-margin-small-bottom uk-button-success"><i class="uk-icon-download"></i> <?php echo JText::_('COM_MEMBERSMANAGER_DOWNLOAD'); ?> '+fileName+'</a>';
 			}
-			var thedelete = '<button onclick="removeFileCheck(\''+item+'\', \''+target+'\', \''+type+'\')" type="button" class="uk-button uk-width-1-1 uk-button-small uk-margin-small-bottom uk-button-danger"><i class="uk-icon-trash"></i> <?php echo JText::_('COM_MEMBERSMANAGER_REMOVE'); ?> '+fileName+'</button>';
+			var thedelete = '<button onclick="removeFileCheck(\''+item+'\', \''+target+'\', \''+type+'\', \''+uiVer+'\')" type="button" class="uk-button uk-width-1-1 uk-button-small uk-margin-small-bottom uk-button-danger"><i class="uk-icon-trash"></i> <?php echo JText::_('COM_MEMBERSMANAGER_REMOVE'); ?> '+fileName+'</button>';
 			fileBox += theplaceholder+thedownload+thedelete; 
 			if (perRow == counter) {
 				counter = 0;
@@ -356,7 +425,7 @@ function getFile(filename, fileFormat, target, type){
 		if (documentsLinks.hasOwnProperty(filename)) {
 			thedownload = '<a href="'+JRouter(documentsLinks[filename])+'" class="uk-button uk-width-1-1 uk-button-small uk-margin-small-bottom uk-button-success"><i class="uk-icon-download"></i> <?php echo JText::_('COM_MEMBERSMANAGER_DOWNLOAD'); ?> '+fileName+'</a>';
 		}
-		var thedelete = '<button onclick="removeFileCheck(\''+filename+'\', \''+target+'\', \''+type+'\')" type="button" class="uk-button uk-width-1-1 uk-button-small uk-margin-small-bottom uk-button-danger"><i class="uk-icon-trash"></i> <?php echo JText::_('COM_MEMBERSMANAGER_REMOVE'); ?> '+fileName+'</button>';
+		var thedelete = '<button onclick="removeFileCheck(\''+filename+'\', \''+target+'\', \''+type+'\', \''+uiVer+'\')" type="button" class="uk-button uk-width-1-1 uk-button-small uk-margin-small-bottom uk-button-danger"><i class="uk-icon-trash"></i> <?php echo JText::_('COM_MEMBERSMANAGER_REMOVE'); ?> '+fileName+'</button>';
 		return theplaceholder+thedownload+thedelete + '</div>';
 	}
 }

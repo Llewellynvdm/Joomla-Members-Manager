@@ -10,7 +10,7 @@
  */
 
 // No direct access to this file
-defined('_JEXEC') or die('Restricted access'); 
+defined('_JEXEC') or die('Restricted access');
 
 ?>
 <tr>
@@ -30,13 +30,10 @@ defined('_JEXEC') or die('Restricted access');
 		</th>
 	<?php endif; ?>
 	<th class="nowrap" >
-			<?php echo JHtml::_('grid.sort', 'MEMBERS_DETAILS', 'user_name', $this->listDirn, $this->listOrder); ?>
+			<?php echo JText::_('COM_MEMBERSMANAGER_MEMBERS_DETAILS'); ?>
 	</th>
 	<th class="nowrap hidden-phone" >
-			<?php echo JText::_('MEMBERS_PHONE'); ?>
-	</th>
-	<th class="nowrap" >
-			<?php echo JHtml::_('grid.sort', 'MEMBERS_MEMBER', 'type_name', $this->listDirn, $this->listOrder); ?>
+			<?php echo JText::_('COM_MEMBERSMANAGER_MEMBER_EMAIL_LABEL'); ?>
 	</th>
 	<th class="nowrap hidden-phone" >
 			<?php echo JHtml::_('grid.sort', 'COM_MEMBERSMANAGER_MEMBER_ACCOUNT_LABEL', 'account', $this->listDirn, $this->listOrder); ?>

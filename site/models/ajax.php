@@ -39,6 +39,28 @@ class MembersmanagerModelAjax extends JModelList
 	// allowed types
 	protected $types = array('image' => 'image');
 
+	public function getUserDetails($user)
+	{
+		//first we check if this is an allowed query
+		$view = $this->getViewID();
+		if (isset($view['a_view']) && in_array($view['a_view'], $this->allowedViews))
+		{
+			// since the connected member user can not be changed, check if this member has a user value set
+			if (isset($view['a_id']) && $view['a_id'] > 0 && ($alreadyUser = MembersmanagerHelper::getVar($view['a_view'], $view['a_id'], 'id', 'user')) !== false && is_numeric($alreadyUser) && $alreadyUser > 0 && $user != $alreadyUser)
+			{
+				return false;
+			}
+			// return user details
+			$user = JFactory::getUser($user);
+			return array(
+				'name' => $user->name,
+				'username' => $user->username,
+				'useremail' => $user->email
+				);
+		}
+		return false;
+	}
+
 	// set some buckets
 	protected $target;
 	protected $targetType;
@@ -532,6 +554,7 @@ class MembersmanagerModelAjax extends JModelList
 			$vdm = $jinput->get('vdm', null, 'WORD');
 			if ($vdm) 
 			{
+				// set view and id
 				if ($view = MembersmanagerHelper::get($vdm))
 				{
 					$current = (array) explode('__', $view);
@@ -542,6 +565,14 @@ class MembersmanagerModelAjax extends JModelList
 							'a_id' => (int) $current[1],
 							'a_view' => $current[0]
 						);
+					}
+				}
+				// set return if found
+				if ($return = MembersmanagerHelper::get($vdm . '__return'))
+				{
+					if (MembersmanagerHelper::checkString($return))
+					{
+						$this->viewid[$call]['a_return'] = $return;
 					}
 				}
 			}
@@ -556,440 +587,163 @@ class MembersmanagerModelAjax extends JModelList
 
 	public function checkUnique($field, $value)
 	{
-		// Get the database object and a new query object.
-		$db = \JFactory::getDbo();
-		$query = $db->getQuery(true);
-
-		// convert to camel case naming
-		$valueArray = (array) $this->splitAtUpperCase(trim($value));
+		// split at upper case
+		$valueArray = (array) preg_split('/(?=[A-Z])/', trim($value), -1, PREG_SPLIT_NO_EMPTY);
+		// make string safe
 		$value = MembersmanagerHelper::safeString(trim(implode(' ', $valueArray), '-'), 'L', '-', false, false);
-
+		// get table and current ID
 		$view = $this->getViewID();
-		if (isset($view['a_id']) && MembersmanagerHelper::checkString($view['a_view']))
+		// check if it is unique
+		if (MembersmanagerHelper::checkUnique($view['a_id'], $field, $value, $view['a_view']))
 		{
-			// Build the query.
-			$query->select('COUNT(*)')
-				->from('#__membersmanager_' . (string) $view['a_view'])
-				->where($db->quoteName($field) . ' = ' . $db->quote($value));
-
-			// remove this item from the list
-			if ($view['a_id'] > 0)
-			{
-				$query->where($db->quoteName('id') . ' <> ' . (int) $view['a_id']);
-			}
-
-			// Set and query the database.
-			$db->setQuery($query);
-			$duplicate = (bool) $db->loadResult();
-
-			if ($duplicate)
-			{
-				return array (
-					'message' => JText::sprintf('COM_MEMBERSMANAGER_BSB_IS_ALREADY_IN_USE_PLEASE_TRY_ANOTHER', $value),
-					'status' => 'danger');
-			}
 			return array (
 				'value' => $value,
 				'message' => JText::sprintf('COM_MEMBERSMANAGER_GREAT_SS_IS_AVAILABLE', $field, $value),
 				'status' => 'success');
 		}
+		return array (
+			'message' => JText::sprintf('COM_MEMBERSMANAGER_BSB_IS_ALREADY_IN_USE_PLEASE_TRY_ANOTHER', $value),
+			'status' => 'danger');
+	}
+
+
+	public function getPlaceHolders($getType)
+	{
+		if ($placeholders = MembersmanagerHelper::getPlaceHolders($getType))
+		{
+			return '<code style="display: inline-block; padding: 2px; margin: 3px;">'. implode('</code> <code style="display: inline-block; padding: 2px; margin: 3px;">', $placeholders).'</code>';
+		}
+		return JText::_('COM_MEMBERSMANAGER_NO_PLACEHOLDERS_WERE_FOUND_PLEASE_TRY_AGAIN_LATER');
+	}
+
+
+	// Used in cpanel
+	public function searchMembers($search)
+	{
+		// get user
+		$user = JFactory::getUser();
+		// get the session details
+		$view = $this->getViewID();
+		if (isset($view['a_id']) && $view['a_id'] > 0 && $user->id == $view['a_id'])
+		{
+			// start building the result set
+			$result = array();
+			// get the members
+			$members = $this->getMembers($search, $user);
+			// make sure we have some member values
+			if (MembersmanagerHelper::checkArray($members))
+			{
+				$result[] = '<ul class="uk-list uk-list-striped">';
+				$result[] = '<li>' . implode('</li><li>', $members) . '</li>';
+				$result[] = '</ul>';
+			}
+			else
+			{
+				$result[] = '<p>' . JText::_('COM_MEMBERSMANAGER_NO_MEMBER_WAS_FOUND') . '...</p>';
+			}
+			return implode("\n", $result);
+		}
 		return false;
 	}
 
-	protected function splitAtUpperCase($string)
+	protected function getMembers($search, $user)
 	{
-		return preg_split('/(?=[A-Z])/', $string, -1, PREG_SPLIT_NO_EMPTY);
+		// get members from DB
+		$members = $this->searching($search, $user);
+		// make sure we have members
+		if (MembersmanagerHelper::checkArray($members))
+		{
+			return (array) array_map( function ($member){
+				// build the details
+				$slug = (isset($member->token)) ? $member->id . ':' . $member->token : $member->id;
+				$profile_link = JRoute::_(membersmanagerHelperRoute::getProfileRoute($slug));
+				$name = (isset($member->user_name) && membersmanagerHelper::checkString($member->user_name)) ? $member->user_name : $member->name;
+				$email = (isset($member->user_email) && membersmanagerHelper::checkString($member->user_email)) ? $member->user_email : $member->email;
+				// build the link to the member
+				return '<a href="' . $profile_link . '" title="' . JText::_('COM_MEMBERSMANAGER_OPEN') . ' ' . $name . '" >' . $name . ' ' . $email . ' (' . $member->token . ')</a>';
+			}, $members);
+		}
+		return false;
 	}
 
-
-	public function getRegion($country)
+	protected function searching($search, $user)
 	{
-		// Get a db connection.
-		$db = JFactory::getDbo();
 		// Create a new query object.
+		$db = JFactory::getDBO();
 		$query = $db->getQuery(true);
-		$query->select($db->quoteName( array('a.id') ));
-		$query->from($db->quoteName('#__membersmanager_region', 'a'));
-		$query->where($db->quoteName('a.published') . ' = 1');
-		// check for country and region
-		$query->where($db->quoteName('a.country') . ' = '. (int) $country);
-		$db->setQuery($query);
-		$db->execute();
-		if ($db->getNumRows())
+
+		// Select some fields
+		$query->select($db->quoteName(array('a.id','a.name','a.email','a.token'),array('id','name','email','token')));
+
+		// From the membersmanager_item table
+		$query->from($db->quoteName('#__membersmanager_member', 'a'));
+
+		// From the users table.
+		$query->select($db->quoteName(array('g.name','g.email'),array('user_name','user_email')));
+		$query->join('LEFT', $db->quoteName('#__users', 'g') . ' ON (' . $db->quoteName('a.user') . ' = ' . $db->quoteName('g.id') . ')');
+
+		// Filter by published state always (for now)
+		$query->where('(a.published = 1)');
+
+		// get types
+		$type_access = MembersmanagerHelper::getAccess($user);
+		// filter to only these groups
+		if (MembersmanagerHelper::checkArray($type_access))
 		{
-			return $db->loadColumn();
-		}
-		return false;
-	}
-
-	public function getCreateUserFields($id)
-	{
-		$view = $this->getKey();
-		$access = array(1 => 'member.access', 2 => 'other.access');
-		if (1 == $id && isset($access[$view]) && JFactory::getUser()->authorise($access[$view], 'com_membersmanager'))
-		{
-			$fields = array();
-			// start the block
-			$fields[] = '<div id="user_info" >';
-
-			// setup modal
-			$name = "createUser";
-			// load button
-			$fields[] = '<div class="control-group">';
-			$fields[] = '<div class="control-label"></div>';
-			$fields[] = '<div class="controls"><a href="#modal-' . $name.'" data-toggle="modal" class="btn span3"><span class="icon-save-new"></span> '.JText::_('COM_MEMBERSMANAGER_CREATE_USER').'</a></div>';
-			$fields[] = '</div>';
-
-			$params = array();
-			$params['title']  = JText::_("COM_MEMBERSMANAGER_CREATE_USER");
-			$params['height'] = "500px";
-			$params['width']  = "100%";
-
-			// load modal
-			$fields[] = JHtml::_('bootstrap.renderModal', 'modal-' . $name, $params, $this->getCreateFields());
-
-			// close the block
-			$fields[] = '</div>';
-
-			return implode("\n",$fields);
-		}
-		return false;
-	}
-
-	protected function getCreateFields()
-	{
-		// add dive to give padding
-		$fields[] = '<div style="padding: 10px;">';
-		// load name
-		$fields[] = '<div class="control-group">';
-		$fields[] = '<div class="control-label"><label title="">'.JText::_('COM_MEMBERSMANAGER_NAME').'</label></div>';
-		$fields[] = '<div class="controls"><input type="text" size="8" id="vdm_c_name" value="" placeholder="'.JText::_('COM_MEMBERSMANAGER_ADD_NAME').'"></div>';
-		$fields[] = '</div>';
-
-		// load username			
-		$fields[] = '<div class="control-group">';
-		$fields[] = '<div class="control-label"><label title="">'.JText::_('COM_MEMBERSMANAGER_USERNAME').'</label></div>';
-		$fields[] = '<div class="controls"><input type="text" size="8" id="vdm_c_username" value="" placeholder="'.JText::_('COM_MEMBERSMANAGER_ADD_USERNAME').'"></div>';
-		$fields[] = '</div>';
-
-		// load email		
-		$fields[] = '<div class="control-group">';
-		$fields[] = '<div class="control-label"><label title="">'.JText::_('COM_MEMBERSMANAGER_EMAIL').'</label></div>';
-		$fields[] = '<div class="controls"><input type="text" size="8" id="vdm_c_email" value="" placeholder="'.JText::_('COM_MEMBERSMANAGER_USERDOMAINCOM').'"></div>';
-		$fields[] = '</div>';
-
-		// load password field		
-		$fields[] = '<div class="control-group">';
-		$fields[] = '<div class="control-label"><label title="">'.JText::_('COM_MEMBERSMANAGER_PASSWORD').'</label></div>';
-		$fields[] = '<div class="controls"><input type="password" size="9" autocomplete="off" id="vdm_c_password" value="" aria-invalid="false"></div>';
-		$fields[] = '</div>';
-
-		$fields[] = '<div><small>'.JText::_('COM_MEMBERSMANAGER_USER_DETAILS_WILL_BE_EMAILED_DURING_CREATION_OF_THE_USER_ACCOUNT').'</small></div>';
-		// close the div
-		$fields[] = '</div>';
-
-		$fields[] = '<div class="modal-footer">';
-		$fields[] = '<button type="button" class="btn btn-default" data-dismiss="modal">'.JText::_('COM_MEMBERSMANAGER_CLOSE').'</button>';
-		$fields[] = '<button type="button" class="btn btn-primary" data-dismiss="modal" onclick="createUser();"><span class="icon-save-new icon-white"></span> '.JText::_('COM_MEMBERSMANAGER_CREATE_USER').'</button>';
-		$fields[] = '</div>';
-
-		return implode("\n",$fields);
-	}
-
-	public function createUser($data)
-	{
-		$view = $this->getKey();
-		$access = array(1 => 'member.edit.user', 2 => 'other.edit.user');
-		if (isset($access[$view]) && JFactory::getUser()->authorise($access[$view], 'com_membersmanager'))
-		{
-			$data = json_decode($data, true);
-			if (MembersmanagerHelper::checkArray($data))
-			{
-				$groups = array(1 => 'memberuser', 2 => 'otheruser');
-				$keys = array('var' => 'name', 'uvar' => 'username', 'evar' => 'email', 'dvar' => 'password');
-				$bucket = array();
-				foreach($data as $key => $value)
-				{
-					if (isset($keys[$key]) && MembersmanagerHelper::checkString($value))
-					{
-						$bucket[$keys[$key]] = (string) $value;
-						if ($keys[$key] == 'password')
-						{
-							$bucket['password2'] = (string) $value;
-						}
-					}
-				}
-				if (MembersmanagerHelper::checkArray($bucket) && count($bucket) == 5)
-				{
-					// now update user
-					$returned = MembersmanagerHelper::createUser($bucket);
-					if (is_numeric($returned))
-					{
-						if ((int) $returned > 0 && isset($groups[$view]))
-						{
-							$groups = $this->app_params->get($groups[$view], null);
-							if ($groups)
-							{
-								// update the user groups
-								JUserHelper::setUserGroups((int)$returned ,(array)$groups);
-							}
-						}
-						$message = array();
-						$message[] = '<button class="close" data-dismiss="alert" type="button">×</button>';
-						$message[] = '<div class="alert alert-success">';
-						$message[] = '<h4 class="alert-heading">'.JText::_('COM_MEMBERSMANAGER_SUCCESS').'</h4>';
-						$message[] = '<div class="alert-message">'.JText::_('COM_MEMBERSMANAGER_USER_WAS_CREATED_SUCCESSFULLY_AND_THE_LOGIN_DETAILS_WAS_EMAILED_TO_THE_USER').'</div>';
-						$message[] = '</div>';
-
-						$notice = array();
-						$notice[] = '<div id="user_info" ><button class="close" data-dismiss="alert" type="button">×</button>';
-						$notice[] = '<div class="alert alert-success">';
-						$notice[] = '<h4 class="alert-heading">'.JText::_('COM_MEMBERSMANAGER_READY_TO_SELECT').'</h4>';
-						$notice[] = '<div class="alert-message">'.JText::sprintf('COM_MEMBERSMANAGER_YOU_CAN_NOW_SELECT_BSB_THAT_YOU_JUST_CREATED_FROM_THE_USERS_LIST_IN_THE_ABOVE_FIELD_SIMPLY_CLICK_ON_THE_BLUE_USER_ICON', $bucket['name']).'</div>';
-						$notice[] = '</div></div>';
-						return array( 'html' => implode("\n",$notice), 'success' => implode("\n",$message));
-					}
-					else
-					{
-						$message = array();
-						$message[] = '<button class="close" data-dismiss="alert" type="button">×</button>';
-						$message[] = '<div class="alert alert-error">';
-						$message[] = '<h4 class="alert-heading">'.JText::_('COM_MEMBERSMANAGER_ERROR_USER_NOT_CREATED').'</h4>';
-						$message[] = '<div class="alert-message">'.$returned.'</div>';
-						$message[] = '</div>';
-						return array('error' => implode("\n",$message));
-					}
-				}
-				else
-				{
-					$message = array();
-					$message[] = '<button class="close" data-dismiss="alert" type="button">×</button>';
-					$message[] = '<div class="alert alert-error">';
-					$message[] = '<h4 class="alert-heading">'.JText::_('COM_MEMBERSMANAGER_ERROR_USER_NOT_UPDATED').'</h4>';
-					$message[] = '<div class="alert-message">'.JText::_('COM_MEMBERSMANAGER_SOME_REQUIRED_VALUES_ARE_MISSING').'.</div>';
-					$message[] = '</div>';
-					return array('error' => implode("\n",$message));
-				}
-			}
-		}
-		return false;
-	}
-
-	public function getUser($id, $showname = 0)
-	{
-		$user = JFactory::getUser($id);
-		if ($user->id)
-		{
-			$fields = array();
-			// start the block
-			$fields[] = '<div id="user_info" >';
-
-			$fields[] = $this->getUserFields($user, false, (2 === (int) $showname));
-
-			$view = $this->getKey();
-			$access = array(1 => 'member.access', 2 => 'other.access');
-			if (isset($access[$view]) && JFactory::getUser()->authorise($access[$view], 'com_membersmanager'))
-			{
-				// setup modal
-				$name = "editUser";
-				// load button
-				$fields[] = '<div class="control-group">';
-				$fields[] = '<div class="control-label"></div>';
-				$fields[] = '<div class="controls"><a href="#modal-' . $name.'" data-toggle="modal" class="btn span3"><span class="icon-edit"></span> '.JText::_('COM_MEMBERSMANAGER_EDIT').'</a></div>';
-				$fields[] = '</div>';
-
-				$params = array();
-				$params['title']  = "Edit User";
-				$params['height'] = "500px";
-				$params['width']  = "100%";
-			
-				// load modal
-				$fields[] = JHtml::_('bootstrap.renderModal', 'modal-' . $name, $params, $this->getUserFields($user, true));
-			}
-
-			// close the block
-			$fields[] = '</div>';
-
-			return implode("\n",$fields);
-		}
-		return false;
-	}
-
-	protected function getUserFields(&$user, $permission = false, $showname = false)
-	{
-		// set read only
-		$readOnly = ' readonly="" class="readonly"';
-
-		if($permission)
-		{
-			// add dive to give padding
-			$fields[] = '<div style="padding: 10px;">';
-
-			$readOnly = ' id="vdm_name"';
-		}
-
-		if($permission || $showname)
-		{
-			// load name			
-			$fields[] = '<div class="control-group">';
-			$fields[] = '<div class="control-label"><label title="">'.JText::_('COM_MEMBERSMANAGER_NAME').'</label></div>';
-			$fields[] = '<div class="controls"><input type="text" size="8"'.$readOnly.' value="'.$user->name.'"></div>';
-			$fields[] = '</div>';
-		}
-
-		if($permission)
-		{
-			$readOnly = ' id="vdm_username"';
-		}
-
-		// load username			
-		$fields[] = '<div class="control-group">';
-		$fields[] = '<div class="control-label"><label title="">'.JText::_('COM_MEMBERSMANAGER_USERNAME').'</label></div>';
-		$fields[] = '<div class="controls"><input type="text" size="8"'.$readOnly.' value="'.$user->username.'"></div>';
-		$fields[] = '</div>';
-
-		if($permission)
-		{
-			$readOnly = ' id="vdm_email"';
-		}	
-
-		// load email		
-		$fields[] = '<div class="control-group">';
-		$fields[] = '<div class="control-label"><label title="">'.JText::_('COM_MEMBERSMANAGER_EMAIL').'</label></div>';
-		$fields[] = '<div class="controls"><input type="text" size="8"'.$readOnly.' value="'.$user->email.'"></div>';
-		$fields[] = '</div>';
-
-		if($permission)
-		{
-			$readOnly = ' id="vdm_password"';
-			$password = $user->password;
+			$query->where('a.type IN (' . implode(',', $type_access) . ')');
 		}
 		else
 		{
-			$password = 'XXXXXXXXXXXXXXXXXX';
+			return false;
 		}
-
-		// load password field		
-		$fields[] = '<div class="control-group">';
-		$fields[] = '<div class="control-label"><label title="">'.JText::_('COM_MEMBERSMANAGER_PASSWORD').'</label></div>';
-		$fields[] = '<div class="controls"><input type="password" size="9" autocomplete="off"'.$readOnly.' value="'.$password.'" aria-invalid="false"></div>';
-		$fields[] = '</div>';
-
-		if($permission)
+		// Implement View Level Access
+		if (!$user->authorise('core.options', 'com_membersmanager'))
 		{
-			// close padding div
-			$fields[] = '</div>';
-			$fields[] = '<div class="modal-footer">';
-			$fields[] = '<button type="button" class="btn btn-default" data-dismiss="modal">'.JText::_('COM_MEMBERSMANAGER_CLOSE').'</button>';
-			$fields[] = '<button type="button" class="btn btn-primary" data-dismiss="modal" onclick="setUser();"><span class="icon-apply icon-white"></span> '.JText::_('COM_MEMBERSMANAGER_SAVE_USER_DETAILS').'</button>';
-			$fields[] = '</div>';
+			// Join over the asset groups.
+			$query->join('LEFT', '#__viewlevels AS ag ON ag.id = a.access');
+			$groups = implode(',', $user->getAuthorisedViewLevels());
+			$query->where('a.access IN (' . $groups . ')');
 		}
-
-		if(!$permission)
+		// check if they are searching for an id
+		if (stripos($search, 'id:') === 0)
 		{
-			// Registration Date
-			$fields[] = '<div class="control-group">';
-			$fields[] = '<div class="control-label"><label title="">'.JText::_('COM_MEMBERSMANAGER_REGISTRATION_DATE').'</label></div>';
-			$fields[] = '<div class="controls"><input type="text" size="8"'.$readOnly.' value="'.$user->registerDate.'"></div>';
-			$fields[] = '</div>';
-
-			// Last Visit Date
-			$fields[] = '<div class="control-group">';
-			$fields[] = '<div class="control-label"><label title="">'.JText::_('COM_MEMBERSMANAGER_LAST_VISIT_DATE').'</label></div>';
-			$fields[] = '<div class="controls"><input type="text" size="8"'.$readOnly.' value="'.$user->lastvisitDate.'"></div>';
-			$fields[] = '</div>';
+			$query->where('a.id = ' . (int) substr($search, 3));
 		}
-		return implode("\n",$fields);
+		else
+		{
+			$search = $db->quote('%' . $db->escape($search) . '%');
+			$query->where(
+				'(g.name LIKE '.$search. // user name
+				' OR g.username LIKE '.$search. // user username
+				' OR g.email LIKE '.$search. // user email
+
+				' OR a.email LIKE '.$search.
+				' OR a.token LIKE '.$search.
+				')');
+		}
+		$query->order('a.token DESC');
+		// set query
+		$db->setQuery($query, 0, 10);
+		return $db->loadObjectList();
 	}
 
-	public function setUser($id, $data)
+	// Used in profile
+	public function getReport($key)
 	{
-		$view = $this->getKey();
-		$access = array(1 => 'member.edit.own', 2 => 'other.edit.own');
-		$my = JFactory::getUser();
-		if (isset($access[$view]) && $my->authorise($access[$view], 'com_membersmanager'))
+		// unlock the request
+		if (($check = MembersmanagerHelper::unlock($key)) !== false &&
+			MembersmanagerHelper::checkArray($check) &&
+			isset($check['id']) && $check['id'] > 0 &&
+			isset($check['element']) && MembersmanagerHelper::checkString($check['element']) &&
+			isset($check['type']) && $check['type'] > 0 &&
+			isset($check['account']) && $check['account'] > 0)
 		{
-			$data = json_decode($data, true);
-			if (MembersmanagerHelper::checkArray($data))
+			// now check if this component is active to this member
+			if (($html = MembersmanagerHelper::getReport($check['id'], $check['element'])) !== false && MembersmanagerHelper::checkString($html))
 			{
-				$keys = array('var' => 'name', 'uvar' => 'username', 'evar' => 'email', 'dvar' => 'password');
-				$bucket = array();
-				$bucket['id'] = $id;
-				foreach($data as $key => $value)
-				{
-					if (isset($keys[$key]) && MembersmanagerHelper::checkString($value))
-					{
-						$bucket[$keys[$key]] = (string) $value;
-						if ($keys[$key] == 'password')
-						{
-							$bucket['password2'] = (string) $value;
-						}
-					}
-				}
-				if (MembersmanagerHelper::checkArray($bucket) && count($bucket) == 6)
-				{
-					// check if current user is a supper admin
-					$iAmSuperAdmin = $my->authorise('core.admin');
-					if ($iAmSuperAdmin)
-					{
-						// add the user current groups
-						$bucket['groups'] = JAccess::getGroupsByUser($id);
-					}
-					// now update user
-					$done = MembersmanagerHelper::updateUser($bucket);
-					if ($done == $id)
-					{
-						$message = array();
-						$message[] = '<button class="close" data-dismiss="alert" type="button">×</button>';
-						$message[] = '<div class="alert alert-success">';
-						$message[] = '<h4 class="alert-heading">'.JText::_('COM_MEMBERSMANAGER_SUCCESS').'</h4>';
-						$message[] = '<div class="alert-message">'.JText::_('COM_MEMBERSMANAGER_USER_WAS_UPDATED_SUCCESSFULLY').'.</div>';
-						$message[] = '</div>';
-						return array( 'html' => $this->getUser($id), 'success' => implode("\n",$message));
-					}
-					else
-					{
-						$message = array();
-						$message[] = '<button class="close" data-dismiss="alert" type="button">×</button>';
-						$message[] = '<div class="alert alert-error">';
-						$message[] = '<h4 class="alert-heading">'.JText::_('COM_MEMBERSMANAGER_ERROR_USER_NOT_UPDATED').'</h4>';
-						$message[] = '<div class="alert-message">'.$done.'</div>';
-						$message[] = '</div>';
-						return array('error' => implode("\n",$message));
-					}
-				}
-				else
-				{
-					$message = array();
-					$message[] = '<button class="close" data-dismiss="alert" type="button">×</button>';
-					$message[] = '<div class="alert alert-error">';
-					$message[] = '<h4 class="alert-heading">'.JText::_('COM_MEMBERSMANAGER_ERROR_USER_NOT_UPDATED').'</h4>';
-					$message[] = '<div class="alert-message">'.JText::_('COM_MEMBERSMANAGER_SOME_REQUIRED_VALUES_ARE_MISSING').'.</div>';
-					$message[] = '</div>';
-					return array('error' => implode("\n",$message));
-				}
+				return array('html' => $html);
 			}
 		}
 		return false;
 	}
-
-	protected function getKey()
-	{
-		$viewData = $this->getViewID();
-		$view = 0;
-		if (isset($viewData['a_view']))
-		{
-			switch($viewData['a_view'])
-			{
-				case 'member':
-					return 1;
-				break;
-				case 'other' :
-					return 2;
-				break;
-			}
-		}
-		return 0;
-	}
-
 }

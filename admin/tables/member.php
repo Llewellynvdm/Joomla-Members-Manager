@@ -14,9 +14,6 @@ defined('_JEXEC') or die('Restricted access');
 
 use Joomla\Registry\Registry;
 
-// import Joomla table library
-jimport('joomla.database.table');
-
 /**
  * Members Table class
  */
@@ -40,7 +37,7 @@ class MembersmanagerTableMember extends JTable
 		parent::__construct('#__membersmanager_member', 'id', $db);
 
 		// Adding History Options
-		JTableObserverContenthistory::createObserver($this, array('typeAlias' => 'com_membersmanager.member')); 
+		JTableObserverContenthistory::createObserver($this, array('typeAlias' => 'com_membersmanager.member'));
 	}	
  
 	public function bind($array, $ignore = '')

@@ -12,9 +12,6 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
-// import Joomla controllerform library
-jimport('joomla.application.component.controller');
-
 /**
  * Membersmanager Ajax Controller
  */
@@ -29,13 +26,12 @@ class MembersmanagerControllerAjax extends JControllerLegacy
 		JResponse::setHeader("Access-Control-Allow-Origin", "*");
 		// load the tasks 
 		$this->registerTask('checkUnique', 'ajax');
-		$this->registerTask('getRegion', 'ajax');
-		$this->registerTask('getUser', 'ajax');
-		$this->registerTask('setUser', 'ajax');
-		$this->registerTask('getCreateUserFields', 'ajax');
-		$this->registerTask('createUser', 'ajax');
+		$this->registerTask('getPlaceHolders', 'ajax');
 		$this->registerTask('uploadfile', 'ajax');
 		$this->registerTask('removeFile', 'ajax');
+		$this->registerTask('getUserDetails', 'ajax');
+		$this->registerTask('searchMembers', 'ajax');
+		$this->registerTask('getReport', 'ajax');
 	}
 
 	public function ajax()
@@ -89,169 +85,14 @@ class MembersmanagerControllerAjax extends JControllerLegacy
 						}
 					}
 				break;
-				case 'getRegion':
+				case 'getPlaceHolders':
 					try
 					{
 						$returnRaw = $jinput->get('raw', false, 'BOOLEAN');
-						$countryValue = $jinput->get('country', NULL, 'INT');
-						if($countryValue && $user->id != 0)
+						$getTypeValue = $jinput->get('getType', NULL, 'WORD');
+						if($getTypeValue && $user->id != 0)
 						{
-							$result = $this->getModel('ajax')->getRegion($countryValue);
-						}
-						else
-						{
-							$result = false;
-						}
-						if($callback = $jinput->get('callback', null, 'CMD'))
-						{
-							echo $callback . "(".json_encode($result).");";
-						}
-						elseif($returnRaw)
-						{
-							echo json_encode($result);
-						}
-						else
-						{
-							echo "(".json_encode($result).");";
-						}
-					}
-					catch(Exception $e)
-					{
-						if($callback = $jinput->get('callback', null, 'CMD'))
-						{
-							echo $callback."(".json_encode($e).");";
-						}
-						else
-						{
-							echo "(".json_encode($e).");";
-						}
-					}
-				break;
-				case 'getUser':
-					try
-					{
-						$returnRaw = $jinput->get('raw', false, 'BOOLEAN');
-						$idValue = $jinput->get('id', NULL, 'INT');
-						$shownameValue = $jinput->get('showname', NULL, 'INT');
-						if($idValue && $shownameValue && $user->id != 0)
-						{
-							$result = $this->getModel('ajax')->getUser($idValue, $shownameValue);
-						}
-						else
-						{
-							$result = false;
-						}
-						if($callback = $jinput->get('callback', null, 'CMD'))
-						{
-							echo $callback . "(".json_encode($result).");";
-						}
-						elseif($returnRaw)
-						{
-							echo json_encode($result);
-						}
-						else
-						{
-							echo "(".json_encode($result).");";
-						}
-					}
-					catch(Exception $e)
-					{
-						if($callback = $jinput->get('callback', null, 'CMD'))
-						{
-							echo $callback."(".json_encode($e).");";
-						}
-						else
-						{
-							echo "(".json_encode($e).");";
-						}
-					}
-				break;
-				case 'setUser':
-					try
-					{
-						$returnRaw = $jinput->get('raw', false, 'BOOLEAN');
-						$idValue = $jinput->get('id', NULL, 'INT');
-						$dataValue = $jinput->get('data', NULL, 'STRING');
-						if($idValue && $dataValue && $user->id != 0)
-						{
-							$result = $this->getModel('ajax')->setUser($idValue, $dataValue);
-						}
-						else
-						{
-							$result = false;
-						}
-						if($callback = $jinput->get('callback', null, 'CMD'))
-						{
-							echo $callback . "(".json_encode($result).");";
-						}
-						elseif($returnRaw)
-						{
-							echo json_encode($result);
-						}
-						else
-						{
-							echo "(".json_encode($result).");";
-						}
-					}
-					catch(Exception $e)
-					{
-						if($callback = $jinput->get('callback', null, 'CMD'))
-						{
-							echo $callback."(".json_encode($e).");";
-						}
-						else
-						{
-							echo "(".json_encode($e).");";
-						}
-					}
-				break;
-				case 'getCreateUserFields':
-					try
-					{
-						$returnRaw = $jinput->get('raw', false, 'BOOLEAN');
-						$idValue = $jinput->get('id', NULL, 'INT');
-						if($idValue && $user->id != 0)
-						{
-							$result = $this->getModel('ajax')->getCreateUserFields($idValue);
-						}
-						else
-						{
-							$result = false;
-						}
-						if($callback = $jinput->get('callback', null, 'CMD'))
-						{
-							echo $callback . "(".json_encode($result).");";
-						}
-						elseif($returnRaw)
-						{
-							echo json_encode($result);
-						}
-						else
-						{
-							echo "(".json_encode($result).");";
-						}
-					}
-					catch(Exception $e)
-					{
-						if($callback = $jinput->get('callback', null, 'CMD'))
-						{
-							echo $callback."(".json_encode($e).");";
-						}
-						else
-						{
-							echo "(".json_encode($e).");";
-						}
-					}
-				break;
-				case 'createUser':
-					try
-					{
-						$returnRaw = $jinput->get('raw', false, 'BOOLEAN');
-						$dataValue = $jinput->get('data', NULL, 'STRING');
-						$keyValue = $jinput->get('key', NULL, 'INT');
-						if($dataValue && $keyValue && $user->id != 0)
-						{
-							$result = $this->getModel('ajax')->createUser($dataValue, $keyValue);
+							$result = $this->getModel('ajax')->getPlaceHolders($getTypeValue);
 						}
 						else
 						{
@@ -332,6 +173,120 @@ class MembersmanagerControllerAjax extends JControllerLegacy
 						if($filenameValue && $targetValue && $flushValue && $typeValue && $user->id != 0)
 						{
 							$result = $this->getModel('ajax')->removeFile($filenameValue, $targetValue, $flushValue, $typeValue);
+						}
+						else
+						{
+							$result = false;
+						}
+						if($callback = $jinput->get('callback', null, 'CMD'))
+						{
+							echo $callback . "(".json_encode($result).");";
+						}
+						elseif($returnRaw)
+						{
+							echo json_encode($result);
+						}
+						else
+						{
+							echo "(".json_encode($result).");";
+						}
+					}
+					catch(Exception $e)
+					{
+						if($callback = $jinput->get('callback', null, 'CMD'))
+						{
+							echo $callback."(".json_encode($e).");";
+						}
+						else
+						{
+							echo "(".json_encode($e).");";
+						}
+					}
+				break;
+				case 'getUserDetails':
+					try
+					{
+						$returnRaw = $jinput->get('raw', false, 'BOOLEAN');
+						$userValue = $jinput->get('user', NULL, 'INT');
+						if($userValue && $user->id != 0)
+						{
+							$result = $this->getModel('ajax')->getUserDetails($userValue);
+						}
+						else
+						{
+							$result = false;
+						}
+						if($callback = $jinput->get('callback', null, 'CMD'))
+						{
+							echo $callback . "(".json_encode($result).");";
+						}
+						elseif($returnRaw)
+						{
+							echo json_encode($result);
+						}
+						else
+						{
+							echo "(".json_encode($result).");";
+						}
+					}
+					catch(Exception $e)
+					{
+						if($callback = $jinput->get('callback', null, 'CMD'))
+						{
+							echo $callback."(".json_encode($e).");";
+						}
+						else
+						{
+							echo "(".json_encode($e).");";
+						}
+					}
+				break;
+				case 'searchMembers':
+					try
+					{
+						$returnRaw = $jinput->get('raw', false, 'BOOLEAN');
+						$searchValue = $jinput->get('search', NULL, 'STRING');
+						if($searchValue && $user->id != 0)
+						{
+							$result = $this->getModel('ajax')->searchMembers($searchValue);
+						}
+						else
+						{
+							$result = false;
+						}
+						if($callback = $jinput->get('callback', null, 'CMD'))
+						{
+							echo $callback . "(".json_encode($result).");";
+						}
+						elseif($returnRaw)
+						{
+							echo json_encode($result);
+						}
+						else
+						{
+							echo "(".json_encode($result).");";
+						}
+					}
+					catch(Exception $e)
+					{
+						if($callback = $jinput->get('callback', null, 'CMD'))
+						{
+							echo $callback."(".json_encode($e).");";
+						}
+						else
+						{
+							echo "(".json_encode($e).");";
+						}
+					}
+				break;
+				case 'getReport':
+					try
+					{
+						$returnRaw = $jinput->get('raw', false, 'BOOLEAN');
+						$keyValue = $jinput->get('key', NULL, 'STRING');
+						if($keyValue && $user->id != 0)
+						{
+							$result = $this->getModel('ajax')->getReport($keyValue);
 						}
 						else
 						{

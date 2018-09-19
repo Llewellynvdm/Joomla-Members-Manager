@@ -15,102 +15,52 @@
 		<action name="core.edit.own" title="JACTION_EDITOWN" description="JACTION_EDITOWN_COMPONENT_DESC" />
 		<action name="core.edit.created_by" title="COM_MEMBERSMANAGER_EDIT_CREATED_BY" description="COM_MEMBERSMANAGER_EDIT_CREATED_BY_DESC" />
 		<action name="core.edit.created" title="COM_MEMBERSMANAGER_EDIT_CREATED_DATE" description="COM_MEMBERSMANAGER_EDIT_CREATED_DATE_DESC" />
-		<action name="country.access" title="COM_MEMBERSMANAGER_COUNTRIES_ACCESS" description="COM_MEMBERSMANAGER_COUNTRIES_ACCESS_DESC" />
-		<action name="country.batch" title="COM_MEMBERSMANAGER_COUNTRIES_BATCH_USE" description="COM_MEMBERSMANAGER_COUNTRIES_BATCH_USE_DESC" />
-		<action name="country.create" title="COM_MEMBERSMANAGER_COUNTRIES_CREATE" description="COM_MEMBERSMANAGER_COUNTRIES_CREATE_DESC" />
-		<action name="country.delete" title="COM_MEMBERSMANAGER_COUNTRIES_DELETE" description="COM_MEMBERSMANAGER_COUNTRIES_DELETE_DESC" />
-		<action name="country.edit" title="COM_MEMBERSMANAGER_COUNTRIES_EDIT" description="COM_MEMBERSMANAGER_COUNTRIES_EDIT_DESC" />
-		<action name="country.edit.own" title="COM_MEMBERSMANAGER_COUNTRIES_EDIT_OWN" description="COM_MEMBERSMANAGER_COUNTRIES_EDIT_OWN_DESC" />
-		<action name="country.edit.state" title="COM_MEMBERSMANAGER_COUNTRIES_EDIT_STATE" description="COM_MEMBERSMANAGER_COUNTRIES_EDIT_STATE_DESC" />
-		<action name="country.export" title="COM_MEMBERSMANAGER_COUNTRIES_EXPORT" description="COM_MEMBERSMANAGER_COUNTRIES_EXPORT_DESC" />
-		<action name="country.import" title="COM_MEMBERSMANAGER_COUNTRIES_IMPORT" description="COM_MEMBERSMANAGER_COUNTRIES_IMPORT_DESC" />
-		<action name="country.submenu" title="COM_MEMBERSMANAGER_COUNTRIES_SUBMENU" description="COM_MEMBERSMANAGER_COUNTRIES_SUBMENU_DESC" />
-		<action name="currency.access" title="COM_MEMBERSMANAGER_CURRENCIES_ACCESS" description="COM_MEMBERSMANAGER_CURRENCIES_ACCESS_DESC" />
-		<action name="currency.batch" title="COM_MEMBERSMANAGER_CURRENCIES_BATCH_USE" description="COM_MEMBERSMANAGER_CURRENCIES_BATCH_USE_DESC" />
-		<action name="currency.create" title="COM_MEMBERSMANAGER_CURRENCIES_CREATE" description="COM_MEMBERSMANAGER_CURRENCIES_CREATE_DESC" />
-		<action name="currency.delete" title="COM_MEMBERSMANAGER_CURRENCIES_DELETE" description="COM_MEMBERSMANAGER_CURRENCIES_DELETE_DESC" />
-		<action name="currency.edit" title="COM_MEMBERSMANAGER_CURRENCIES_EDIT" description="COM_MEMBERSMANAGER_CURRENCIES_EDIT_DESC" />
-		<action name="currency.edit.own" title="COM_MEMBERSMANAGER_CURRENCIES_EDIT_OWN" description="COM_MEMBERSMANAGER_CURRENCIES_EDIT_OWN_DESC" />
-		<action name="currency.edit.state" title="COM_MEMBERSMANAGER_CURRENCIES_EDIT_STATE" description="COM_MEMBERSMANAGER_CURRENCIES_EDIT_STATE_DESC" />
-		<action name="currency.export" title="COM_MEMBERSMANAGER_CURRENCIES_EXPORT" description="COM_MEMBERSMANAGER_CURRENCIES_EXPORT_DESC" />
-		<action name="currency.import" title="COM_MEMBERSMANAGER_CURRENCIES_IMPORT" description="COM_MEMBERSMANAGER_CURRENCIES_IMPORT_DESC" />
-		<action name="currency.submenu" title="COM_MEMBERSMANAGER_CURRENCIES_SUBMENU" description="COM_MEMBERSMANAGER_CURRENCIES_SUBMENU_DESC" />
+		<action name="site.cpanel.access" title="COM_MEMBERSMANAGER_CPANEL_ACCESS_SITE" description="COM_MEMBERSMANAGER_CPANEL_ACCESS_SITE_DESC" />
 		<action name="site.profile.access" title="COM_MEMBERSMANAGER_MEMBER_PROFILE_ACCESS_SITE" description="COM_MEMBERSMANAGER_MEMBER_PROFILE_ACCESS_SITE_DESC" />
 		<action name="member.access" title="COM_MEMBERSMANAGER_MEMBERS_ACCESS" description="COM_MEMBERSMANAGER_MEMBERS_ACCESS_DESC" />
-		<action name="member.access.account" title="COM_MEMBERSMANAGER_MEMBERS_ACCESS_ACCOUNT" description="COM_MEMBERSMANAGER_MEMBERS_ACCESS_ACCOUNT_DESC" />
-		<action name="member.access.city" title="COM_MEMBERSMANAGER_MEMBERS_ACCESS_CITY" description="COM_MEMBERSMANAGER_MEMBERS_ACCESS_CITY_DESC" />
-		<action name="member.access.country" title="COM_MEMBERSMANAGER_MEMBERS_ACCESS_COUNTRY" description="COM_MEMBERSMANAGER_MEMBERS_ACCESS_COUNTRY_DESC" />
 		<action name="member.access.email" title="COM_MEMBERSMANAGER_MEMBERS_ACCESS_EMAIL" description="COM_MEMBERSMANAGER_MEMBERS_ACCESS_EMAIL_DESC" />
-		<action name="member.access.landline_phone" title="COM_MEMBERSMANAGER_MEMBERS_ACCESS_LANDLINE_PHONE" description="COM_MEMBERSMANAGER_MEMBERS_ACCESS_LANDLINE_PHONE_DESC" />
-		<action name="member.access.main_member" title="COM_MEMBERSMANAGER_MEMBERS_ACCESS_MAIN_MEMBER" description="COM_MEMBERSMANAGER_MEMBERS_ACCESS_MAIN_MEMBER_DESC" />
-		<action name="member.access.mobile_phone" title="COM_MEMBERSMANAGER_MEMBERS_ACCESS_MOBILE_PHONE" description="COM_MEMBERSMANAGER_MEMBERS_ACCESS_MOBILE_PHONE_DESC" />
-		<action name="member.access.name" title="COM_MEMBERSMANAGER_MEMBERS_ACCESS_NAME" description="COM_MEMBERSMANAGER_MEMBERS_ACCESS_NAME_DESC" />
-		<action name="member.access.postal" title="COM_MEMBERSMANAGER_MEMBERS_ACCESS_POSTAL" description="COM_MEMBERSMANAGER_MEMBERS_ACCESS_POSTAL_DESC" />
-		<action name="member.access.postalcode" title="COM_MEMBERSMANAGER_MEMBERS_ACCESS_POSTALCODE" description="COM_MEMBERSMANAGER_MEMBERS_ACCESS_POSTALCODE_DESC" />
-		<action name="member.access.region" title="COM_MEMBERSMANAGER_MEMBERS_ACCESS_REGION" description="COM_MEMBERSMANAGER_MEMBERS_ACCESS_REGION_DESC" />
-		<action name="member.access.street" title="COM_MEMBERSMANAGER_MEMBERS_ACCESS_STREET" description="COM_MEMBERSMANAGER_MEMBERS_ACCESS_STREET_DESC" />
-		<action name="member.access.token" title="COM_MEMBERSMANAGER_MEMBERS_ACCESS_TOKEN" description="COM_MEMBERSMANAGER_MEMBERS_ACCESS_TOKEN_DESC" />
-		<action name="member.access.type" title="COM_MEMBERSMANAGER_MEMBERS_ACCESS_TYPE" description="COM_MEMBERSMANAGER_MEMBERS_ACCESS_TYPE_DESC" />
-		<action name="member.access.user" title="COM_MEMBERSMANAGER_MEMBERS_ACCESS_USER" description="COM_MEMBERSMANAGER_MEMBERS_ACCESS_USER_DESC" />
-		<action name="member.access.website" title="COM_MEMBERSMANAGER_MEMBERS_ACCESS_WEBSITE" description="COM_MEMBERSMANAGER_MEMBERS_ACCESS_WEBSITE_DESC" />
+		<action name="member.access.password" title="COM_MEMBERSMANAGER_MEMBERS_ACCESS_PASSWORD" description="COM_MEMBERSMANAGER_MEMBERS_ACCESS_PASSWORD_DESC" />
+		<action name="member.access.password_check" title="COM_MEMBERSMANAGER_MEMBERS_ACCESS_PASSWORD_CHECK" description="COM_MEMBERSMANAGER_MEMBERS_ACCESS_PASSWORD_CHECK_DESC" />
+		<action name="member.access.profile_image" title="COM_MEMBERSMANAGER_MEMBERS_ACCESS_PROFILE_IMAGE" description="COM_MEMBERSMANAGER_MEMBERS_ACCESS_PROFILE_IMAGE_DESC" />
+		<action name="member.access.useremail" title="COM_MEMBERSMANAGER_MEMBERS_ACCESS_USEREMAIL" description="COM_MEMBERSMANAGER_MEMBERS_ACCESS_USEREMAIL_DESC" />
+		<action name="member.access.username" title="COM_MEMBERSMANAGER_MEMBERS_ACCESS_USERNAME" description="COM_MEMBERSMANAGER_MEMBERS_ACCESS_USERNAME_DESC" />
 		<action name="member.batch" title="COM_MEMBERSMANAGER_MEMBERS_BATCH_USE" description="COM_MEMBERSMANAGER_MEMBERS_BATCH_USE_DESC" />
 		<action name="member.create" title="COM_MEMBERSMANAGER_MEMBERS_CREATE" description="COM_MEMBERSMANAGER_MEMBERS_CREATE_DESC" />
 		<action name="member.delete" title="COM_MEMBERSMANAGER_MEMBERS_DELETE" description="COM_MEMBERSMANAGER_MEMBERS_DELETE_DESC" />
 		<action name="member.edit" title="COM_MEMBERSMANAGER_MEMBERS_EDIT" description="COM_MEMBERSMANAGER_MEMBERS_EDIT_DESC" />
 		<action name="member.edit.account" title="COM_MEMBERSMANAGER_MEMBERS_EDIT_ACCOUNT" description="COM_MEMBERSMANAGER_MEMBERS_EDIT_ACCOUNT_DESC" />
-		<action name="member.edit.city" title="COM_MEMBERSMANAGER_MEMBERS_EDIT_CITY" description="COM_MEMBERSMANAGER_MEMBERS_EDIT_CITY_DESC" />
-		<action name="member.edit.country" title="COM_MEMBERSMANAGER_MEMBERS_EDIT_COUNTRY" description="COM_MEMBERSMANAGER_MEMBERS_EDIT_COUNTRY_DESC" />
 		<action name="member.edit.created_by" title="COM_MEMBERSMANAGER_MEMBERS_EDIT_CREATED_BY" description="COM_MEMBERSMANAGER_MEMBERS_EDIT_CREATED_BY_DESC" />
 		<action name="member.edit.created" title="COM_MEMBERSMANAGER_MEMBERS_EDIT_CREATED_DATE" description="COM_MEMBERSMANAGER_MEMBERS_EDIT_CREATED_DATE_DESC" />
 		<action name="member.edit.email" title="COM_MEMBERSMANAGER_MEMBERS_EDIT_EMAIL" description="COM_MEMBERSMANAGER_MEMBERS_EDIT_EMAIL_DESC" />
-		<action name="member.edit.landline_phone" title="COM_MEMBERSMANAGER_MEMBERS_EDIT_LANDLINE_PHONE" description="COM_MEMBERSMANAGER_MEMBERS_EDIT_LANDLINE_PHONE_DESC" />
 		<action name="member.edit.main_member" title="COM_MEMBERSMANAGER_MEMBERS_EDIT_MAIN_MEMBER" description="COM_MEMBERSMANAGER_MEMBERS_EDIT_MAIN_MEMBER_DESC" />
-		<action name="member.edit.mobile_phone" title="COM_MEMBERSMANAGER_MEMBERS_EDIT_MOBILE_PHONE" description="COM_MEMBERSMANAGER_MEMBERS_EDIT_MOBILE_PHONE_DESC" />
 		<action name="member.edit.name" title="COM_MEMBERSMANAGER_MEMBERS_EDIT_NAME" description="COM_MEMBERSMANAGER_MEMBERS_EDIT_NAME_DESC" />
 		<action name="member.edit.own" title="COM_MEMBERSMANAGER_MEMBERS_EDIT_OWN" description="COM_MEMBERSMANAGER_MEMBERS_EDIT_OWN_DESC" />
-		<action name="member.edit.postal" title="COM_MEMBERSMANAGER_MEMBERS_EDIT_POSTAL" description="COM_MEMBERSMANAGER_MEMBERS_EDIT_POSTAL_DESC" />
-		<action name="member.edit.postalcode" title="COM_MEMBERSMANAGER_MEMBERS_EDIT_POSTALCODE" description="COM_MEMBERSMANAGER_MEMBERS_EDIT_POSTALCODE_DESC" />
-		<action name="member.edit.region" title="COM_MEMBERSMANAGER_MEMBERS_EDIT_REGION" description="COM_MEMBERSMANAGER_MEMBERS_EDIT_REGION_DESC" />
+		<action name="member.edit.password" title="COM_MEMBERSMANAGER_MEMBERS_EDIT_PASSWORD" description="COM_MEMBERSMANAGER_MEMBERS_EDIT_PASSWORD_DESC" />
+		<action name="member.edit.password_check" title="COM_MEMBERSMANAGER_MEMBERS_EDIT_PASSWORD_CHECK" description="COM_MEMBERSMANAGER_MEMBERS_EDIT_PASSWORD_CHECK_DESC" />
+		<action name="member.edit.profile_image" title="COM_MEMBERSMANAGER_MEMBERS_EDIT_PROFILE_IMAGE" description="COM_MEMBERSMANAGER_MEMBERS_EDIT_PROFILE_IMAGE_DESC" />
 		<action name="member.edit.state" title="COM_MEMBERSMANAGER_MEMBERS_EDIT_STATE" description="COM_MEMBERSMANAGER_MEMBERS_EDIT_STATE_DESC" />
-		<action name="member.edit.street" title="COM_MEMBERSMANAGER_MEMBERS_EDIT_STREET" description="COM_MEMBERSMANAGER_MEMBERS_EDIT_STREET_DESC" />
+		<action name="member.edit.surname" title="COM_MEMBERSMANAGER_MEMBERS_EDIT_SURNAME" description="COM_MEMBERSMANAGER_MEMBERS_EDIT_SURNAME_DESC" />
 		<action name="member.edit.token" title="COM_MEMBERSMANAGER_MEMBERS_EDIT_TOKEN" description="COM_MEMBERSMANAGER_MEMBERS_EDIT_TOKEN_DESC" />
 		<action name="member.edit.type" title="COM_MEMBERSMANAGER_MEMBERS_EDIT_TYPE" description="COM_MEMBERSMANAGER_MEMBERS_EDIT_TYPE_DESC" />
 		<action name="member.edit.user" title="COM_MEMBERSMANAGER_MEMBERS_EDIT_USER" description="COM_MEMBERSMANAGER_MEMBERS_EDIT_USER_DESC" />
+		<action name="member.edit.useremail" title="COM_MEMBERSMANAGER_MEMBERS_EDIT_USEREMAIL" description="COM_MEMBERSMANAGER_MEMBERS_EDIT_USEREMAIL_DESC" />
+		<action name="member.edit.username" title="COM_MEMBERSMANAGER_MEMBERS_EDIT_USERNAME" description="COM_MEMBERSMANAGER_MEMBERS_EDIT_USERNAME_DESC" />
 		<action name="member.version" title="COM_MEMBERSMANAGER_MEMBERS_EDIT_VERSION" description="COM_MEMBERSMANAGER_MEMBERS_EDIT_VERSION_DESC" />
-		<action name="member.edit.website" title="COM_MEMBERSMANAGER_MEMBERS_EDIT_WEBSITE" description="COM_MEMBERSMANAGER_MEMBERS_EDIT_WEBSITE_DESC" />
 		<action name="member.export" title="COM_MEMBERSMANAGER_MEMBERS_EXPORT" description="COM_MEMBERSMANAGER_MEMBERS_EXPORT_DESC" />
 		<action name="member.import" title="COM_MEMBERSMANAGER_MEMBERS_IMPORT" description="COM_MEMBERSMANAGER_MEMBERS_IMPORT_DESC" />
-		<action name="member.submenu" title="COM_MEMBERSMANAGER_MEMBERS_SUBMENU" description="COM_MEMBERSMANAGER_MEMBERS_SUBMENU_DESC" />
 		<action name="member.view.account" title="COM_MEMBERSMANAGER_MEMBERS_VIEW_ACCOUNT" description="COM_MEMBERSMANAGER_MEMBERS_VIEW_ACCOUNT_DESC" />
-		<action name="member.view.city" title="COM_MEMBERSMANAGER_MEMBERS_VIEW_CITY" description="COM_MEMBERSMANAGER_MEMBERS_VIEW_CITY_DESC" />
-		<action name="member.view.country" title="COM_MEMBERSMANAGER_MEMBERS_VIEW_COUNTRY" description="COM_MEMBERSMANAGER_MEMBERS_VIEW_COUNTRY_DESC" />
 		<action name="member.view.email" title="COM_MEMBERSMANAGER_MEMBERS_VIEW_EMAIL" description="COM_MEMBERSMANAGER_MEMBERS_VIEW_EMAIL_DESC" />
-		<action name="member.view.landline_phone" title="COM_MEMBERSMANAGER_MEMBERS_VIEW_LANDLINE_PHONE" description="COM_MEMBERSMANAGER_MEMBERS_VIEW_LANDLINE_PHONE_DESC" />
 		<action name="member.view.main_member" title="COM_MEMBERSMANAGER_MEMBERS_VIEW_MAIN_MEMBER" description="COM_MEMBERSMANAGER_MEMBERS_VIEW_MAIN_MEMBER_DESC" />
-		<action name="member.view.mobile_phone" title="COM_MEMBERSMANAGER_MEMBERS_VIEW_MOBILE_PHONE" description="COM_MEMBERSMANAGER_MEMBERS_VIEW_MOBILE_PHONE_DESC" />
 		<action name="member.view.name" title="COM_MEMBERSMANAGER_MEMBERS_VIEW_NAME" description="COM_MEMBERSMANAGER_MEMBERS_VIEW_NAME_DESC" />
-		<action name="member.view.postal" title="COM_MEMBERSMANAGER_MEMBERS_VIEW_POSTAL" description="COM_MEMBERSMANAGER_MEMBERS_VIEW_POSTAL_DESC" />
-		<action name="member.view.postalcode" title="COM_MEMBERSMANAGER_MEMBERS_VIEW_POSTALCODE" description="COM_MEMBERSMANAGER_MEMBERS_VIEW_POSTALCODE_DESC" />
-		<action name="member.view.region" title="COM_MEMBERSMANAGER_MEMBERS_VIEW_REGION" description="COM_MEMBERSMANAGER_MEMBERS_VIEW_REGION_DESC" />
-		<action name="member.view.street" title="COM_MEMBERSMANAGER_MEMBERS_VIEW_STREET" description="COM_MEMBERSMANAGER_MEMBERS_VIEW_STREET_DESC" />
+		<action name="member.view.password" title="COM_MEMBERSMANAGER_MEMBERS_VIEW_PASSWORD" description="COM_MEMBERSMANAGER_MEMBERS_VIEW_PASSWORD_DESC" />
+		<action name="member.view.password_check" title="COM_MEMBERSMANAGER_MEMBERS_VIEW_PASSWORD_CHECK" description="COM_MEMBERSMANAGER_MEMBERS_VIEW_PASSWORD_CHECK_DESC" />
+		<action name="member.view.profile_image" title="COM_MEMBERSMANAGER_MEMBERS_VIEW_PROFILE_IMAGE" description="COM_MEMBERSMANAGER_MEMBERS_VIEW_PROFILE_IMAGE_DESC" />
+		<action name="member.view.surname" title="COM_MEMBERSMANAGER_MEMBERS_VIEW_SURNAME" description="COM_MEMBERSMANAGER_MEMBERS_VIEW_SURNAME_DESC" />
 		<action name="member.view.token" title="COM_MEMBERSMANAGER_MEMBERS_VIEW_TOKEN" description="COM_MEMBERSMANAGER_MEMBERS_VIEW_TOKEN_DESC" />
 		<action name="member.view.type" title="COM_MEMBERSMANAGER_MEMBERS_VIEW_TYPE" description="COM_MEMBERSMANAGER_MEMBERS_VIEW_TYPE_DESC" />
 		<action name="member.view.user" title="COM_MEMBERSMANAGER_MEMBERS_VIEW_USER" description="COM_MEMBERSMANAGER_MEMBERS_VIEW_USER_DESC" />
-		<action name="member.view.website" title="COM_MEMBERSMANAGER_MEMBERS_VIEW_WEBSITE" description="COM_MEMBERSMANAGER_MEMBERS_VIEW_WEBSITE_DESC" />
-		<action name="region.access" title="COM_MEMBERSMANAGER_REGIONS_ACCESS" description="COM_MEMBERSMANAGER_REGIONS_ACCESS_DESC" />
-		<action name="region.batch" title="COM_MEMBERSMANAGER_REGIONS_BATCH_USE" description="COM_MEMBERSMANAGER_REGIONS_BATCH_USE_DESC" />
-		<action name="region.create" title="COM_MEMBERSMANAGER_REGIONS_CREATE" description="COM_MEMBERSMANAGER_REGIONS_CREATE_DESC" />
-		<action name="region.delete" title="COM_MEMBERSMANAGER_REGIONS_DELETE" description="COM_MEMBERSMANAGER_REGIONS_DELETE_DESC" />
-		<action name="region.edit" title="COM_MEMBERSMANAGER_REGIONS_EDIT" description="COM_MEMBERSMANAGER_REGIONS_EDIT_DESC" />
-		<action name="region.edit.alias" title="COM_MEMBERSMANAGER_REGIONS_EDIT_ALIAS" description="COM_MEMBERSMANAGER_REGIONS_EDIT_ALIAS_DESC" />
-		<action name="region.edit.country" title="COM_MEMBERSMANAGER_REGIONS_EDIT_COUNTRY" description="COM_MEMBERSMANAGER_REGIONS_EDIT_COUNTRY_DESC" />
-		<action name="region.edit.created_by" title="COM_MEMBERSMANAGER_REGIONS_EDIT_CREATED_BY" description="COM_MEMBERSMANAGER_REGIONS_EDIT_CREATED_BY_DESC" />
-		<action name="region.edit.created" title="COM_MEMBERSMANAGER_REGIONS_EDIT_CREATED_DATE" description="COM_MEMBERSMANAGER_REGIONS_EDIT_CREATED_DATE_DESC" />
-		<action name="region.edit.name" title="COM_MEMBERSMANAGER_REGIONS_EDIT_NAME" description="COM_MEMBERSMANAGER_REGIONS_EDIT_NAME_DESC" />
-		<action name="region.edit.own" title="COM_MEMBERSMANAGER_REGIONS_EDIT_OWN" description="COM_MEMBERSMANAGER_REGIONS_EDIT_OWN_DESC" />
-		<action name="region.edit.state" title="COM_MEMBERSMANAGER_REGIONS_EDIT_STATE" description="COM_MEMBERSMANAGER_REGIONS_EDIT_STATE_DESC" />
-		<action name="region.export" title="COM_MEMBERSMANAGER_REGIONS_EXPORT" description="COM_MEMBERSMANAGER_REGIONS_EXPORT_DESC" />
-		<action name="region.import" title="COM_MEMBERSMANAGER_REGIONS_IMPORT" description="COM_MEMBERSMANAGER_REGIONS_IMPORT_DESC" />
+		<action name="member.view.useremail" title="COM_MEMBERSMANAGER_MEMBERS_VIEW_USEREMAIL" description="COM_MEMBERSMANAGER_MEMBERS_VIEW_USEREMAIL_DESC" />
+		<action name="member.view.username" title="COM_MEMBERSMANAGER_MEMBERS_VIEW_USERNAME" description="COM_MEMBERSMANAGER_MEMBERS_VIEW_USERNAME_DESC" />
 		<action name="type.access" title="COM_MEMBERSMANAGER_TYPES_ACCESS" description="COM_MEMBERSMANAGER_TYPES_ACCESS_DESC" />
 		<action name="type.batch" title="COM_MEMBERSMANAGER_TYPES_BATCH_USE" description="COM_MEMBERSMANAGER_TYPES_BATCH_USE_DESC" />
 		<action name="type.create" title="COM_MEMBERSMANAGER_TYPES_CREATE" description="COM_MEMBERSMANAGER_TYPES_CREATE_DESC" />
@@ -119,6 +69,8 @@
 		<action name="type.edit.created_by" title="COM_MEMBERSMANAGER_TYPES_EDIT_CREATED_BY" description="COM_MEMBERSMANAGER_TYPES_EDIT_CREATED_BY_DESC" />
 		<action name="type.edit.created" title="COM_MEMBERSMANAGER_TYPES_EDIT_CREATED_DATE" description="COM_MEMBERSMANAGER_TYPES_EDIT_CREATED_DATE_DESC" />
 		<action name="type.edit.description" title="COM_MEMBERSMANAGER_TYPES_EDIT_DESCRIPTION" description="COM_MEMBERSMANAGER_TYPES_EDIT_DESCRIPTION_DESC" />
+		<action name="type.edit.groups_access" title="COM_MEMBERSMANAGER_TYPES_EDIT_GROUPS_ACCESS" description="COM_MEMBERSMANAGER_TYPES_EDIT_GROUPS_ACCESS_DESC" />
+		<action name="type.edit.groups_target" title="COM_MEMBERSMANAGER_TYPES_EDIT_GROUPS_TARGET" description="COM_MEMBERSMANAGER_TYPES_EDIT_GROUPS_TARGET_DESC" />
 		<action name="type.edit.name" title="COM_MEMBERSMANAGER_TYPES_EDIT_NAME" description="COM_MEMBERSMANAGER_TYPES_EDIT_NAME_DESC" />
 		<action name="type.edit.own" title="COM_MEMBERSMANAGER_TYPES_EDIT_OWN" description="COM_MEMBERSMANAGER_TYPES_EDIT_OWN_DESC" />
 		<action name="type.edit.state" title="COM_MEMBERSMANAGER_TYPES_EDIT_STATE" description="COM_MEMBERSMANAGER_TYPES_EDIT_STATE_DESC" />
@@ -135,54 +87,38 @@
 		<action name="member.create" title="COM_MEMBERSMANAGER_MEMBERS_CREATE" description="COM_MEMBERSMANAGER_MEMBERS_CREATE_DESC" />
 		<action name="member.delete" title="COM_MEMBERSMANAGER_MEMBERS_DELETE" description="COM_MEMBERSMANAGER_MEMBERS_DELETE_DESC" />
 		<action name="member.access" title="COM_MEMBERSMANAGER_MEMBERS_ACCESS" description="COM_MEMBERSMANAGER_MEMBERS_ACCESS_DESC" />
-		<action name="member.edit.user" title="COM_MEMBERSMANAGER_MEMBERS_EDIT_USER" description="COM_MEMBERSMANAGER_MEMBERS_EDIT_USER_DESC" />
-		<action name="member.access.user" title="COM_MEMBERSMANAGER_MEMBERS_ACCESS_USER" description="COM_MEMBERSMANAGER_MEMBERS_ACCESS_USER_DESC" />
-		<action name="member.view.user" title="COM_MEMBERSMANAGER_MEMBERS_VIEW_USER" description="COM_MEMBERSMANAGER_MEMBERS_VIEW_USER_DESC" />
-		<action name="member.edit.landline_phone" title="COM_MEMBERSMANAGER_MEMBERS_EDIT_LANDLINE_PHONE" description="COM_MEMBERSMANAGER_MEMBERS_EDIT_LANDLINE_PHONE_DESC" />
-		<action name="member.access.landline_phone" title="COM_MEMBERSMANAGER_MEMBERS_ACCESS_LANDLINE_PHONE" description="COM_MEMBERSMANAGER_MEMBERS_ACCESS_LANDLINE_PHONE_DESC" />
-		<action name="member.view.landline_phone" title="COM_MEMBERSMANAGER_MEMBERS_VIEW_LANDLINE_PHONE" description="COM_MEMBERSMANAGER_MEMBERS_VIEW_LANDLINE_PHONE_DESC" />
-		<action name="member.edit.type" title="COM_MEMBERSMANAGER_MEMBERS_EDIT_TYPE" description="COM_MEMBERSMANAGER_MEMBERS_EDIT_TYPE_DESC" />
-		<action name="member.access.type" title="COM_MEMBERSMANAGER_MEMBERS_ACCESS_TYPE" description="COM_MEMBERSMANAGER_MEMBERS_ACCESS_TYPE_DESC" />
-		<action name="member.view.type" title="COM_MEMBERSMANAGER_MEMBERS_VIEW_TYPE" description="COM_MEMBERSMANAGER_MEMBERS_VIEW_TYPE_DESC" />
-		<action name="member.edit.account" title="COM_MEMBERSMANAGER_MEMBERS_EDIT_ACCOUNT" description="COM_MEMBERSMANAGER_MEMBERS_EDIT_ACCOUNT_DESC" />
-		<action name="member.access.account" title="COM_MEMBERSMANAGER_MEMBERS_ACCESS_ACCOUNT" description="COM_MEMBERSMANAGER_MEMBERS_ACCESS_ACCOUNT_DESC" />
-		<action name="member.view.account" title="COM_MEMBERSMANAGER_MEMBERS_VIEW_ACCOUNT" description="COM_MEMBERSMANAGER_MEMBERS_VIEW_ACCOUNT_DESC" />
-		<action name="member.edit.token" title="COM_MEMBERSMANAGER_MEMBERS_EDIT_TOKEN" description="COM_MEMBERSMANAGER_MEMBERS_EDIT_TOKEN_DESC" />
-		<action name="member.access.token" title="COM_MEMBERSMANAGER_MEMBERS_ACCESS_TOKEN" description="COM_MEMBERSMANAGER_MEMBERS_ACCESS_TOKEN_DESC" />
-		<action name="member.view.token" title="COM_MEMBERSMANAGER_MEMBERS_VIEW_TOKEN" description="COM_MEMBERSMANAGER_MEMBERS_VIEW_TOKEN_DESC" />
-		<action name="member.edit.country" title="COM_MEMBERSMANAGER_MEMBERS_EDIT_COUNTRY" description="COM_MEMBERSMANAGER_MEMBERS_EDIT_COUNTRY_DESC" />
-		<action name="member.access.country" title="COM_MEMBERSMANAGER_MEMBERS_ACCESS_COUNTRY" description="COM_MEMBERSMANAGER_MEMBERS_ACCESS_COUNTRY_DESC" />
-		<action name="member.view.country" title="COM_MEMBERSMANAGER_MEMBERS_VIEW_COUNTRY" description="COM_MEMBERSMANAGER_MEMBERS_VIEW_COUNTRY_DESC" />
-		<action name="member.edit.postalcode" title="COM_MEMBERSMANAGER_MEMBERS_EDIT_POSTALCODE" description="COM_MEMBERSMANAGER_MEMBERS_EDIT_POSTALCODE_DESC" />
-		<action name="member.access.postalcode" title="COM_MEMBERSMANAGER_MEMBERS_ACCESS_POSTALCODE" description="COM_MEMBERSMANAGER_MEMBERS_ACCESS_POSTALCODE_DESC" />
-		<action name="member.view.postalcode" title="COM_MEMBERSMANAGER_MEMBERS_VIEW_POSTALCODE" description="COM_MEMBERSMANAGER_MEMBERS_VIEW_POSTALCODE_DESC" />
-		<action name="member.edit.city" title="COM_MEMBERSMANAGER_MEMBERS_EDIT_CITY" description="COM_MEMBERSMANAGER_MEMBERS_EDIT_CITY_DESC" />
-		<action name="member.access.city" title="COM_MEMBERSMANAGER_MEMBERS_ACCESS_CITY" description="COM_MEMBERSMANAGER_MEMBERS_ACCESS_CITY_DESC" />
-		<action name="member.view.city" title="COM_MEMBERSMANAGER_MEMBERS_VIEW_CITY" description="COM_MEMBERSMANAGER_MEMBERS_VIEW_CITY_DESC" />
-		<action name="member.edit.region" title="COM_MEMBERSMANAGER_MEMBERS_EDIT_REGION" description="COM_MEMBERSMANAGER_MEMBERS_EDIT_REGION_DESC" />
-		<action name="member.access.region" title="COM_MEMBERSMANAGER_MEMBERS_ACCESS_REGION" description="COM_MEMBERSMANAGER_MEMBERS_ACCESS_REGION_DESC" />
-		<action name="member.view.region" title="COM_MEMBERSMANAGER_MEMBERS_VIEW_REGION" description="COM_MEMBERSMANAGER_MEMBERS_VIEW_REGION_DESC" />
-		<action name="member.edit.street" title="COM_MEMBERSMANAGER_MEMBERS_EDIT_STREET" description="COM_MEMBERSMANAGER_MEMBERS_EDIT_STREET_DESC" />
-		<action name="member.access.street" title="COM_MEMBERSMANAGER_MEMBERS_ACCESS_STREET" description="COM_MEMBERSMANAGER_MEMBERS_ACCESS_STREET_DESC" />
-		<action name="member.view.street" title="COM_MEMBERSMANAGER_MEMBERS_VIEW_STREET" description="COM_MEMBERSMANAGER_MEMBERS_VIEW_STREET_DESC" />
-		<action name="member.edit.postal" title="COM_MEMBERSMANAGER_MEMBERS_EDIT_POSTAL" description="COM_MEMBERSMANAGER_MEMBERS_EDIT_POSTAL_DESC" />
-		<action name="member.access.postal" title="COM_MEMBERSMANAGER_MEMBERS_ACCESS_POSTAL" description="COM_MEMBERSMANAGER_MEMBERS_ACCESS_POSTAL_DESC" />
-		<action name="member.view.postal" title="COM_MEMBERSMANAGER_MEMBERS_VIEW_POSTAL" description="COM_MEMBERSMANAGER_MEMBERS_VIEW_POSTAL_DESC" />
-		<action name="member.edit.mobile_phone" title="COM_MEMBERSMANAGER_MEMBERS_EDIT_MOBILE_PHONE" description="COM_MEMBERSMANAGER_MEMBERS_EDIT_MOBILE_PHONE_DESC" />
-		<action name="member.access.mobile_phone" title="COM_MEMBERSMANAGER_MEMBERS_ACCESS_MOBILE_PHONE" description="COM_MEMBERSMANAGER_MEMBERS_ACCESS_MOBILE_PHONE_DESC" />
-		<action name="member.view.mobile_phone" title="COM_MEMBERSMANAGER_MEMBERS_VIEW_MOBILE_PHONE" description="COM_MEMBERSMANAGER_MEMBERS_VIEW_MOBILE_PHONE_DESC" />
 		<action name="member.edit.name" title="COM_MEMBERSMANAGER_MEMBERS_EDIT_NAME" description="COM_MEMBERSMANAGER_MEMBERS_EDIT_NAME_DESC" />
-		<action name="member.access.name" title="COM_MEMBERSMANAGER_MEMBERS_ACCESS_NAME" description="COM_MEMBERSMANAGER_MEMBERS_ACCESS_NAME_DESC" />
 		<action name="member.view.name" title="COM_MEMBERSMANAGER_MEMBERS_VIEW_NAME" description="COM_MEMBERSMANAGER_MEMBERS_VIEW_NAME_DESC" />
-		<action name="member.edit.website" title="COM_MEMBERSMANAGER_MEMBERS_EDIT_WEBSITE" description="COM_MEMBERSMANAGER_MEMBERS_EDIT_WEBSITE_DESC" />
-		<action name="member.access.website" title="COM_MEMBERSMANAGER_MEMBERS_ACCESS_WEBSITE" description="COM_MEMBERSMANAGER_MEMBERS_ACCESS_WEBSITE_DESC" />
-		<action name="member.view.website" title="COM_MEMBERSMANAGER_MEMBERS_VIEW_WEBSITE" description="COM_MEMBERSMANAGER_MEMBERS_VIEW_WEBSITE_DESC" />
 		<action name="member.edit.email" title="COM_MEMBERSMANAGER_MEMBERS_EDIT_EMAIL" description="COM_MEMBERSMANAGER_MEMBERS_EDIT_EMAIL_DESC" />
 		<action name="member.access.email" title="COM_MEMBERSMANAGER_MEMBERS_ACCESS_EMAIL" description="COM_MEMBERSMANAGER_MEMBERS_ACCESS_EMAIL_DESC" />
 		<action name="member.view.email" title="COM_MEMBERSMANAGER_MEMBERS_VIEW_EMAIL" description="COM_MEMBERSMANAGER_MEMBERS_VIEW_EMAIL_DESC" />
+		<action name="member.edit.account" title="COM_MEMBERSMANAGER_MEMBERS_EDIT_ACCOUNT" description="COM_MEMBERSMANAGER_MEMBERS_EDIT_ACCOUNT_DESC" />
+		<action name="member.view.account" title="COM_MEMBERSMANAGER_MEMBERS_VIEW_ACCOUNT" description="COM_MEMBERSMANAGER_MEMBERS_VIEW_ACCOUNT_DESC" />
+		<action name="member.edit.user" title="COM_MEMBERSMANAGER_MEMBERS_EDIT_USER" description="COM_MEMBERSMANAGER_MEMBERS_EDIT_USER_DESC" />
+		<action name="member.view.user" title="COM_MEMBERSMANAGER_MEMBERS_VIEW_USER" description="COM_MEMBERSMANAGER_MEMBERS_VIEW_USER_DESC" />
+		<action name="member.edit.token" title="COM_MEMBERSMANAGER_MEMBERS_EDIT_TOKEN" description="COM_MEMBERSMANAGER_MEMBERS_EDIT_TOKEN_DESC" />
+		<action name="member.view.token" title="COM_MEMBERSMANAGER_MEMBERS_VIEW_TOKEN" description="COM_MEMBERSMANAGER_MEMBERS_VIEW_TOKEN_DESC" />
+		<action name="member.edit.profile_image" title="COM_MEMBERSMANAGER_MEMBERS_EDIT_PROFILE_IMAGE" description="COM_MEMBERSMANAGER_MEMBERS_EDIT_PROFILE_IMAGE_DESC" />
+		<action name="member.access.profile_image" title="COM_MEMBERSMANAGER_MEMBERS_ACCESS_PROFILE_IMAGE" description="COM_MEMBERSMANAGER_MEMBERS_ACCESS_PROFILE_IMAGE_DESC" />
+		<action name="member.view.profile_image" title="COM_MEMBERSMANAGER_MEMBERS_VIEW_PROFILE_IMAGE" description="COM_MEMBERSMANAGER_MEMBERS_VIEW_PROFILE_IMAGE_DESC" />
 		<action name="member.edit.main_member" title="COM_MEMBERSMANAGER_MEMBERS_EDIT_MAIN_MEMBER" description="COM_MEMBERSMANAGER_MEMBERS_EDIT_MAIN_MEMBER_DESC" />
-		<action name="member.access.main_member" title="COM_MEMBERSMANAGER_MEMBERS_ACCESS_MAIN_MEMBER" description="COM_MEMBERSMANAGER_MEMBERS_ACCESS_MAIN_MEMBER_DESC" />
 		<action name="member.view.main_member" title="COM_MEMBERSMANAGER_MEMBERS_VIEW_MAIN_MEMBER" description="COM_MEMBERSMANAGER_MEMBERS_VIEW_MAIN_MEMBER_DESC" />
+		<action name="member.edit.password_check" title="COM_MEMBERSMANAGER_MEMBERS_EDIT_PASSWORD_CHECK" description="COM_MEMBERSMANAGER_MEMBERS_EDIT_PASSWORD_CHECK_DESC" />
+		<action name="member.access.password_check" title="COM_MEMBERSMANAGER_MEMBERS_ACCESS_PASSWORD_CHECK" description="COM_MEMBERSMANAGER_MEMBERS_ACCESS_PASSWORD_CHECK_DESC" />
+		<action name="member.view.password_check" title="COM_MEMBERSMANAGER_MEMBERS_VIEW_PASSWORD_CHECK" description="COM_MEMBERSMANAGER_MEMBERS_VIEW_PASSWORD_CHECK_DESC" />
+		<action name="member.edit.password" title="COM_MEMBERSMANAGER_MEMBERS_EDIT_PASSWORD" description="COM_MEMBERSMANAGER_MEMBERS_EDIT_PASSWORD_DESC" />
+		<action name="member.access.password" title="COM_MEMBERSMANAGER_MEMBERS_ACCESS_PASSWORD" description="COM_MEMBERSMANAGER_MEMBERS_ACCESS_PASSWORD_DESC" />
+		<action name="member.view.password" title="COM_MEMBERSMANAGER_MEMBERS_VIEW_PASSWORD" description="COM_MEMBERSMANAGER_MEMBERS_VIEW_PASSWORD_DESC" />
+		<action name="member.edit.useremail" title="COM_MEMBERSMANAGER_MEMBERS_EDIT_USEREMAIL" description="COM_MEMBERSMANAGER_MEMBERS_EDIT_USEREMAIL_DESC" />
+		<action name="member.access.useremail" title="COM_MEMBERSMANAGER_MEMBERS_ACCESS_USEREMAIL" description="COM_MEMBERSMANAGER_MEMBERS_ACCESS_USEREMAIL_DESC" />
+		<action name="member.view.useremail" title="COM_MEMBERSMANAGER_MEMBERS_VIEW_USEREMAIL" description="COM_MEMBERSMANAGER_MEMBERS_VIEW_USEREMAIL_DESC" />
+		<action name="member.edit.username" title="COM_MEMBERSMANAGER_MEMBERS_EDIT_USERNAME" description="COM_MEMBERSMANAGER_MEMBERS_EDIT_USERNAME_DESC" />
+		<action name="member.access.username" title="COM_MEMBERSMANAGER_MEMBERS_ACCESS_USERNAME" description="COM_MEMBERSMANAGER_MEMBERS_ACCESS_USERNAME_DESC" />
+		<action name="member.view.username" title="COM_MEMBERSMANAGER_MEMBERS_VIEW_USERNAME" description="COM_MEMBERSMANAGER_MEMBERS_VIEW_USERNAME_DESC" />
+		<action name="member.edit.surname" title="COM_MEMBERSMANAGER_MEMBERS_EDIT_SURNAME" description="COM_MEMBERSMANAGER_MEMBERS_EDIT_SURNAME_DESC" />
+		<action name="member.view.surname" title="COM_MEMBERSMANAGER_MEMBERS_VIEW_SURNAME" description="COM_MEMBERSMANAGER_MEMBERS_VIEW_SURNAME_DESC" />
+		<action name="member.edit.type" title="COM_MEMBERSMANAGER_MEMBERS_EDIT_TYPE" description="COM_MEMBERSMANAGER_MEMBERS_EDIT_TYPE_DESC" />
+		<action name="member.view.type" title="COM_MEMBERSMANAGER_MEMBERS_VIEW_TYPE" description="COM_MEMBERSMANAGER_MEMBERS_VIEW_TYPE_DESC" />
 		<action name="member.version" title="COM_MEMBERSMANAGER_MEMBERS_EDIT_VERSION" description="COM_MEMBERSMANAGER_MEMBERS_EDIT_VERSION_DESC" />
 	</section>
 	<section name="type">
@@ -196,35 +132,8 @@
 		<action name="type.access" title="COM_MEMBERSMANAGER_TYPES_ACCESS" description="COM_MEMBERSMANAGER_TYPES_ACCESS_DESC" />
 		<action name="type.edit.name" title="COM_MEMBERSMANAGER_TYPES_EDIT_NAME" description="COM_MEMBERSMANAGER_TYPES_EDIT_NAME_DESC" />
 		<action name="type.edit.description" title="COM_MEMBERSMANAGER_TYPES_EDIT_DESCRIPTION" description="COM_MEMBERSMANAGER_TYPES_EDIT_DESCRIPTION_DESC" />
+		<action name="type.edit.groups_target" title="COM_MEMBERSMANAGER_TYPES_EDIT_GROUPS_TARGET" description="COM_MEMBERSMANAGER_TYPES_EDIT_GROUPS_TARGET_DESC" />
+		<action name="type.edit.groups_access" title="COM_MEMBERSMANAGER_TYPES_EDIT_GROUPS_ACCESS" description="COM_MEMBERSMANAGER_TYPES_EDIT_GROUPS_ACCESS_DESC" />
 		<action name="type.version" title="COM_MEMBERSMANAGER_TYPES_EDIT_VERSION" description="COM_MEMBERSMANAGER_TYPES_EDIT_VERSION_DESC" />
-	</section>
-	<section name="region">
-		<action name="region.edit" title="COM_MEMBERSMANAGER_REGIONS_EDIT" description="COM_MEMBERSMANAGER_REGIONS_EDIT_DESC" />
-		<action name="region.edit.own" title="COM_MEMBERSMANAGER_REGIONS_EDIT_OWN" description="COM_MEMBERSMANAGER_REGIONS_EDIT_OWN_DESC" />
-		<action name="region.edit.state" title="COM_MEMBERSMANAGER_REGIONS_EDIT_STATE" description="COM_MEMBERSMANAGER_REGIONS_EDIT_STATE_DESC" />
-		<action name="region.edit.created_by" title="COM_MEMBERSMANAGER_REGIONS_EDIT_CREATED_BY" description="COM_MEMBERSMANAGER_REGIONS_EDIT_CREATED_BY_DESC" />
-		<action name="region.edit.created" title="COM_MEMBERSMANAGER_REGIONS_EDIT_CREATED_DATE" description="COM_MEMBERSMANAGER_REGIONS_EDIT_CREATED_DATE_DESC" />
-		<action name="region.create" title="COM_MEMBERSMANAGER_REGIONS_CREATE" description="COM_MEMBERSMANAGER_REGIONS_CREATE_DESC" />
-		<action name="region.delete" title="COM_MEMBERSMANAGER_REGIONS_DELETE" description="COM_MEMBERSMANAGER_REGIONS_DELETE_DESC" />
-		<action name="region.access" title="COM_MEMBERSMANAGER_REGIONS_ACCESS" description="COM_MEMBERSMANAGER_REGIONS_ACCESS_DESC" />
-		<action name="region.edit.name" title="COM_MEMBERSMANAGER_REGIONS_EDIT_NAME" description="COM_MEMBERSMANAGER_REGIONS_EDIT_NAME_DESC" />
-		<action name="region.edit.country" title="COM_MEMBERSMANAGER_REGIONS_EDIT_COUNTRY" description="COM_MEMBERSMANAGER_REGIONS_EDIT_COUNTRY_DESC" />
-		<action name="region.edit.alias" title="COM_MEMBERSMANAGER_REGIONS_EDIT_ALIAS" description="COM_MEMBERSMANAGER_REGIONS_EDIT_ALIAS_DESC" />
-	</section>
-	<section name="country">
-		<action name="country.edit" title="COM_MEMBERSMANAGER_COUNTRIES_EDIT" description="COM_MEMBERSMANAGER_COUNTRIES_EDIT_DESC" />
-		<action name="country.edit.own" title="COM_MEMBERSMANAGER_COUNTRIES_EDIT_OWN" description="COM_MEMBERSMANAGER_COUNTRIES_EDIT_OWN_DESC" />
-		<action name="country.edit.state" title="COM_MEMBERSMANAGER_COUNTRIES_EDIT_STATE" description="COM_MEMBERSMANAGER_COUNTRIES_EDIT_STATE_DESC" />
-		<action name="country.create" title="COM_MEMBERSMANAGER_COUNTRIES_CREATE" description="COM_MEMBERSMANAGER_COUNTRIES_CREATE_DESC" />
-		<action name="country.delete" title="COM_MEMBERSMANAGER_COUNTRIES_DELETE" description="COM_MEMBERSMANAGER_COUNTRIES_DELETE_DESC" />
-		<action name="country.access" title="COM_MEMBERSMANAGER_COUNTRIES_ACCESS" description="COM_MEMBERSMANAGER_COUNTRIES_ACCESS_DESC" />
-	</section>
-	<section name="currency">
-		<action name="currency.edit" title="COM_MEMBERSMANAGER_CURRENCIES_EDIT" description="COM_MEMBERSMANAGER_CURRENCIES_EDIT_DESC" />
-		<action name="currency.edit.own" title="COM_MEMBERSMANAGER_CURRENCIES_EDIT_OWN" description="COM_MEMBERSMANAGER_CURRENCIES_EDIT_OWN_DESC" />
-		<action name="currency.edit.state" title="COM_MEMBERSMANAGER_CURRENCIES_EDIT_STATE" description="COM_MEMBERSMANAGER_CURRENCIES_EDIT_STATE_DESC" />
-		<action name="currency.create" title="COM_MEMBERSMANAGER_CURRENCIES_CREATE" description="COM_MEMBERSMANAGER_CURRENCIES_CREATE_DESC" />
-		<action name="currency.delete" title="COM_MEMBERSMANAGER_CURRENCIES_DELETE" description="COM_MEMBERSMANAGER_CURRENCIES_DELETE_DESC" />
-		<action name="currency.access" title="COM_MEMBERSMANAGER_CURRENCIES_ACCESS" description="COM_MEMBERSMANAGER_CURRENCIES_ACCESS_DESC" />
 	</section>
 </access>

@@ -14,9 +14,6 @@ defined('_JEXEC') or die('Restricted access');
 
 use Joomla\Registry\Registry;
 
-// import Joomla modelform library
-jimport('joomla.application.component.modeladmin');
-
 /**
  * Membersmanager Member Model
  */
@@ -49,6 +46,9 @@ class MembersmanagerModelMember extends JModelAdmin
 	 */
 	public function getTable($type = 'member', $prefix = 'MembersmanagerTable', $config = array())
 	{
+		// add table path for when model gets used from other component
+		$this->addTablePath(JPATH_ADMINISTRATOR . '/components/com_membersmanager/tables');
+		// get instance of the table
 		return JTable::getInstance($type, $prefix, $config);
 	}
 
@@ -113,9 +113,26 @@ class MembersmanagerModelMember extends JModelAdmin
 			}
 			else
 			{
+				// set the vast development method key
 				$this->vastDevMod = MembersmanagerHelper::randomkey(50);
 				MembersmanagerHelper::set($this->vastDevMod, 'member__'.$id);
 				MembersmanagerHelper::set('member__'.$id, $this->vastDevMod);
+				// set a return value if found
+				$jinput = JFactory::getApplication()->input;
+				$return = $jinput->get('return', null, 'base64');
+				MembersmanagerHelper::set($this->vastDevMod . '__return', $return);
+			}
+			// load values from user table
+			if (isset($item->user) && $item->user > 0 && isset($item->account) && (1 == $item->account || 4 == $item->account))
+			{
+				// load values from user table
+				$member = JFactory::getUser($item->user);
+				// set the name
+				$item->name = $member->name;
+				// set the useremail
+				$item->useremail = $member->email;
+				// set the username
+				$item->username = $member->username;
 			}
 			
 			if (!empty($item->id))
@@ -126,22 +143,25 @@ class MembersmanagerModelMember extends JModelAdmin
 		}
 
 		return $item;
-	} 
+	}
 
 	/**
 	 * Method to get the record form.
 	 *
 	 * @param   array    $data      Data for the form.
 	 * @param   boolean  $loadData  True if the form is to load its own data (default case), false if not.
+	 * @param   array    $options   Optional array of options for the form creation.
 	 *
 	 * @return  mixed  A JForm object on success, false on failure
 	 *
 	 * @since   1.6
 	 */
-	public function getForm($data = array(), $loadData = true)
+	public function getForm($data = array(), $loadData = true, $options = array('control' => 'jform'))
 	{
+		// set load data option
+		$options['load_data'] = $loadData;
 		// Get the form.
-		$form = $this->loadForm('com_membersmanager.member', 'member', array('control' => 'jform', 'load_data' => $loadData));
+		$form = $this->loadForm('com_membersmanager.member', 'member', $options);
 
 		if (empty($form))
 		{
@@ -201,474 +221,6 @@ class MembersmanagerModelMember extends JModelAdmin
 			// Disable fields while saving.
 			$form->setFieldAttribute('created', 'filter', 'unset');
 		}
-		// Modify the form based on Edit User access controls.
-		if ($id != 0 && (!$user->authorise('member.edit.user', 'com_membersmanager.member.' . (int) $id))
-			|| ($id == 0 && !$user->authorise('member.edit.user', 'com_membersmanager')))
-		{
-			// Disable fields for display.
-			$form->setFieldAttribute('user', 'disabled', 'true');
-			// Disable fields for display.
-			$form->setFieldAttribute('user', 'readonly', 'true');
-			// If there is no value continue.
-			if (!$form->getValue('user'))
-			{
-				// Disable fields while saving.
-				$form->setFieldAttribute('user', 'filter', 'unset');
-				// Disable fields while saving.
-				$form->setFieldAttribute('user', 'required', 'false');
-			}
-		}
-		// Modify the from the form based on User access controls.
-		if ($id != 0 && (!$user->authorise('member.access.user', 'com_membersmanager.member.' . (int) $id))
-			|| ($id == 0 && !$user->authorise('member.access.user', 'com_membersmanager')))
-		{
-			// Remove the field
-			$form->removeField('user');
-		}
-		// Modify the form based on View User access controls.
-		if ($id != 0 && (!$user->authorise('member.view.user', 'com_membersmanager.member.' . (int) $id))
-			|| ($id == 0 && !$user->authorise('member.view.user', 'com_membersmanager')))
-		{
-			// Make the field hidded.
-			$form->setFieldAttribute('user', 'type', 'hidden');
-			// If there is no value continue.
-			if (!$form->getValue('user'))
-			{
-				// Disable fields while saving.
-				$form->setFieldAttribute('user', 'filter', 'unset');
-				// Disable fields while saving.
-				$form->setFieldAttribute('user', 'required', 'false');
-			}
-		}
-		// Modify the form based on Edit Landline Phone access controls.
-		if ($id != 0 && (!$user->authorise('member.edit.landline_phone', 'com_membersmanager.member.' . (int) $id))
-			|| ($id == 0 && !$user->authorise('member.edit.landline_phone', 'com_membersmanager')))
-		{
-			// Disable fields for display.
-			$form->setFieldAttribute('landline_phone', 'disabled', 'true');
-			// Disable fields for display.
-			$form->setFieldAttribute('landline_phone', 'readonly', 'true');
-			// If there is no value continue.
-			if (!$form->getValue('landline_phone'))
-			{
-				// Disable fields while saving.
-				$form->setFieldAttribute('landline_phone', 'filter', 'unset');
-				// Disable fields while saving.
-				$form->setFieldAttribute('landline_phone', 'required', 'false');
-			}
-		}
-		// Modify the from the form based on Landline Phone access controls.
-		if ($id != 0 && (!$user->authorise('member.access.landline_phone', 'com_membersmanager.member.' . (int) $id))
-			|| ($id == 0 && !$user->authorise('member.access.landline_phone', 'com_membersmanager')))
-		{
-			// Remove the field
-			$form->removeField('landline_phone');
-		}
-		// Modify the form based on View Landline Phone access controls.
-		if ($id != 0 && (!$user->authorise('member.view.landline_phone', 'com_membersmanager.member.' . (int) $id))
-			|| ($id == 0 && !$user->authorise('member.view.landline_phone', 'com_membersmanager')))
-		{
-			// Make the field hidded.
-			$form->setFieldAttribute('landline_phone', 'type', 'hidden');
-			// If there is no value continue.
-			if (!$form->getValue('landline_phone'))
-			{
-				// Disable fields while saving.
-				$form->setFieldAttribute('landline_phone', 'filter', 'unset');
-				// Disable fields while saving.
-				$form->setFieldAttribute('landline_phone', 'required', 'false');
-			}
-		}
-		// Modify the form based on Edit Type access controls.
-		if ($id != 0 && (!$user->authorise('member.edit.type', 'com_membersmanager.member.' . (int) $id))
-			|| ($id == 0 && !$user->authorise('member.edit.type', 'com_membersmanager')))
-		{
-			// Disable fields for display.
-			$form->setFieldAttribute('type', 'disabled', 'true');
-			// Disable fields for display.
-			$form->setFieldAttribute('type', 'readonly', 'true');
-			// If there is no value continue.
-			if (!$form->getValue('type'))
-			{
-				// Disable fields while saving.
-				$form->setFieldAttribute('type', 'filter', 'unset');
-				// Disable fields while saving.
-				$form->setFieldAttribute('type', 'required', 'false');
-			}
-		}
-		// Modify the from the form based on Type access controls.
-		if ($id != 0 && (!$user->authorise('member.access.type', 'com_membersmanager.member.' . (int) $id))
-			|| ($id == 0 && !$user->authorise('member.access.type', 'com_membersmanager')))
-		{
-			// Remove the field
-			$form->removeField('type');
-		}
-		// Modify the form based on View Type access controls.
-		if ($id != 0 && (!$user->authorise('member.view.type', 'com_membersmanager.member.' . (int) $id))
-			|| ($id == 0 && !$user->authorise('member.view.type', 'com_membersmanager')))
-		{
-			// Make the field hidded.
-			$form->setFieldAttribute('type', 'type', 'hidden');
-			// If there is no value continue.
-			if (!$form->getValue('type'))
-			{
-				// Disable fields while saving.
-				$form->setFieldAttribute('type', 'filter', 'unset');
-				// Disable fields while saving.
-				$form->setFieldAttribute('type', 'required', 'false');
-			}
-		}
-		// Modify the form based on Edit Account access controls.
-		if ($id != 0 && (!$user->authorise('member.edit.account', 'com_membersmanager.member.' . (int) $id))
-			|| ($id == 0 && !$user->authorise('member.edit.account', 'com_membersmanager')))
-		{
-			// Disable fields for display.
-			$form->setFieldAttribute('account', 'disabled', 'true');
-			// Disable fields for display.
-			$form->setFieldAttribute('account', 'readonly', 'true');
-			// If there is no value continue.
-			if (!$form->getValue('account'))
-			{
-				// Disable fields while saving.
-				$form->setFieldAttribute('account', 'filter', 'unset');
-				// Disable fields while saving.
-				$form->setFieldAttribute('account', 'required', 'false');
-			}
-		}
-		// Modify the from the form based on Account access controls.
-		if ($id != 0 && (!$user->authorise('member.access.account', 'com_membersmanager.member.' . (int) $id))
-			|| ($id == 0 && !$user->authorise('member.access.account', 'com_membersmanager')))
-		{
-			// Remove the field
-			$form->removeField('account');
-		}
-		// Modify the form based on View Account access controls.
-		if ($id != 0 && (!$user->authorise('member.view.account', 'com_membersmanager.member.' . (int) $id))
-			|| ($id == 0 && !$user->authorise('member.view.account', 'com_membersmanager')))
-		{
-			// Make the field hidded.
-			$form->setFieldAttribute('account', 'type', 'hidden');
-			// If there is no value continue.
-			if (!$form->getValue('account'))
-			{
-				// Disable fields while saving.
-				$form->setFieldAttribute('account', 'filter', 'unset');
-				// Disable fields while saving.
-				$form->setFieldAttribute('account', 'required', 'false');
-			}
-		}
-		// Modify the form based on Edit Token access controls.
-		if ($id != 0 && (!$user->authorise('member.edit.token', 'com_membersmanager.member.' . (int) $id))
-			|| ($id == 0 && !$user->authorise('member.edit.token', 'com_membersmanager')))
-		{
-			// Disable fields for display.
-			$form->setFieldAttribute('token', 'disabled', 'true');
-			// Disable fields for display.
-			$form->setFieldAttribute('token', 'readonly', 'true');
-			// If there is no value continue.
-			if (!$form->getValue('token'))
-			{
-				// Disable fields while saving.
-				$form->setFieldAttribute('token', 'filter', 'unset');
-				// Disable fields while saving.
-				$form->setFieldAttribute('token', 'required', 'false');
-			}
-		}
-		// Modify the from the form based on Token access controls.
-		if ($id != 0 && (!$user->authorise('member.access.token', 'com_membersmanager.member.' . (int) $id))
-			|| ($id == 0 && !$user->authorise('member.access.token', 'com_membersmanager')))
-		{
-			// Remove the field
-			$form->removeField('token');
-		}
-		// Modify the form based on View Token access controls.
-		if ($id != 0 && (!$user->authorise('member.view.token', 'com_membersmanager.member.' . (int) $id))
-			|| ($id == 0 && !$user->authorise('member.view.token', 'com_membersmanager')))
-		{
-			// Make the field hidded.
-			$form->setFieldAttribute('token', 'type', 'hidden');
-			// If there is no value continue.
-			if (!$form->getValue('token'))
-			{
-				// Disable fields while saving.
-				$form->setFieldAttribute('token', 'filter', 'unset');
-				// Disable fields while saving.
-				$form->setFieldAttribute('token', 'required', 'false');
-			}
-		}
-		// Modify the form based on Edit Country access controls.
-		if ($id != 0 && (!$user->authorise('member.edit.country', 'com_membersmanager.member.' . (int) $id))
-			|| ($id == 0 && !$user->authorise('member.edit.country', 'com_membersmanager')))
-		{
-			// Disable fields for display.
-			$form->setFieldAttribute('country', 'disabled', 'true');
-			// Disable fields for display.
-			$form->setFieldAttribute('country', 'readonly', 'true');
-			// If there is no value continue.
-			if (!$form->getValue('country'))
-			{
-				// Disable fields while saving.
-				$form->setFieldAttribute('country', 'filter', 'unset');
-				// Disable fields while saving.
-				$form->setFieldAttribute('country', 'required', 'false');
-			}
-		}
-		// Modify the from the form based on Country access controls.
-		if ($id != 0 && (!$user->authorise('member.access.country', 'com_membersmanager.member.' . (int) $id))
-			|| ($id == 0 && !$user->authorise('member.access.country', 'com_membersmanager')))
-		{
-			// Remove the field
-			$form->removeField('country');
-		}
-		// Modify the form based on View Country access controls.
-		if ($id != 0 && (!$user->authorise('member.view.country', 'com_membersmanager.member.' . (int) $id))
-			|| ($id == 0 && !$user->authorise('member.view.country', 'com_membersmanager')))
-		{
-			// Make the field hidded.
-			$form->setFieldAttribute('country', 'type', 'hidden');
-			// If there is no value continue.
-			if (!$form->getValue('country'))
-			{
-				// Disable fields while saving.
-				$form->setFieldAttribute('country', 'filter', 'unset');
-				// Disable fields while saving.
-				$form->setFieldAttribute('country', 'required', 'false');
-			}
-		}
-		// Modify the form based on Edit Postalcode access controls.
-		if ($id != 0 && (!$user->authorise('member.edit.postalcode', 'com_membersmanager.member.' . (int) $id))
-			|| ($id == 0 && !$user->authorise('member.edit.postalcode', 'com_membersmanager')))
-		{
-			// Disable fields for display.
-			$form->setFieldAttribute('postalcode', 'disabled', 'true');
-			// Disable fields for display.
-			$form->setFieldAttribute('postalcode', 'readonly', 'true');
-			// If there is no value continue.
-			if (!$form->getValue('postalcode'))
-			{
-				// Disable fields while saving.
-				$form->setFieldAttribute('postalcode', 'filter', 'unset');
-				// Disable fields while saving.
-				$form->setFieldAttribute('postalcode', 'required', 'false');
-			}
-		}
-		// Modify the from the form based on Postalcode access controls.
-		if ($id != 0 && (!$user->authorise('member.access.postalcode', 'com_membersmanager.member.' . (int) $id))
-			|| ($id == 0 && !$user->authorise('member.access.postalcode', 'com_membersmanager')))
-		{
-			// Remove the field
-			$form->removeField('postalcode');
-		}
-		// Modify the form based on View Postalcode access controls.
-		if ($id != 0 && (!$user->authorise('member.view.postalcode', 'com_membersmanager.member.' . (int) $id))
-			|| ($id == 0 && !$user->authorise('member.view.postalcode', 'com_membersmanager')))
-		{
-			// Make the field hidded.
-			$form->setFieldAttribute('postalcode', 'type', 'hidden');
-			// If there is no value continue.
-			if (!$form->getValue('postalcode'))
-			{
-				// Disable fields while saving.
-				$form->setFieldAttribute('postalcode', 'filter', 'unset');
-				// Disable fields while saving.
-				$form->setFieldAttribute('postalcode', 'required', 'false');
-			}
-		}
-		// Modify the form based on Edit City access controls.
-		if ($id != 0 && (!$user->authorise('member.edit.city', 'com_membersmanager.member.' . (int) $id))
-			|| ($id == 0 && !$user->authorise('member.edit.city', 'com_membersmanager')))
-		{
-			// Disable fields for display.
-			$form->setFieldAttribute('city', 'disabled', 'true');
-			// Disable fields for display.
-			$form->setFieldAttribute('city', 'readonly', 'true');
-			// If there is no value continue.
-			if (!$form->getValue('city'))
-			{
-				// Disable fields while saving.
-				$form->setFieldAttribute('city', 'filter', 'unset');
-				// Disable fields while saving.
-				$form->setFieldAttribute('city', 'required', 'false');
-			}
-		}
-		// Modify the from the form based on City access controls.
-		if ($id != 0 && (!$user->authorise('member.access.city', 'com_membersmanager.member.' . (int) $id))
-			|| ($id == 0 && !$user->authorise('member.access.city', 'com_membersmanager')))
-		{
-			// Remove the field
-			$form->removeField('city');
-		}
-		// Modify the form based on View City access controls.
-		if ($id != 0 && (!$user->authorise('member.view.city', 'com_membersmanager.member.' . (int) $id))
-			|| ($id == 0 && !$user->authorise('member.view.city', 'com_membersmanager')))
-		{
-			// Make the field hidded.
-			$form->setFieldAttribute('city', 'type', 'hidden');
-			// If there is no value continue.
-			if (!$form->getValue('city'))
-			{
-				// Disable fields while saving.
-				$form->setFieldAttribute('city', 'filter', 'unset');
-				// Disable fields while saving.
-				$form->setFieldAttribute('city', 'required', 'false');
-			}
-		}
-		// Modify the form based on Edit Region access controls.
-		if ($id != 0 && (!$user->authorise('member.edit.region', 'com_membersmanager.member.' . (int) $id))
-			|| ($id == 0 && !$user->authorise('member.edit.region', 'com_membersmanager')))
-		{
-			// Disable fields for display.
-			$form->setFieldAttribute('region', 'disabled', 'true');
-			// Disable fields for display.
-			$form->setFieldAttribute('region', 'readonly', 'true');
-			// If there is no value continue.
-			if (!$form->getValue('region'))
-			{
-				// Disable fields while saving.
-				$form->setFieldAttribute('region', 'filter', 'unset');
-				// Disable fields while saving.
-				$form->setFieldAttribute('region', 'required', 'false');
-			}
-		}
-		// Modify the from the form based on Region access controls.
-		if ($id != 0 && (!$user->authorise('member.access.region', 'com_membersmanager.member.' . (int) $id))
-			|| ($id == 0 && !$user->authorise('member.access.region', 'com_membersmanager')))
-		{
-			// Remove the field
-			$form->removeField('region');
-		}
-		// Modify the form based on View Region access controls.
-		if ($id != 0 && (!$user->authorise('member.view.region', 'com_membersmanager.member.' . (int) $id))
-			|| ($id == 0 && !$user->authorise('member.view.region', 'com_membersmanager')))
-		{
-			// Make the field hidded.
-			$form->setFieldAttribute('region', 'type', 'hidden');
-			// If there is no value continue.
-			if (!$form->getValue('region'))
-			{
-				// Disable fields while saving.
-				$form->setFieldAttribute('region', 'filter', 'unset');
-				// Disable fields while saving.
-				$form->setFieldAttribute('region', 'required', 'false');
-			}
-		}
-		// Modify the form based on Edit Street access controls.
-		if ($id != 0 && (!$user->authorise('member.edit.street', 'com_membersmanager.member.' . (int) $id))
-			|| ($id == 0 && !$user->authorise('member.edit.street', 'com_membersmanager')))
-		{
-			// Disable fields for display.
-			$form->setFieldAttribute('street', 'disabled', 'true');
-			// Disable fields for display.
-			$form->setFieldAttribute('street', 'readonly', 'true');
-			// If there is no value continue.
-			if (!$form->getValue('street'))
-			{
-				// Disable fields while saving.
-				$form->setFieldAttribute('street', 'filter', 'unset');
-				// Disable fields while saving.
-				$form->setFieldAttribute('street', 'required', 'false');
-			}
-		}
-		// Modify the from the form based on Street access controls.
-		if ($id != 0 && (!$user->authorise('member.access.street', 'com_membersmanager.member.' . (int) $id))
-			|| ($id == 0 && !$user->authorise('member.access.street', 'com_membersmanager')))
-		{
-			// Remove the field
-			$form->removeField('street');
-		}
-		// Modify the form based on View Street access controls.
-		if ($id != 0 && (!$user->authorise('member.view.street', 'com_membersmanager.member.' . (int) $id))
-			|| ($id == 0 && !$user->authorise('member.view.street', 'com_membersmanager')))
-		{
-			// Make the field hidded.
-			$form->setFieldAttribute('street', 'type', 'hidden');
-			// If there is no value continue.
-			if (!$form->getValue('street'))
-			{
-				// Disable fields while saving.
-				$form->setFieldAttribute('street', 'filter', 'unset');
-				// Disable fields while saving.
-				$form->setFieldAttribute('street', 'required', 'false');
-			}
-		}
-		// Modify the form based on Edit Postal access controls.
-		if ($id != 0 && (!$user->authorise('member.edit.postal', 'com_membersmanager.member.' . (int) $id))
-			|| ($id == 0 && !$user->authorise('member.edit.postal', 'com_membersmanager')))
-		{
-			// Disable fields for display.
-			$form->setFieldAttribute('postal', 'disabled', 'true');
-			// Disable fields for display.
-			$form->setFieldAttribute('postal', 'readonly', 'true');
-			// If there is no value continue.
-			if (!$form->getValue('postal'))
-			{
-				// Disable fields while saving.
-				$form->setFieldAttribute('postal', 'filter', 'unset');
-				// Disable fields while saving.
-				$form->setFieldAttribute('postal', 'required', 'false');
-			}
-		}
-		// Modify the from the form based on Postal access controls.
-		if ($id != 0 && (!$user->authorise('member.access.postal', 'com_membersmanager.member.' . (int) $id))
-			|| ($id == 0 && !$user->authorise('member.access.postal', 'com_membersmanager')))
-		{
-			// Remove the field
-			$form->removeField('postal');
-		}
-		// Modify the form based on View Postal access controls.
-		if ($id != 0 && (!$user->authorise('member.view.postal', 'com_membersmanager.member.' . (int) $id))
-			|| ($id == 0 && !$user->authorise('member.view.postal', 'com_membersmanager')))
-		{
-			// Make the field hidded.
-			$form->setFieldAttribute('postal', 'type', 'hidden');
-			// If there is no value continue.
-			if (!$form->getValue('postal'))
-			{
-				// Disable fields while saving.
-				$form->setFieldAttribute('postal', 'filter', 'unset');
-				// Disable fields while saving.
-				$form->setFieldAttribute('postal', 'required', 'false');
-			}
-		}
-		// Modify the form based on Edit Mobile Phone access controls.
-		if ($id != 0 && (!$user->authorise('member.edit.mobile_phone', 'com_membersmanager.member.' . (int) $id))
-			|| ($id == 0 && !$user->authorise('member.edit.mobile_phone', 'com_membersmanager')))
-		{
-			// Disable fields for display.
-			$form->setFieldAttribute('mobile_phone', 'disabled', 'true');
-			// Disable fields for display.
-			$form->setFieldAttribute('mobile_phone', 'readonly', 'true');
-			// If there is no value continue.
-			if (!$form->getValue('mobile_phone'))
-			{
-				// Disable fields while saving.
-				$form->setFieldAttribute('mobile_phone', 'filter', 'unset');
-				// Disable fields while saving.
-				$form->setFieldAttribute('mobile_phone', 'required', 'false');
-			}
-		}
-		// Modify the from the form based on Mobile Phone access controls.
-		if ($id != 0 && (!$user->authorise('member.access.mobile_phone', 'com_membersmanager.member.' . (int) $id))
-			|| ($id == 0 && !$user->authorise('member.access.mobile_phone', 'com_membersmanager')))
-		{
-			// Remove the field
-			$form->removeField('mobile_phone');
-		}
-		// Modify the form based on View Mobile Phone access controls.
-		if ($id != 0 && (!$user->authorise('member.view.mobile_phone', 'com_membersmanager.member.' . (int) $id))
-			|| ($id == 0 && !$user->authorise('member.view.mobile_phone', 'com_membersmanager')))
-		{
-			// Make the field hidded.
-			$form->setFieldAttribute('mobile_phone', 'type', 'hidden');
-			// If there is no value continue.
-			if (!$form->getValue('mobile_phone'))
-			{
-				// Disable fields while saving.
-				$form->setFieldAttribute('mobile_phone', 'filter', 'unset');
-				// Disable fields while saving.
-				$form->setFieldAttribute('mobile_phone', 'required', 'false');
-			}
-		}
 		// Modify the form based on Edit Name access controls.
 		if ($id != 0 && (!$user->authorise('member.edit.name', 'com_membersmanager.member.' . (int) $id))
 			|| ($id == 0 && !$user->authorise('member.edit.name', 'com_membersmanager')))
@@ -686,13 +238,6 @@ class MembersmanagerModelMember extends JModelAdmin
 				$form->setFieldAttribute('name', 'required', 'false');
 			}
 		}
-		// Modify the from the form based on Name access controls.
-		if ($id != 0 && (!$user->authorise('member.access.name', 'com_membersmanager.member.' . (int) $id))
-			|| ($id == 0 && !$user->authorise('member.access.name', 'com_membersmanager')))
-		{
-			// Remove the field
-			$form->removeField('name');
-		}
 		// Modify the form based on View Name access controls.
 		if ($id != 0 && (!$user->authorise('member.view.name', 'com_membersmanager.member.' . (int) $id))
 			|| ($id == 0 && !$user->authorise('member.view.name', 'com_membersmanager')))
@@ -706,45 +251,6 @@ class MembersmanagerModelMember extends JModelAdmin
 				$form->setFieldAttribute('name', 'filter', 'unset');
 				// Disable fields while saving.
 				$form->setFieldAttribute('name', 'required', 'false');
-			}
-		}
-		// Modify the form based on Edit Website access controls.
-		if ($id != 0 && (!$user->authorise('member.edit.website', 'com_membersmanager.member.' . (int) $id))
-			|| ($id == 0 && !$user->authorise('member.edit.website', 'com_membersmanager')))
-		{
-			// Disable fields for display.
-			$form->setFieldAttribute('website', 'disabled', 'true');
-			// Disable fields for display.
-			$form->setFieldAttribute('website', 'readonly', 'true');
-			// If there is no value continue.
-			if (!$form->getValue('website'))
-			{
-				// Disable fields while saving.
-				$form->setFieldAttribute('website', 'filter', 'unset');
-				// Disable fields while saving.
-				$form->setFieldAttribute('website', 'required', 'false');
-			}
-		}
-		// Modify the from the form based on Website access controls.
-		if ($id != 0 && (!$user->authorise('member.access.website', 'com_membersmanager.member.' . (int) $id))
-			|| ($id == 0 && !$user->authorise('member.access.website', 'com_membersmanager')))
-		{
-			// Remove the field
-			$form->removeField('website');
-		}
-		// Modify the form based on View Website access controls.
-		if ($id != 0 && (!$user->authorise('member.view.website', 'com_membersmanager.member.' . (int) $id))
-			|| ($id == 0 && !$user->authorise('member.view.website', 'com_membersmanager')))
-		{
-			// Make the field hidded.
-			$form->setFieldAttribute('website', 'type', 'hidden');
-			// If there is no value continue.
-			if (!$form->getValue('website'))
-			{
-				// Disable fields while saving.
-				$form->setFieldAttribute('website', 'filter', 'unset');
-				// Disable fields while saving.
-				$form->setFieldAttribute('website', 'required', 'false');
 			}
 		}
 		// Modify the form based on Edit Email access controls.
@@ -786,6 +292,141 @@ class MembersmanagerModelMember extends JModelAdmin
 				$form->setFieldAttribute('email', 'required', 'false');
 			}
 		}
+		// Modify the form based on Edit Account access controls.
+		if ($id != 0 && (!$user->authorise('member.edit.account', 'com_membersmanager.member.' . (int) $id))
+			|| ($id == 0 && !$user->authorise('member.edit.account', 'com_membersmanager')))
+		{
+			// Disable fields for display.
+			$form->setFieldAttribute('account', 'disabled', 'true');
+			// Disable fields for display.
+			$form->setFieldAttribute('account', 'readonly', 'true');
+			// If there is no value continue.
+			if (!$form->getValue('account'))
+			{
+				// Disable fields while saving.
+				$form->setFieldAttribute('account', 'filter', 'unset');
+				// Disable fields while saving.
+				$form->setFieldAttribute('account', 'required', 'false');
+			}
+		}
+		// Modify the form based on View Account access controls.
+		if ($id != 0 && (!$user->authorise('member.view.account', 'com_membersmanager.member.' . (int) $id))
+			|| ($id == 0 && !$user->authorise('member.view.account', 'com_membersmanager')))
+		{
+			// Make the field hidded.
+			$form->setFieldAttribute('account', 'type', 'hidden');
+			// If there is no value continue.
+			if (!$form->getValue('account'))
+			{
+				// Disable fields while saving.
+				$form->setFieldAttribute('account', 'filter', 'unset');
+				// Disable fields while saving.
+				$form->setFieldAttribute('account', 'required', 'false');
+			}
+		}
+		// Modify the form based on Edit User access controls.
+		if ($id != 0 && (!$user->authorise('member.edit.user', 'com_membersmanager.member.' . (int) $id))
+			|| ($id == 0 && !$user->authorise('member.edit.user', 'com_membersmanager')))
+		{
+			// Disable fields for display.
+			$form->setFieldAttribute('user', 'disabled', 'true');
+			// Disable fields for display.
+			$form->setFieldAttribute('user', 'readonly', 'true');
+			// If there is no value continue.
+			if (!$form->getValue('user'))
+			{
+				// Disable fields while saving.
+				$form->setFieldAttribute('user', 'filter', 'unset');
+				// Disable fields while saving.
+				$form->setFieldAttribute('user', 'required', 'false');
+			}
+		}
+		// Modify the form based on View User access controls.
+		if ($id != 0 && (!$user->authorise('member.view.user', 'com_membersmanager.member.' . (int) $id))
+			|| ($id == 0 && !$user->authorise('member.view.user', 'com_membersmanager')))
+		{
+			// Make the field hidded.
+			$form->setFieldAttribute('user', 'type', 'hidden');
+			// If there is no value continue.
+			if (!$form->getValue('user'))
+			{
+				// Disable fields while saving.
+				$form->setFieldAttribute('user', 'filter', 'unset');
+				// Disable fields while saving.
+				$form->setFieldAttribute('user', 'required', 'false');
+			}
+		}
+		// Modify the form based on Edit Token access controls.
+		if ($id != 0 && (!$user->authorise('member.edit.token', 'com_membersmanager.member.' . (int) $id))
+			|| ($id == 0 && !$user->authorise('member.edit.token', 'com_membersmanager')))
+		{
+			// Disable fields for display.
+			$form->setFieldAttribute('token', 'disabled', 'true');
+			// Disable fields for display.
+			$form->setFieldAttribute('token', 'readonly', 'true');
+			// If there is no value continue.
+			if (!$form->getValue('token'))
+			{
+				// Disable fields while saving.
+				$form->setFieldAttribute('token', 'filter', 'unset');
+				// Disable fields while saving.
+				$form->setFieldAttribute('token', 'required', 'false');
+			}
+		}
+		// Modify the form based on View Token access controls.
+		if ($id != 0 && (!$user->authorise('member.view.token', 'com_membersmanager.member.' . (int) $id))
+			|| ($id == 0 && !$user->authorise('member.view.token', 'com_membersmanager')))
+		{
+			// Make the field hidded.
+			$form->setFieldAttribute('token', 'type', 'hidden');
+			// If there is no value continue.
+			if (!$form->getValue('token'))
+			{
+				// Disable fields while saving.
+				$form->setFieldAttribute('token', 'filter', 'unset');
+				// Disable fields while saving.
+				$form->setFieldAttribute('token', 'required', 'false');
+			}
+		}
+		// Modify the form based on Edit Profile Image access controls.
+		if ($id != 0 && (!$user->authorise('member.edit.profile_image', 'com_membersmanager.member.' . (int) $id))
+			|| ($id == 0 && !$user->authorise('member.edit.profile_image', 'com_membersmanager')))
+		{
+			// Disable fields for display.
+			$form->setFieldAttribute('profile_image', 'disabled', 'true');
+			// Disable fields for display.
+			$form->setFieldAttribute('profile_image', 'readonly', 'true');
+			// If there is no value continue.
+			if (!$form->getValue('profile_image'))
+			{
+				// Disable fields while saving.
+				$form->setFieldAttribute('profile_image', 'filter', 'unset');
+				// Disable fields while saving.
+				$form->setFieldAttribute('profile_image', 'required', 'false');
+			}
+		}
+		// Modify the from the form based on Profile Image access controls.
+		if ($id != 0 && (!$user->authorise('member.access.profile_image', 'com_membersmanager.member.' . (int) $id))
+			|| ($id == 0 && !$user->authorise('member.access.profile_image', 'com_membersmanager')))
+		{
+			// Remove the field
+			$form->removeField('profile_image');
+		}
+		// Modify the form based on View Profile Image access controls.
+		if ($id != 0 && (!$user->authorise('member.view.profile_image', 'com_membersmanager.member.' . (int) $id))
+			|| ($id == 0 && !$user->authorise('member.view.profile_image', 'com_membersmanager')))
+		{
+			// Make the field hidded.
+			$form->setFieldAttribute('profile_image', 'type', 'hidden');
+			// If there is no value continue.
+			if (!$form->getValue('profile_image'))
+			{
+				// Disable fields while saving.
+				$form->setFieldAttribute('profile_image', 'filter', 'unset');
+				// Disable fields while saving.
+				$form->setFieldAttribute('profile_image', 'required', 'false');
+			}
+		}
 		// Modify the form based on Edit Main Member access controls.
 		if ($id != 0 && (!$user->authorise('member.edit.main_member', 'com_membersmanager.member.' . (int) $id))
 			|| ($id == 0 && !$user->authorise('member.edit.main_member', 'com_membersmanager')))
@@ -803,13 +444,6 @@ class MembersmanagerModelMember extends JModelAdmin
 				$form->setFieldAttribute('main_member', 'required', 'false');
 			}
 		}
-		// Modify the from the form based on Main Member access controls.
-		if ($id != 0 && (!$user->authorise('member.access.main_member', 'com_membersmanager.member.' . (int) $id))
-			|| ($id == 0 && !$user->authorise('member.access.main_member', 'com_membersmanager')))
-		{
-			// Remove the field
-			$form->removeField('main_member');
-		}
 		// Modify the form based on View Main Member access controls.
 		if ($id != 0 && (!$user->authorise('member.view.main_member', 'com_membersmanager.member.' . (int) $id))
 			|| ($id == 0 && !$user->authorise('member.view.main_member', 'com_membersmanager')))
@@ -825,17 +459,252 @@ class MembersmanagerModelMember extends JModelAdmin
 				$form->setFieldAttribute('main_member', 'required', 'false');
 			}
 		}
+		// Modify the form based on Edit Password Check access controls.
+		if ($id != 0 && (!$user->authorise('member.edit.password_check', 'com_membersmanager.member.' . (int) $id))
+			|| ($id == 0 && !$user->authorise('member.edit.password_check', 'com_membersmanager')))
+		{
+			// Disable fields for display.
+			$form->setFieldAttribute('password_check', 'disabled', 'true');
+			// Disable fields for display.
+			$form->setFieldAttribute('password_check', 'readonly', 'true');
+			// If there is no value continue.
+			if (!$form->getValue('password_check'))
+			{
+				// Disable fields while saving.
+				$form->setFieldAttribute('password_check', 'filter', 'unset');
+				// Disable fields while saving.
+				$form->setFieldAttribute('password_check', 'required', 'false');
+			}
+		}
+		// Modify the from the form based on Password Check access controls.
+		if ($id != 0 && (!$user->authorise('member.access.password_check', 'com_membersmanager.member.' . (int) $id))
+			|| ($id == 0 && !$user->authorise('member.access.password_check', 'com_membersmanager')))
+		{
+			// Remove the field
+			$form->removeField('password_check');
+		}
+		// Modify the form based on View Password Check access controls.
+		if ($id != 0 && (!$user->authorise('member.view.password_check', 'com_membersmanager.member.' . (int) $id))
+			|| ($id == 0 && !$user->authorise('member.view.password_check', 'com_membersmanager')))
+		{
+			// Make the field hidded.
+			$form->setFieldAttribute('password_check', 'type', 'hidden');
+			// If there is no value continue.
+			if (!$form->getValue('password_check'))
+			{
+				// Disable fields while saving.
+				$form->setFieldAttribute('password_check', 'filter', 'unset');
+				// Disable fields while saving.
+				$form->setFieldAttribute('password_check', 'required', 'false');
+			}
+		}
+		// Modify the form based on Edit Password access controls.
+		if ($id != 0 && (!$user->authorise('member.edit.password', 'com_membersmanager.member.' . (int) $id))
+			|| ($id == 0 && !$user->authorise('member.edit.password', 'com_membersmanager')))
+		{
+			// Disable fields for display.
+			$form->setFieldAttribute('password', 'disabled', 'true');
+			// Disable fields for display.
+			$form->setFieldAttribute('password', 'readonly', 'true');
+			// If there is no value continue.
+			if (!$form->getValue('password'))
+			{
+				// Disable fields while saving.
+				$form->setFieldAttribute('password', 'filter', 'unset');
+				// Disable fields while saving.
+				$form->setFieldAttribute('password', 'required', 'false');
+			}
+		}
+		// Modify the from the form based on Password access controls.
+		if ($id != 0 && (!$user->authorise('member.access.password', 'com_membersmanager.member.' . (int) $id))
+			|| ($id == 0 && !$user->authorise('member.access.password', 'com_membersmanager')))
+		{
+			// Remove the field
+			$form->removeField('password');
+		}
+		// Modify the form based on View Password access controls.
+		if ($id != 0 && (!$user->authorise('member.view.password', 'com_membersmanager.member.' . (int) $id))
+			|| ($id == 0 && !$user->authorise('member.view.password', 'com_membersmanager')))
+		{
+			// Make the field hidded.
+			$form->setFieldAttribute('password', 'type', 'hidden');
+			// If there is no value continue.
+			if (!$form->getValue('password'))
+			{
+				// Disable fields while saving.
+				$form->setFieldAttribute('password', 'filter', 'unset');
+				// Disable fields while saving.
+				$form->setFieldAttribute('password', 'required', 'false');
+			}
+		}
+		// Modify the form based on Edit Useremail access controls.
+		if ($id != 0 && (!$user->authorise('member.edit.useremail', 'com_membersmanager.member.' . (int) $id))
+			|| ($id == 0 && !$user->authorise('member.edit.useremail', 'com_membersmanager')))
+		{
+			// Disable fields for display.
+			$form->setFieldAttribute('useremail', 'disabled', 'true');
+			// Disable fields for display.
+			$form->setFieldAttribute('useremail', 'readonly', 'true');
+			// If there is no value continue.
+			if (!$form->getValue('useremail'))
+			{
+				// Disable fields while saving.
+				$form->setFieldAttribute('useremail', 'filter', 'unset');
+				// Disable fields while saving.
+				$form->setFieldAttribute('useremail', 'required', 'false');
+			}
+		}
+		// Modify the from the form based on Useremail access controls.
+		if ($id != 0 && (!$user->authorise('member.access.useremail', 'com_membersmanager.member.' . (int) $id))
+			|| ($id == 0 && !$user->authorise('member.access.useremail', 'com_membersmanager')))
+		{
+			// Remove the field
+			$form->removeField('useremail');
+		}
+		// Modify the form based on View Useremail access controls.
+		if ($id != 0 && (!$user->authorise('member.view.useremail', 'com_membersmanager.member.' . (int) $id))
+			|| ($id == 0 && !$user->authorise('member.view.useremail', 'com_membersmanager')))
+		{
+			// Make the field hidded.
+			$form->setFieldAttribute('useremail', 'type', 'hidden');
+			// If there is no value continue.
+			if (!$form->getValue('useremail'))
+			{
+				// Disable fields while saving.
+				$form->setFieldAttribute('useremail', 'filter', 'unset');
+				// Disable fields while saving.
+				$form->setFieldAttribute('useremail', 'required', 'false');
+			}
+		}
+		// Modify the form based on Edit Username access controls.
+		if ($id != 0 && (!$user->authorise('member.edit.username', 'com_membersmanager.member.' . (int) $id))
+			|| ($id == 0 && !$user->authorise('member.edit.username', 'com_membersmanager')))
+		{
+			// Disable fields for display.
+			$form->setFieldAttribute('username', 'disabled', 'true');
+			// Disable fields for display.
+			$form->setFieldAttribute('username', 'readonly', 'true');
+			// If there is no value continue.
+			if (!$form->getValue('username'))
+			{
+				// Disable fields while saving.
+				$form->setFieldAttribute('username', 'filter', 'unset');
+				// Disable fields while saving.
+				$form->setFieldAttribute('username', 'required', 'false');
+			}
+		}
+		// Modify the from the form based on Username access controls.
+		if ($id != 0 && (!$user->authorise('member.access.username', 'com_membersmanager.member.' . (int) $id))
+			|| ($id == 0 && !$user->authorise('member.access.username', 'com_membersmanager')))
+		{
+			// Remove the field
+			$form->removeField('username');
+		}
+		// Modify the form based on View Username access controls.
+		if ($id != 0 && (!$user->authorise('member.view.username', 'com_membersmanager.member.' . (int) $id))
+			|| ($id == 0 && !$user->authorise('member.view.username', 'com_membersmanager')))
+		{
+			// Make the field hidded.
+			$form->setFieldAttribute('username', 'type', 'hidden');
+			// If there is no value continue.
+			if (!$form->getValue('username'))
+			{
+				// Disable fields while saving.
+				$form->setFieldAttribute('username', 'filter', 'unset');
+				// Disable fields while saving.
+				$form->setFieldAttribute('username', 'required', 'false');
+			}
+		}
+		// Modify the form based on Edit Surname access controls.
+		if ($id != 0 && (!$user->authorise('member.edit.surname', 'com_membersmanager.member.' . (int) $id))
+			|| ($id == 0 && !$user->authorise('member.edit.surname', 'com_membersmanager')))
+		{
+			// Disable fields for display.
+			$form->setFieldAttribute('surname', 'disabled', 'true');
+			// Disable fields for display.
+			$form->setFieldAttribute('surname', 'readonly', 'true');
+			// If there is no value continue.
+			if (!$form->getValue('surname'))
+			{
+				// Disable fields while saving.
+				$form->setFieldAttribute('surname', 'filter', 'unset');
+				// Disable fields while saving.
+				$form->setFieldAttribute('surname', 'required', 'false');
+			}
+		}
+		// Modify the form based on View Surname access controls.
+		if ($id != 0 && (!$user->authorise('member.view.surname', 'com_membersmanager.member.' . (int) $id))
+			|| ($id == 0 && !$user->authorise('member.view.surname', 'com_membersmanager')))
+		{
+			// Make the field hidded.
+			$form->setFieldAttribute('surname', 'type', 'hidden');
+			// If there is no value continue.
+			if (!$form->getValue('surname'))
+			{
+				// Disable fields while saving.
+				$form->setFieldAttribute('surname', 'filter', 'unset');
+				// Disable fields while saving.
+				$form->setFieldAttribute('surname', 'required', 'false');
+			}
+		}
+		// Modify the form based on Edit Type access controls.
+		if ($id != 0 && (!$user->authorise('member.edit.type', 'com_membersmanager.member.' . (int) $id))
+			|| ($id == 0 && !$user->authorise('member.edit.type', 'com_membersmanager')))
+		{
+			// Disable fields for display.
+			$form->setFieldAttribute('type', 'disabled', 'true');
+			// Disable fields for display.
+			$form->setFieldAttribute('type', 'readonly', 'true');
+			// If there is no value continue.
+			if (!$form->getValue('type'))
+			{
+				// Disable fields while saving.
+				$form->setFieldAttribute('type', 'filter', 'unset');
+				// Disable fields while saving.
+				$form->setFieldAttribute('type', 'required', 'false');
+			}
+		}
+		// Modify the form based on View Type access controls.
+		if ($id != 0 && (!$user->authorise('member.view.type', 'com_membersmanager.member.' . (int) $id))
+			|| ($id == 0 && !$user->authorise('member.view.type', 'com_membersmanager')))
+		{
+			// Make the field hidded.
+			$form->setFieldAttribute('type', 'type', 'hidden');
+			// If there is no value continue.
+			if (!$form->getValue('type'))
+			{
+				// Disable fields while saving.
+				$form->setFieldAttribute('type', 'filter', 'unset');
+				// Disable fields while saving.
+				$form->setFieldAttribute('type', 'required', 'false');
+			}
+		}
 		// Only load these values if no id is found
 		if (0 == $id)
 		{
-			// Set redirected field name
-			$redirectedField = $jinput->get('ref', null, 'STRING');
-			// Set redirected field value
-			$redirectedValue = $jinput->get('refid', 0, 'INT');
+			// Set redirected view name
+			$redirectedView = $jinput->get('ref', null, 'STRING');
+			// Set field name (or fall back to view name)
+			$redirectedField = $jinput->get('field', $redirectedView, 'STRING');
+			// Set redirected view id
+			$redirectedId = $jinput->get('refid', 0, 'INT');
+			// Set field id (or fall back to redirected view id)
+			$redirectedValue = $jinput->get('field_id', $redirectedId, 'INT');
 			if (0 != $redirectedValue && $redirectedField)
 			{
 				// Now set the local-redirected field default value
 				$form->setValue($redirectedField, null, $redirectedValue);
+			}
+		}
+		// if this is a site area hide the user field
+		if (JFactory::getApplication()->isSite() || $form->getValue('user'))
+		{
+			// Disable fields for being edited directly
+			$form->setFieldAttribute('user', 'readonly', 'true');
+			// only make hidden if site area
+			if (JFactory::getApplication()->isSite())
+			{
+				$form->setFieldAttribute('user', 'type', 'hidden');
 			}
 		}
 		return $form;
@@ -1032,7 +901,7 @@ class MembersmanagerModelMember extends JModelAdmin
 			}
 		}
 		return parent::validate($form, $data, $group);
-	} 
+	}
 
 	/**
 	 * Method to get the unique fields of this table.
@@ -1257,6 +1126,12 @@ class MembersmanagerModelMember extends JModelAdmin
 				}
 			}
 
+			// Only for strings
+			if (MembersmanagerHelper::checkString($this->table->name) && !is_numeric($this->table->name))
+			{
+				$this->table->name = $this->generateUniqe('name',$this->table->name);
+			}
+
 			// insert all set values
 			if (MembersmanagerHelper::checkArray($values))
 			{
@@ -1316,7 +1191,7 @@ class MembersmanagerModelMember extends JModelAdmin
 		$this->cleanCache();
 
 		return $newIds;
-	} 
+	}
 
 	/**
 	 * Batch move items to a new category
@@ -1448,7 +1323,171 @@ class MembersmanagerModelMember extends JModelAdmin
 			$metadata = new JRegistry;
 			$metadata->loadArray($data['metadata']);
 			$data['metadata'] = (string) $metadata;
-		} 
+		}
+
+		// check if this is a linked user (MUST STILL DO PERMISSIONS)
+		if (isset($data['account']) && (1 == $data['account'] || 4 == $data['account']))
+		{
+			// get the application object
+			$app = JFactory::getApplication();
+			// check if member already exist
+			if (isset($data['id']) && $data['id'] > 0 && isset($data['user']) && $data['user'] > 0)
+			{
+				// do not allow user link to be changed (should have done this in the controller)
+				if (($alreadyUser = MembersmanagerHelper::getVar('member', $data['id'], 'id', 'user')) !== false && is_numeric($alreadyUser) && $alreadyUser > 0 && $alreadyUser != $data['user'])
+				{
+					$app->enqueueMessage(JText::_('COM_MEMBERSMANAGER_MEMBER_IS_ALREADY_LINKED_TO_AN_USER_THIS_CAN_NOT_BE_CHANGED_CONTACT_YOUR_SYSTEM_ADMINISTRATOR_IF_YOU_NEED_MORE_HELP'), 'Error');
+					return false;
+				}
+			}
+			// set bucket to update/create user
+			$bucket = array();
+			// set name
+			$bucket['name'] = $data['name'];
+			// set username
+			$bucket['username'] = $data['username'];
+			// set useremail
+			$bucket['email'] = $data['useremail'];
+			// start message bucket
+			$message = array();
+			// check if user already linked
+			if (isset($data['user']) && $data['user'] > 0)
+			{
+				// set user ID
+				$bucket['id'] = $data['user'];
+				// get user exciting groups
+				$memberUser = JFactory::getUser($bucket['id']);
+				$excitingGroups = $memberUser->get('groups');
+				$typeGroups = array();
+				// set the groups
+				if (isset($data['type']) && $data['type'] > 0)
+				{
+					// get the target groups
+					$typeGroups = MembersmanagerHelper::getVar('type', $data['type'], 'id', 'groups_target');
+					// convert to array
+					if (MembersmanagerHelper::checkJson($typeGroups))
+					{
+						$typeGroups = (array) json_decode($typeGroups, true);
+					}
+					elseif (is_numeric($typeGroups))
+					{
+						$typeGroups = array((int) $typeGroups);
+					}
+				}
+				// load the user groups (TODO)
+				$bucket['groups'] = MembersmanagerHelper::mergeArrays(array($excitingGroups, $typeGroups));
+				// set password
+				if (empty($data['password']) || empty($data['password_check']))
+				{
+					$bucket['password'] = JFactory::getUser($data['user'])->password;
+					$bucket['password2'] = $bucket['password'];
+				}
+				else
+				{
+					$bucket['password'] = $data['password'];
+					$bucket['password2'] = $data['password_check'];
+				}
+				// update exiting user
+				$done = MembersmanagerHelper::updateUser($bucket);
+				if (!is_numeric($done) || $done != $data['user'])
+				{
+					$app->enqueueMessage($done, 'Error');
+					// we still check if user was created.... (TODO)
+					if ($didCreate = JUserHelper::getUserId($bucket['username']))
+					{
+						$data['user'] = $didCreate;
+					}
+				}
+			}
+			else
+			{
+				// set password
+				if (isset($data['password']) && isset($data['password_check']))
+				{
+					$bucket['password'] = $data['password'];
+					$bucket['password2'] = $data['password_check'];
+				}
+				// create new user
+				$done = MembersmanagerHelper::createUser($bucket);
+				if (is_numeric($done))
+				{
+					// make sure to set the user value
+					$data['user'] = $done;
+					if (isset($data['type']) && $data['type'] > 0)
+					{
+						// get the target groups
+						$_groups = MembersmanagerHelper::getVar('type', $data['type'], 'id', 'groups_target');
+						// convert to array
+						if (MembersmanagerHelper::checkJson($_groups))
+						{
+							$groups = (array) json_decode($_groups, true);
+						}
+						elseif (is_numeric($_groups))
+						{
+							$groups = array((int) $_groups);
+						}
+					}
+					// check if we have groups
+					if (isset($groups) && $groups)
+					{
+						// update the user groups
+						JUserHelper::setUserGroups((int) $done ,(array) $groups);
+					}
+					else
+					{
+						// notice that the group was not set for this user
+						$app->enqueueMessage(JText::_('COM_MEMBERSMANAGER_MEMBER_WAS_NOT_ADDED_TO_ANY_GROUPS_PLEASE_INFORM_YOUR_SYSTEM_ADMINISTRATOR'), 'Error');
+					}
+					$app->enqueueMessage(JText::_('COM_MEMBERSMANAGER_MEMBER_WAS_CREATED_SUCCESSFULLY_AND_THE_LOGIN_DETAILS_WAS_EMAILED_TO_THE_MEMBER'), 'Success');
+				}
+				else
+				{
+					$app->enqueueMessage($done, 'Error');
+				}
+				// we still check if user was created.... (TODO)
+				if (!is_numeric($done) && ($didCreate = JUserHelper::getUserId($bucket['username'])))
+				{
+					$data['user'] = $didCreate;
+				}
+			}
+		}
+		// always clear out password!!
+		unset($data['password']);
+		unset($data['password_check']);
+		// clear out user if error found
+		if (empty($data['user']) || $data['user'] == 0 || empty($data['account']) || (1 != $data['account'] && 4 != $data['account']))
+		{
+			// if not a linked account, then no user can be set
+			$data['user'] = '';
+			$data['username'] = '';
+			$data['useremail'] = '';
+		}
+		// check if token is set
+		if (empty($data['token']))
+		{
+			// get a token
+			$token = call_user_func(function($data) {
+				// get the name of this member
+				if ((1 == $data['account'] || 4 == $data['account']) && isset($data['user']) && $data['user'] > 0)
+				{
+					return JFactory::getUser($data['user'])->name;
+				}
+				elseif (isset($data['name']) && MembersmanagerHelper::checkString($data['name']))
+				{
+					return $data['name'];
+				}
+				return MembersmanagerHelper::randomkey(8);
+			}, $data);
+			// split at upper case
+			$tokenArray = (array) preg_split('/(?=[A-Z])/', trim($token), -1, PREG_SPLIT_NO_EMPTY);
+			// make string safe
+			$data['token'] = MembersmanagerHelper::safeString(trim(implode(' ', $tokenArray), '-'), 'L', '-', false, false);
+			// get unique token
+			while (!MembersmanagerHelper::checkUnique($data['id'], 'token', $data['token'], 'member'))
+			{
+				$data['token'] = JString::increment($data['token'], 'dash');
+			}
+		}
 
 		// Get the medium encryption key.
 		$mediumkey = MembersmanagerHelper::getCryptKey('medium');

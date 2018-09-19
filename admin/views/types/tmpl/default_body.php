@@ -75,6 +75,12 @@ $edit = "index.php?option=com_membersmanager&view=types&task=type.edit";
 		<td class="hidden-phone">
 			<?php echo $this->escape($item->description); ?>
 		</td>
+		<td class="hidden-phone">
+			<?php echo $this->escape($item->groups_target); ?>
+		</td>
+		<td class="hidden-phone">
+			<?php echo $this->escape($item->groups_access); ?>
+		</td>
 		<td class="center">
 		<?php if ($canDo->get('type.edit.state')) : ?>
 				<?php if ($item->checked_out) : ?>

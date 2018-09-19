@@ -12,9 +12,6 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
-// import Joomla view library
-jimport('joomla.application.component.view');
-
 /**
  * Member View class
  */
@@ -26,27 +23,37 @@ class MembersmanagerViewMember extends JViewLegacy
 	 */
 	public function display($tpl = null)
 	{
+		// set params
+		$this->params = JComponentHelper::getParams('com_membersmanager');
 		// Assign the variables
 		$this->form = $this->get('Form');
 		$this->item = $this->get('Item');
 		$this->script = $this->get('Script');
 		$this->state = $this->get('State');
 		// get action permissions
-		$this->canDo = MembersmanagerHelper::getActions('member',$this->item);
+		$this->canDo = MembersmanagerHelper::getActions('member', $this->item);
 		// get input
 		$jinput = JFactory::getApplication()->input;
 		$this->ref = $jinput->get('ref', 0, 'word');
 		$this->refid = $jinput->get('refid', 0, 'int');
+		$return = $jinput->get('return', null, 'base64');
+		// set the referral string
 		$this->referral = '';
-		if ($this->refid)
+		if ($this->refid && $this->ref)
 		{
-			// return to the item that refered to this item
-			$this->referral = '&ref='.(string)$this->ref.'&refid='.(int)$this->refid;
+			// return to the item that referred to this item
+			$this->referral = '&ref=' . (string)$this->ref . '&refid=' . (int)$this->refid;
 		}
 		elseif($this->ref)
 		{
-			// return to the list view that refered to this item
-			$this->referral = '&ref='.(string)$this->ref;
+			// return to the list view that referred to this item
+			$this->referral = '&ref=' . (string)$this->ref;
+		}
+		// check return value
+		if (!is_null($return))
+		{
+			// add the return value
+			$this->referral .= '&return=' . (string)$return;
 		}
 
 		// Set the toolbar
@@ -78,7 +85,7 @@ class MembersmanagerViewMember extends JViewLegacy
 
 		JToolbarHelper::title( JText::_($isNew ? 'COM_MEMBERSMANAGER_MEMBER_NEW' : 'COM_MEMBERSMANAGER_MEMBER_EDIT'), 'pencil-2 article-add');
 		// Built the actions for new and existing records.
-		if ($this->refid || $this->ref)
+		if (MembersmanagerHelper::checkString($this->referral))
 		{
 			if ($this->canDo->get('member.create') && $isNew)
 			{
@@ -182,26 +189,57 @@ class MembersmanagerViewMember extends JViewLegacy
 		$this->document->setTitle(JText::_($isNew ? 'COM_MEMBERSMANAGER_MEMBER_NEW' : 'COM_MEMBERSMANAGER_MEMBER_EDIT'));
 		$this->document->addStyleSheet(JURI::root() . "administrator/components/com_membersmanager/assets/css/member.css", (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/css');
 		// Add Ajax Token
-		$this->document->addScriptDeclaration("var token = '".JSession::getFormToken()."';"); 
+		$this->document->addScriptDeclaration("var token = '".JSession::getFormToken()."';");
 		$this->document->addScript(JURI::root() . $this->script, (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/javascript');
 		$this->document->addScript(JURI::root() . "administrator/components/com_membersmanager/views/member/submitbutton.js", (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/javascript'); 
 
-		// add the style sheets
-		$this->document->addStyleSheet( JURI::root(true) .'/media/com_membersmanager/uikit-v2/css/uikit.gradient.min.css' , (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/css');
-		$this->document->addStyleSheet( JURI::root(true) .'/media/com_membersmanager/uikit-v2/css/components/accordion.gradient.min.css' , (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/css');
-		$this->document->addStyleSheet( JURI::root(true) .'/media/com_membersmanager/uikit-v2/css/components/tooltip.gradient.min.css' , (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/css');
-		$this->document->addStyleSheet( JURI::root(true) .'/media/com_membersmanager/uikit-v2/css/components/notify.gradient.min.css' , (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/css');
-		$this->document->addStyleSheet( JURI::root(true) .'/media/com_membersmanager/uikit-v2/css/components/form-file.gradient.min.css' , (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/css');
-		$this->document->addStyleSheet( JURI::root(true) .'/media/com_membersmanager/uikit-v2/css/components/progress.gradient.min.css' , (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/css');
-		$this->document->addStyleSheet( JURI::root(true) .'/media/com_membersmanager/uikit-v2/css/components/placeholder.gradient.min.css' , (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/css');
-		$this->document->addStyleSheet( JURI::root(true) .'/media/com_membersmanager/uikit-v2//css/components/upload.gradient.min.css' , (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/css');
-		// add JavaScripts
-		$this->document->addScript( JURI::root(true) .'/media/com_membersmanager/uikit-v2/js/uikit.min.js', (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/css');
-		$this->document->addScript( JURI::root(true) .'/media/com_membersmanager/uikit-v2/js/components/accordion.min.js', (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/css');
-		$this->document->addScript( JURI::root(true) .'/media/com_membersmanager/uikit-v2/js/components/tooltip.min.js', (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/css');
-		$this->document->addScript( JURI::root(true) .'/media/com_membersmanager/uikit-v2/js/components/lightbox.min.js', (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/css');
-		$this->document->addScript( JURI::root(true) .'/media/com_membersmanager/uikit-v2/js/components/notify.min.js', (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/css');
-		$this->document->addScript( JURI::root(true) .'/media/com_membersmanager/uikit-v2/js/components/upload.min.js', (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/css');
+		// get Uikit Version
+		$this->uikitVersion = $this->params->get('uikit_version', 2);
+		// Load uikit options.
+		$uikit = $this->params->get('uikit_load');
+		$isAdmin = JFactory::getApplication()->isClient('administrator');
+		// Set script size.
+		$size = $this->params->get('uikit_min');
+		// Use Uikit Version 2
+		if (2 == $this->uikitVersion && ($isAdmin || $uikit != 2))
+		{
+			// Set css style.
+			$style = $this->params->get('uikit_style');
+			// only load if needed
+			if ($isAdmin || $uikit != 3)
+			{
+				// add the style sheets
+				$this->document->addStyleSheet( JURI::root(true) .'/media/com_membersmanager/uikit-v2/css/uikit' . $style . $size . '.css' , (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/css');
+			}
+			// add the style sheets
+			$this->document->addStyleSheet( JURI::root(true) .'/media/com_membersmanager/uikit-v2/css/components/accordion' . $style . $size . '.css' , (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/css');
+			$this->document->addStyleSheet( JURI::root(true) .'/media/com_membersmanager/uikit-v2/css/components/tooltip' . $style . $size . '.css' , (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/css');
+			$this->document->addStyleSheet( JURI::root(true) .'/media/com_membersmanager/uikit-v2/css/components/notify' . $style . $size . '.css' , (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/css');
+			$this->document->addStyleSheet( JURI::root(true) .'/media/com_membersmanager/uikit-v2/css/components/form-file' . $style . $size . '.css' , (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/css');
+			$this->document->addStyleSheet( JURI::root(true) .'/media/com_membersmanager/uikit-v2/css/components/progress' . $style . $size . '.css' , (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/css');
+			$this->document->addStyleSheet( JURI::root(true) .'/media/com_membersmanager/uikit-v2/css/components/placeholder' . $style . $size . '.css' , (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/css');
+			$this->document->addStyleSheet( JURI::root(true) .'/media/com_membersmanager/uikit-v2//css/components/upload' . $style . $size . '.css' , (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/css');
+			// only load if needed
+			if ($isAdmin || $uikit != 3)
+			{
+				// add JavaScripts
+				$this->document->addScript( JURI::root(true) .'/media/com_membersmanager/uikit-v2/js/uikit' . $size . '.js', (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/css');
+			}
+			// add JavaScripts
+			$this->document->addScript( JURI::root(true) .'/media/com_membersmanager/uikit-v2/js/components/accordion' . $size . '.js', (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/css');
+			$this->document->addScript( JURI::root(true) .'/media/com_membersmanager/uikit-v2/js/components/tooltip' . $size . '.js', (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/css');
+			$this->document->addScript( JURI::root(true) .'/media/com_membersmanager/uikit-v2/js/components/lightbox' . $size . '.js', (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/css');
+			$this->document->addScript( JURI::root(true) .'/media/com_membersmanager/uikit-v2/js/components/notify' . $size . '.js', (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/css');
+			$this->document->addScript( JURI::root(true) .'/media/com_membersmanager/uikit-v2/js/components/upload' . $size . '.js', (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/css');
+		}
+		// Use Uikit Version 3
+		elseif (3 == $this->uikitVersion && ($isAdmin || $uikit != 2))
+		{
+			// add the style sheets
+			$this->document->addStyleSheet( JURI::root(true) .'/media/com_membersmanager/uikit-v3/css/uikit'.$size.'.css', (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/css');
+			// add JavaScripts
+			$this->document->addScript( JURI::root(true) .'/media/com_membersmanager/uikit-v3/js/uikit'.$size.'.js', (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/javascript');
+		}
 		// add var key
 		$this->document->addScriptDeclaration("var vastDevMod = '".$this->get('VDM')."';");
 		// need to add some language strings

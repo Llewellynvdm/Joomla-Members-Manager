@@ -12,9 +12,6 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
-// import the Joomla modellist library
-jimport('joomla.application.component.modellist');
-
 /**
  * Types Model
  */
@@ -82,7 +79,7 @@ class MembersmanagerModelTypes extends JModelList
 	 * @return  mixed  An array of data items on success, false on failure.
 	 */
 	public function getItems()
-	{ 
+	{
 		// check in items
 		$this->checkInNow();
 
@@ -101,8 +98,48 @@ class MembersmanagerModelTypes extends JModelList
 					continue;
 				}
 
+				// decode groups_target
+				$groups_targetArray = json_decode($item->groups_target, true);
+				if (MembersmanagerHelper::checkArray($groups_targetArray))
+				{
+					$groups_targetNames = '';
+					$counter = 0;
+					foreach ($groups_targetArray as $groups_target)
+					{
+						if ($counter == 0)
+						{
+							$groups_targetNames .= MembersmanagerHelper::getGroupName($groups_target);
+						}
+						else
+						{
+							$groups_targetNames .= ', '.MembersmanagerHelper::getGroupName($groups_target);
+						}
+						$counter++;
+					}
+					$item->groups_target = $groups_targetNames;
+				}
+				// decode groups_access
+				$groups_accessArray = json_decode($item->groups_access, true);
+				if (MembersmanagerHelper::checkArray($groups_accessArray))
+				{
+					$groups_accessNames = '';
+					$counter = 0;
+					foreach ($groups_accessArray as $groups_access)
+					{
+						if ($counter == 0)
+						{
+							$groups_accessNames .= MembersmanagerHelper::getGroupName($groups_access);
+						}
+						else
+						{
+							$groups_accessNames .= ', '.MembersmanagerHelper::getGroupName($groups_access);
+						}
+						$counter++;
+					}
+					$item->groups_access = $groups_accessNames;
+				}
 			}
-		}  
+		}
         
 		// return items
 		return $items;
@@ -163,7 +200,7 @@ class MembersmanagerModelTypes extends JModelList
 			else
 			{
 				$search = $db->quote('%' . $db->escape($search) . '%');
-				$query->where('(a.name LIKE '.$search.')');
+				$query->where('(a.name LIKE '.$search.' OR a.groups_target LIKE '.$search.' OR a.groups_access LIKE '.$search.')');
 			}
 		}
 
@@ -275,7 +312,7 @@ class MembersmanagerModelTypes extends JModelList
 			return $headers;
 		}
 		return false;
-	} 
+	}
 	
 	/**
 	 * Method to get a store id based on model configuration state.

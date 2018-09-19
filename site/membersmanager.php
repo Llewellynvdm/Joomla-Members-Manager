@@ -11,6 +11,7 @@
 
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
+JHtml::_('behavior.tabstate');
 
 // Set the component css/js
 $document = JFactory::getDocument();
@@ -18,21 +19,17 @@ $document->addStyleSheet('components/com_membersmanager/assets/css/site.css');
 $document->addScript('components/com_membersmanager/assets/js/site.js');
 
 // Require helper files
-JLoader::register('MembersmanagerHelper', dirname(__FILE__) . '/helpers/membersmanager.php'); 
-JLoader::register('MembersmanagerHelperRoute', dirname(__FILE__) . '/helpers/route.php'); 
+JLoader::register('MembersmanagerHelper', __DIR__ . '/helpers/membersmanager.php'); 
+JLoader::register('MembersmanagerHelperRoute', __DIR__ . '/helpers/route.php'); 
 
 // Triger the Global Site Event
 MembersmanagerHelper::globalEvent($document);
-
-// import joomla controller library
-jimport('joomla.application.component.controller');
 
 // Get an instance of the controller prefixed by Membersmanager
 $controller = JControllerLegacy::getInstance('Membersmanager');
 
 // Perform the request task
-$jinput = JFactory::getApplication()->input;
-$controller->execute($jinput->get('task', null, 'CMD'));
+$controller->execute(JFactory::getApplication()->input->get('task'));
 
 // Redirect if set by the controller
 $controller->redirect();

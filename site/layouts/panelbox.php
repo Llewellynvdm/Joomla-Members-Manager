@@ -10,7 +10,6 @@
  */
 
 // No direct access to this file
-
 defined('JPATH_BASE') or die('Restricted access');
 
 

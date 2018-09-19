@@ -113,6 +113,24 @@
 			filter="HTML"
 			hint="COM_MEMBERSMANAGER_TYPE_DESCRIPTION_HINT"
 		/>
+		<!-- Groups_target Field. Type: Usergroup. (joomla) -->
+		<field
+			type="usergroup"
+			name="groups_target"
+			label="COM_MEMBERSMANAGER_TYPE_GROUPS_TARGET_LABEL"
+			description="COM_MEMBERSMANAGER_TYPE_GROUPS_TARGET_DESCRIPTION"
+			required="true"
+			multiple="true"
+		/>
+		<!-- Groups_access Field. Type: Usergroup. (joomla) -->
+		<field
+			type="usergroup"
+			name="groups_access"
+			label="COM_MEMBERSMANAGER_TYPE_GROUPS_ACCESS_LABEL"
+			description="COM_MEMBERSMANAGER_TYPE_GROUPS_ACCESS_DESCRIPTION"
+			required="true"
+			multiple="true"
+		/>
 		<!-- Alias Field. Type: Text. (joomla) -->
 		<field
 			type="text"

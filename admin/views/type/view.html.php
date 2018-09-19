@@ -12,9 +12,6 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
-// import Joomla view library
-jimport('joomla.application.component.view');
-
 /**
  * Type View class
  */
@@ -26,27 +23,37 @@ class MembersmanagerViewType extends JViewLegacy
 	 */
 	public function display($tpl = null)
 	{
+		// set params
+		$this->params = JComponentHelper::getParams('com_membersmanager');
 		// Assign the variables
 		$this->form = $this->get('Form');
 		$this->item = $this->get('Item');
 		$this->script = $this->get('Script');
 		$this->state = $this->get('State');
 		// get action permissions
-		$this->canDo = MembersmanagerHelper::getActions('type',$this->item);
+		$this->canDo = MembersmanagerHelper::getActions('type', $this->item);
 		// get input
 		$jinput = JFactory::getApplication()->input;
 		$this->ref = $jinput->get('ref', 0, 'word');
 		$this->refid = $jinput->get('refid', 0, 'int');
+		$return = $jinput->get('return', null, 'base64');
+		// set the referral string
 		$this->referral = '';
-		if ($this->refid)
+		if ($this->refid && $this->ref)
 		{
-			// return to the item that refered to this item
-			$this->referral = '&ref='.(string)$this->ref.'&refid='.(int)$this->refid;
+			// return to the item that referred to this item
+			$this->referral = '&ref=' . (string)$this->ref . '&refid=' . (int)$this->refid;
 		}
 		elseif($this->ref)
 		{
-			// return to the list view that refered to this item
-			$this->referral = '&ref='.(string)$this->ref;
+			// return to the list view that referred to this item
+			$this->referral = '&ref=' . (string)$this->ref;
+		}
+		// check return value
+		if (!is_null($return))
+		{
+			// add the return value
+			$this->referral .= '&return=' . (string)$return;
 		}
 
 		// Set the toolbar
@@ -78,7 +85,7 @@ class MembersmanagerViewType extends JViewLegacy
 
 		JToolbarHelper::title( JText::_($isNew ? 'COM_MEMBERSMANAGER_TYPE_NEW' : 'COM_MEMBERSMANAGER_TYPE_EDIT'), 'pencil-2 article-add');
 		// Built the actions for new and existing records.
-		if ($this->refid || $this->ref)
+		if (MembersmanagerHelper::checkString($this->referral))
 		{
 			if ($this->canDo->get('type.create') && $isNew)
 			{
@@ -180,7 +187,7 @@ class MembersmanagerViewType extends JViewLegacy
 			$this->document = JFactory::getDocument();
 		}
 		$this->document->setTitle(JText::_($isNew ? 'COM_MEMBERSMANAGER_TYPE_NEW' : 'COM_MEMBERSMANAGER_TYPE_EDIT'));
-		$this->document->addStyleSheet(JURI::root() . "administrator/components/com_membersmanager/assets/css/type.css", (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/css'); 
+		$this->document->addStyleSheet(JURI::root() . "administrator/components/com_membersmanager/assets/css/type.css", (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/css');
 		$this->document->addScript(JURI::root() . $this->script, (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/javascript');
 		$this->document->addScript(JURI::root() . "administrator/components/com_membersmanager/views/type/submitbutton.js", (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/javascript'); 
 

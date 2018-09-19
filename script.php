@@ -13,8 +13,6 @@
 defined('_JEXEC') or die('Restricted access');
 
 JHTML::_('behavior.modal');
-jimport('joomla.installer.installer');
-jimport('joomla.installer.helper');
 
 /**
  * Script File of Membersmanager Component
@@ -69,7 +67,7 @@ class com_membersmanagerInstallerScript
 			$db->setQuery($query);
 			// Execute the query to remove Member items
 			$member_done = $db->execute();
-			if ($member_done);
+			if ($member_done)
 			{
 				// If succesfully remove Member add queued success message.
 				$app->enqueueMessage(JText::_('The (com_membersmanager.member) type alias was removed from the <b>#__content_type</b> table'));
@@ -84,7 +82,7 @@ class com_membersmanagerInstallerScript
 			$db->setQuery($query);
 			// Execute the query to remove Member items
 			$member_done = $db->execute();
-			if ($member_done);
+			if ($member_done)
 			{
 				// If succesfully remove Member add queued success message.
 				$app->enqueueMessage(JText::_('The (com_membersmanager.member) type alias was removed from the <b>#__contentitem_tag_map</b> table'));
@@ -99,7 +97,7 @@ class com_membersmanagerInstallerScript
 			$db->setQuery($query);
 			// Execute the query to remove Member items
 			$member_done = $db->execute();
-			if ($member_done);
+			if ($member_done)
 			{
 				// If succesfully remove Member add queued success message.
 				$app->enqueueMessage(JText::_('The (com_membersmanager.member) type alias was removed from the <b>#__ucm_content</b> table'));
@@ -155,7 +153,7 @@ class com_membersmanagerInstallerScript
 			$db->setQuery($query);
 			// Execute the query to remove Type items
 			$type_done = $db->execute();
-			if ($type_done);
+			if ($type_done)
 			{
 				// If succesfully remove Type add queued success message.
 				$app->enqueueMessage(JText::_('The (com_membersmanager.type) type alias was removed from the <b>#__content_type</b> table'));
@@ -170,7 +168,7 @@ class com_membersmanagerInstallerScript
 			$db->setQuery($query);
 			// Execute the query to remove Type items
 			$type_done = $db->execute();
-			if ($type_done);
+			if ($type_done)
 			{
 				// If succesfully remove Type add queued success message.
 				$app->enqueueMessage(JText::_('The (com_membersmanager.type) type alias was removed from the <b>#__contentitem_tag_map</b> table'));
@@ -185,7 +183,7 @@ class com_membersmanagerInstallerScript
 			$db->setQuery($query);
 			// Execute the query to remove Type items
 			$type_done = $db->execute();
-			if ($type_done);
+			if ($type_done)
 			{
 				// If succesfully remove Type add queued success message.
 				$app->enqueueMessage(JText::_('The (com_membersmanager.type) type alias was removed from the <b>#__ucm_content</b> table'));
@@ -229,7 +227,7 @@ class com_membersmanagerInstallerScript
 		$query->where($membersmanager_condition);
 		$db->setQuery($query);
 		$type_done = $db->execute();
-		if ($type_done);
+		if ($type_done)
 		{
 			// If succesfully remove membersmanager add queued success message.
 			$app->enqueueMessage(JText::_('All related items was removed from the <b>#__assets</b> table'));
@@ -305,9 +303,9 @@ class com_membersmanagerInstallerScript
 			$member->type_title = 'Membersmanager Member';
 			$member->type_alias = 'com_membersmanager.member';
 			$member->table = '{"special": {"dbtable": "#__membersmanager_member","key": "id","type": "Member","prefix": "membersmanagerTable","config": "array()"},"common": {"dbtable": "#__ucm_content","key": "ucm_id","type": "Corecontent","prefix": "JTable","config": "array()"}}';
-			$member->field_mappings = '{"common": {"core_content_item_id": "id","core_title": "user","core_state": "published","core_alias": "null","core_created_time": "created","core_modified_time": "modified","core_body": "null","core_hits": "hits","core_publish_up": "null","core_publish_down": "null","core_access": "access","core_params": "params","core_featured": "null","core_metadata": "null","core_language": "null","core_images": "null","core_urls": "null","core_version": "version","core_ordering": "ordering","core_metakey": "null","core_metadesc": "null","core_catid": "null","core_xreference": "null","asset_id": "asset_id"},"special": {"user":"user","landline_phone":"landline_phone","type":"type","account":"account","token":"token","country":"country","postalcode":"postalcode","city":"city","region":"region","street":"street","postal":"postal","mobile_phone":"mobile_phone","name":"name","website":"website","profile_image":"profile_image","not_required":"not_required","email":"email","main_member":"main_member"}}';
+			$member->field_mappings = '{"common": {"core_content_item_id": "id","core_title": "name","core_state": "published","core_alias": "null","core_created_time": "created","core_modified_time": "modified","core_body": "null","core_hits": "hits","core_publish_up": "null","core_publish_down": "null","core_access": "access","core_params": "params","core_featured": "null","core_metadata": "null","core_language": "null","core_images": "null","core_urls": "null","core_version": "version","core_ordering": "ordering","core_metakey": "null","core_metadesc": "null","core_catid": "null","core_xreference": "null","asset_id": "asset_id"},"special": {"name":"name","email":"email","account":"account","user":"user","token":"token","profile_image":"profile_image","not_required":"not_required","main_member":"main_member","password_check":"password_check","password":"password","useremail":"useremail","username":"username","surname":"surname","type":"type"}}';
 			$member->router = 'MembersmanagerHelperRoute::getMemberRoute';
-			$member->content_history_options = '{"formFile": "administrator/components/com_membersmanager/models/forms/member.xml","hideFields": ["asset_id","checked_out","checked_out_time","version","profile_image","not_required"],"ignoreChanges": ["modified_by","modified","checked_out","checked_out_time","version","hits"],"convertToInt": ["published","ordering","user","type","account","country","region","main_member"],"displayLookup": [{"sourceColumn": "created_by","targetTable": "#__users","targetColumn": "id","displayColumn": "name"},{"sourceColumn": "access","targetTable": "#__viewlevels","targetColumn": "id","displayColumn": "title"},{"sourceColumn": "modified_by","targetTable": "#__users","targetColumn": "id","displayColumn": "name"},{"sourceColumn": "user","targetTable": "#__users","targetColumn": "id","displayColumn": "name"},{"sourceColumn": "type","targetTable": "#__membersmanager_type","targetColumn": "id","displayColumn": "name"},{"sourceColumn": "country","targetTable": "#__membersmanager_country","targetColumn": "id","displayColumn": "name"},{"sourceColumn": "region","targetTable": "#__membersmanager_region","targetColumn": "id","displayColumn": "name"},{"sourceColumn": "main_member","targetTable": "#__membersmanager_member","targetColumn": "id","displayColumn": "user"}]}';
+			$member->content_history_options = '{"formFile": "administrator/components/com_membersmanager/models/forms/member.xml","hideFields": ["asset_id","checked_out","checked_out_time","version","profile_image","not_required"],"ignoreChanges": ["modified_by","modified","checked_out","checked_out_time","version","hits"],"convertToInt": ["published","ordering","account","user","main_member","type"],"displayLookup": [{"sourceColumn": "created_by","targetTable": "#__users","targetColumn": "id","displayColumn": "name"},{"sourceColumn": "access","targetTable": "#__viewlevels","targetColumn": "id","displayColumn": "title"},{"sourceColumn": "modified_by","targetTable": "#__users","targetColumn": "id","displayColumn": "name"},{"sourceColumn": "user","targetTable": "#__users","targetColumn": "id","displayColumn": "name"},{"sourceColumn": "main_member","targetTable": "#__membersmanager_member","targetColumn": "id","displayColumn": "user"},{"sourceColumn": "type","targetTable": "#__membersmanager_type","targetColumn": "id","displayColumn": "name"}]}';
 
 			// Set the object into the content types table.
 			$member_Inserted = $db->insertObject('#__content_types', $member);
@@ -317,7 +315,7 @@ class com_membersmanagerInstallerScript
 			$type->type_title = 'Membersmanager Type';
 			$type->type_alias = 'com_membersmanager.type';
 			$type->table = '{"special": {"dbtable": "#__membersmanager_type","key": "id","type": "Type","prefix": "membersmanagerTable","config": "array()"},"common": {"dbtable": "#__ucm_content","key": "ucm_id","type": "Corecontent","prefix": "JTable","config": "array()"}}';
-			$type->field_mappings = '{"common": {"core_content_item_id": "id","core_title": "name","core_state": "published","core_alias": "alias","core_created_time": "created","core_modified_time": "modified","core_body": "null","core_hits": "hits","core_publish_up": "null","core_publish_down": "null","core_access": "access","core_params": "params","core_featured": "null","core_metadata": "null","core_language": "null","core_images": "null","core_urls": "null","core_version": "version","core_ordering": "ordering","core_metakey": "null","core_metadesc": "null","core_catid": "null","core_xreference": "null","asset_id": "asset_id"},"special": {"name":"name","description":"description","alias":"alias"}}';
+			$type->field_mappings = '{"common": {"core_content_item_id": "id","core_title": "name","core_state": "published","core_alias": "alias","core_created_time": "created","core_modified_time": "modified","core_body": "null","core_hits": "hits","core_publish_up": "null","core_publish_down": "null","core_access": "access","core_params": "params","core_featured": "null","core_metadata": "null","core_language": "null","core_images": "null","core_urls": "null","core_version": "version","core_ordering": "ordering","core_metakey": "null","core_metadesc": "null","core_catid": "null","core_xreference": "null","asset_id": "asset_id"},"special": {"name":"name","description":"description","groups_target":"groups_target","groups_access":"groups_access","alias":"alias"}}';
 			$type->router = 'MembersmanagerHelperRoute::getTypeRoute';
 			$type->content_history_options = '{"formFile": "administrator/components/com_membersmanager/models/forms/type.xml","hideFields": ["asset_id","checked_out","checked_out_time","version"],"ignoreChanges": ["modified_by","modified","checked_out","checked_out_time","version","hits"],"convertToInt": ["published","ordering"],"displayLookup": [{"sourceColumn": "created_by","targetTable": "#__users","targetColumn": "id","displayColumn": "name"},{"sourceColumn": "access","targetTable": "#__viewlevels","targetColumn": "id","displayColumn": "title"},{"sourceColumn": "modified_by","targetTable": "#__users","targetColumn": "id","displayColumn": "name"}]}';
 
@@ -325,11 +323,25 @@ class com_membersmanagerInstallerScript
 			$type_Inserted = $db->insertObject('#__content_types', $type);
 
 
+			// Install the global extenstion assets permission.
+			$query = $db->getQuery(true);
+			// Field to update.
+			$fields = array(
+				$db->quoteName('rules') . ' = ' . $db->quote('{"site.cpanel.access":{"1":1}}'),
+			);
+			// Condition.
+			$conditions = array(
+				$db->quoteName('name') . ' = ' . $db->quote('com_membersmanager')
+			);
+			$query->update($db->quoteName('#__assets'))->set($fields)->where($conditions);
+			$db->setQuery($query);
+			$allDone = $db->execute();
+
 			// Install the global extenstion params.
 			$query = $db->getQuery(true);
 			// Field to update.
 			$fields = array(
-				$db->quoteName('params') . ' = ' . $db->quote('{"autorName":"Llewellyn van der Merwe","autorEmail":"llewellyn@joomlacomponentbuilder.com","crop_profile":"1","profile_height":"300","profile_width":"200","check_in":"-1 day","save_history":"1","history_limit":"10","memberuser":["2"],"uikit_version":"2","uikit_load":"1","uikit_min":"","uikit_style":""}'),
+				$db->quoteName('params') . ' = ' . $db->quote('{"autorName":"Llewellyn van der Merwe","autorEmail":"llewellyn@joomlacomponentbuilder.com","crop_profile":"1","profile_height":"300","profile_width":"200","dynamic_salt":"1->!,3->E,4->A,6->b,9->d","country":"Namibia","check_in":"-1 day","save_history":"1","history_limit":"10","uikit_version":"2","uikit_load":"1","uikit_min":"","uikit_style":""}'),
 			);
 			// Condition.
 			$conditions = array(
@@ -355,9 +367,9 @@ class com_membersmanagerInstallerScript
 			$member->type_title = 'Membersmanager Member';
 			$member->type_alias = 'com_membersmanager.member';
 			$member->table = '{"special": {"dbtable": "#__membersmanager_member","key": "id","type": "Member","prefix": "membersmanagerTable","config": "array()"},"common": {"dbtable": "#__ucm_content","key": "ucm_id","type": "Corecontent","prefix": "JTable","config": "array()"}}';
-			$member->field_mappings = '{"common": {"core_content_item_id": "id","core_title": "user","core_state": "published","core_alias": "null","core_created_time": "created","core_modified_time": "modified","core_body": "null","core_hits": "hits","core_publish_up": "null","core_publish_down": "null","core_access": "access","core_params": "params","core_featured": "null","core_metadata": "null","core_language": "null","core_images": "null","core_urls": "null","core_version": "version","core_ordering": "ordering","core_metakey": "null","core_metadesc": "null","core_catid": "null","core_xreference": "null","asset_id": "asset_id"},"special": {"user":"user","landline_phone":"landline_phone","type":"type","account":"account","token":"token","country":"country","postalcode":"postalcode","city":"city","region":"region","street":"street","postal":"postal","mobile_phone":"mobile_phone","name":"name","website":"website","profile_image":"profile_image","not_required":"not_required","email":"email","main_member":"main_member"}}';
+			$member->field_mappings = '{"common": {"core_content_item_id": "id","core_title": "name","core_state": "published","core_alias": "null","core_created_time": "created","core_modified_time": "modified","core_body": "null","core_hits": "hits","core_publish_up": "null","core_publish_down": "null","core_access": "access","core_params": "params","core_featured": "null","core_metadata": "null","core_language": "null","core_images": "null","core_urls": "null","core_version": "version","core_ordering": "ordering","core_metakey": "null","core_metadesc": "null","core_catid": "null","core_xreference": "null","asset_id": "asset_id"},"special": {"name":"name","email":"email","account":"account","user":"user","token":"token","profile_image":"profile_image","not_required":"not_required","main_member":"main_member","password_check":"password_check","password":"password","useremail":"useremail","username":"username","surname":"surname","type":"type"}}';
 			$member->router = 'MembersmanagerHelperRoute::getMemberRoute';
-			$member->content_history_options = '{"formFile": "administrator/components/com_membersmanager/models/forms/member.xml","hideFields": ["asset_id","checked_out","checked_out_time","version","profile_image","not_required"],"ignoreChanges": ["modified_by","modified","checked_out","checked_out_time","version","hits"],"convertToInt": ["published","ordering","user","type","account","country","region","main_member"],"displayLookup": [{"sourceColumn": "created_by","targetTable": "#__users","targetColumn": "id","displayColumn": "name"},{"sourceColumn": "access","targetTable": "#__viewlevels","targetColumn": "id","displayColumn": "title"},{"sourceColumn": "modified_by","targetTable": "#__users","targetColumn": "id","displayColumn": "name"},{"sourceColumn": "user","targetTable": "#__users","targetColumn": "id","displayColumn": "name"},{"sourceColumn": "type","targetTable": "#__membersmanager_type","targetColumn": "id","displayColumn": "name"},{"sourceColumn": "country","targetTable": "#__membersmanager_country","targetColumn": "id","displayColumn": "name"},{"sourceColumn": "region","targetTable": "#__membersmanager_region","targetColumn": "id","displayColumn": "name"},{"sourceColumn": "main_member","targetTable": "#__membersmanager_member","targetColumn": "id","displayColumn": "user"}]}';
+			$member->content_history_options = '{"formFile": "administrator/components/com_membersmanager/models/forms/member.xml","hideFields": ["asset_id","checked_out","checked_out_time","version","profile_image","not_required"],"ignoreChanges": ["modified_by","modified","checked_out","checked_out_time","version","hits"],"convertToInt": ["published","ordering","account","user","main_member","type"],"displayLookup": [{"sourceColumn": "created_by","targetTable": "#__users","targetColumn": "id","displayColumn": "name"},{"sourceColumn": "access","targetTable": "#__viewlevels","targetColumn": "id","displayColumn": "title"},{"sourceColumn": "modified_by","targetTable": "#__users","targetColumn": "id","displayColumn": "name"},{"sourceColumn": "user","targetTable": "#__users","targetColumn": "id","displayColumn": "name"},{"sourceColumn": "main_member","targetTable": "#__membersmanager_member","targetColumn": "id","displayColumn": "user"},{"sourceColumn": "type","targetTable": "#__membersmanager_type","targetColumn": "id","displayColumn": "name"}]}';
 
 			// Check if member type is already in content_type DB.
 			$member_id = null;
@@ -384,7 +396,7 @@ class com_membersmanagerInstallerScript
 			$type->type_title = 'Membersmanager Type';
 			$type->type_alias = 'com_membersmanager.type';
 			$type->table = '{"special": {"dbtable": "#__membersmanager_type","key": "id","type": "Type","prefix": "membersmanagerTable","config": "array()"},"common": {"dbtable": "#__ucm_content","key": "ucm_id","type": "Corecontent","prefix": "JTable","config": "array()"}}';
-			$type->field_mappings = '{"common": {"core_content_item_id": "id","core_title": "name","core_state": "published","core_alias": "alias","core_created_time": "created","core_modified_time": "modified","core_body": "null","core_hits": "hits","core_publish_up": "null","core_publish_down": "null","core_access": "access","core_params": "params","core_featured": "null","core_metadata": "null","core_language": "null","core_images": "null","core_urls": "null","core_version": "version","core_ordering": "ordering","core_metakey": "null","core_metadesc": "null","core_catid": "null","core_xreference": "null","asset_id": "asset_id"},"special": {"name":"name","description":"description","alias":"alias"}}';
+			$type->field_mappings = '{"common": {"core_content_item_id": "id","core_title": "name","core_state": "published","core_alias": "alias","core_created_time": "created","core_modified_time": "modified","core_body": "null","core_hits": "hits","core_publish_up": "null","core_publish_down": "null","core_access": "access","core_params": "params","core_featured": "null","core_metadata": "null","core_language": "null","core_images": "null","core_urls": "null","core_version": "version","core_ordering": "ordering","core_metakey": "null","core_metadesc": "null","core_catid": "null","core_xreference": "null","asset_id": "asset_id"},"special": {"name":"name","description":"description","groups_target":"groups_target","groups_access":"groups_access","alias":"alias"}}';
 			$type->router = 'MembersmanagerHelperRoute::getTypeRoute';
 			$type->content_history_options = '{"formFile": "administrator/components/com_membersmanager/models/forms/type.xml","hideFields": ["asset_id","checked_out","checked_out_time","version"],"ignoreChanges": ["modified_by","modified","checked_out","checked_out_time","version","hits"],"convertToInt": ["published","ordering"],"displayLookup": [{"sourceColumn": "created_by","targetTable": "#__users","targetColumn": "id","displayColumn": "name"},{"sourceColumn": "access","targetTable": "#__viewlevels","targetColumn": "id","displayColumn": "title"},{"sourceColumn": "modified_by","targetTable": "#__users","targetColumn": "id","displayColumn": "name"}]}';
 
@@ -412,7 +424,7 @@ class com_membersmanagerInstallerScript
 			echo '<a target="_blank" href="https://www.joomlacomponentbuilder.com/" title="Members Manager">
 				<img src="components/com_membersmanager/assets/images/vdm-component.jpg"/>
 				</a>
-				<h3>Upgrade to Version 1.0.7 Was Successful! Let us know if anything is not working as expected.</h3>';
+				<h3>Upgrade to Version 2.0.0 Was Successful! Let us know if anything is not working as expected.</h3>';
 		}
 	}
 }

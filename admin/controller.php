@@ -12,9 +12,6 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
-// import Joomla controller library
-jimport('joomla.application.component.controller');
-
 /**
  * General Controller of Membersmanager component
  */
@@ -94,10 +91,7 @@ class MembersmanagerController extends JControllerLegacy
 			// the view relationships
 			$views = array(
 				'member' => 'members',
-				'type' => 'types',
-				'region' => 'regions',
-				'country' => 'countries',
-				'currency' => 'currencies'
+				'type' => 'types'
 					);
 			// check if this is a list view
 			if (in_array($view, $views))

@@ -12,9 +12,6 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
-// import Joomla modelitem library
-jimport('joomla.application.component.modelitem');
-
 /**
  * Membersmanager Profile Model
  */
@@ -84,8 +81,8 @@ class MembersmanagerModelProfile extends JModelItem
 		{
 			$app = JFactory::getApplication();
 			$app->enqueueMessage(JText::_('COM_MEMBERSMANAGER_NOT_AUTHORISED_TO_VIEW_PROFILE'), 'error');
-			// redirect away to the home page if no access allowed.
-			$app->redirect(JURI::root());
+			// redirect away to the default view if no access allowed.
+			$app->redirect(JRoute::_('index.php?option=com_membersmanager&view=cpanel'));
 			return false;
 		}
 		$this->userId = $this->user->get('id');
@@ -119,8 +116,8 @@ class MembersmanagerModelProfile extends JModelItem
 
 				// Get from #__membersmanager_member as a
 				$query->select($db->quoteName(
-			array('a.id','a.account','a.type','a.name','a.email','a.main_member','a.user','a.profile_image','a.website','a.mobile_phone','a.landline_phone','a.street','a.postal','a.city','a.region','a.country','a.postalcode','a.published','a.created_by','a.modified_by','a.created','a.modified','a.version','a.hits','a.checked_out'),
-			array('id','account','type','name','email','main_member','user','profile_image','website','mobile_phone','landline_phone','street','postal','city','region','country','postalcode','published','created_by','modified_by','created','modified','version','hits','checked_out')));
+			array('a.id','a.account','a.token','a.type','a.name','a.surname','a.email','a.main_member','a.user','a.profile_image','a.published','a.created_by','a.modified_by','a.created','a.modified','a.version','a.hits','a.checked_out'),
+			array('id','account','token','type','name','surname','email','main_member','user','profile_image','published','created_by','modified_by','created','modified','version','hits','checked_out')));
 				$query->from($db->quoteName('#__membersmanager_member', 'a'));
 
 				// Get from #__membersmanager_type as d
@@ -129,22 +126,10 @@ class MembersmanagerModelProfile extends JModelItem
 			array('type_description','type_name')));
 				$query->join('LEFT', ($db->quoteName('#__membersmanager_type', 'd')) . ' ON (' . $db->quoteName('a.type') . ' = ' . $db->quoteName('d.id') . ')');
 
-				// Get from #__membersmanager_region as i
-				$query->select($db->quoteName(
-			array('i.name'),
-			array('region_name')));
-				$query->join('LEFT', ($db->quoteName('#__membersmanager_region', 'i')) . ' ON (' . $db->quoteName('a.region') . ' = ' . $db->quoteName('i.id') . ')');
-
-				// Get from #__membersmanager_country as k
-				$query->select($db->quoteName(
-			array('k.name'),
-			array('country_name')));
-				$query->join('LEFT', ($db->quoteName('#__membersmanager_country', 'k')) . ' ON (' . $db->quoteName('a.country') . ' = ' . $db->quoteName('k.id') . ')');
-
 				// Get from #__membersmanager_member as aa
 				$query->select($db->quoteName(
-			array('aa.name','aa.email','aa.user'),
-			array('main_member_name','main_member_email','main_member_user')));
+			array('aa.name','aa.surname','aa.email','aa.user','aa.token'),
+			array('main_member_name','main_member_surname','main_member_email','main_member_user','main_member_token')));
 				$query->join('LEFT', ($db->quoteName('#__membersmanager_member', 'aa')) . ' ON (' . $db->quoteName('a.main_member') . ' = ' . $db->quoteName('aa.id') . ')');
 
 				// Get from #__users as c
@@ -171,7 +156,7 @@ class MembersmanagerModelProfile extends JModelItem
 					$app = JFactory::getApplication();
 					// If no data is found redirect to default page and show warning.
 					$app->enqueueMessage(JText::_('COM_MEMBERSMANAGER_NOT_FOUND_OR_ACCESS_DENIED'), 'warning');
-					$app->redirect(JURI::root());
+					$app->redirect(JRoute::_('index.php?option=com_membersmanager&view=cpanel'));
 					return false;
 				}
 			// Load the JEvent Dispatcher
@@ -183,11 +168,13 @@ class MembersmanagerModelProfile extends JModelItem
 					// Decode profile_image
 					$data->profile_image = rtrim($medium->decryptString($data->profile_image), "\0");
 				}
+				// Check if item has params, or pass whole item.
+				$params = (isset($data->params) && MembersmanagerHelper::checkJson($data->params)) ? json_decode($data->params) : $data;
 				// Make sure the content prepare plugins fire on type_description
 				$_type_description = new stdClass();
 				$_type_description->text =& $data->type_description; // value must be in text
 				// Since all values are now in text (Joomla Limitation), we also add the field name (type_description) to context
-				$this->_dispatcher->trigger("onContentPrepare", array('com_membersmanager.profile.type_description', &$_type_description, &$this->params, 0));
+				$this->_dispatcher->trigger("onContentPrepare", array('com_membersmanager.member.type_description', &$_type_description, &$params, 0));
 				// Checking if type_description has uikit components that must be loaded.
 				$this->uikitComp = MembersmanagerHelper::getUikitComp($data->type_description,$this->uikitComp);
 				// set idMain_memberMemberB to the $data object.
@@ -211,8 +198,39 @@ class MembersmanagerModelProfile extends JModelItem
 			}
 		}
 
+		// set name
+		$this->_item[$pk]->name = MembersmanagerHelper::getMemberName($this->_item[$pk]->id, $this->_item[$pk]->user, $this->_item[$pk]->name, $this->_item[$pk]->surname);
+		// Build the item slug
+		$this->_item[$pk]->slug = (isset($this->_item[$pk]->token)) ? $this->_item[$pk]->id . ':' . $this->_item[$pk]->token : $this->_item[$pk]->id;
+		$this->_item[$pk]->main_member_slug = (isset($this->_item[$pk]->main_member_token)) ? $this->_item[$pk]->main_member . ':' . $this->_item[$pk]->main_member_token : $this->_item[$pk]->main_member;
+		// setup the link to profile
+		$profile_link = MembersmanagerHelperRoute::getProfileRoute($this->_item[$pk]->slug);
+		$this->_item[$pk]->profile_link = JRoute::_($profile_link);
+		$this->_item[$pk]->main_member_profile_link = JRoute::_(MembersmanagerHelperRoute::getProfileRoute($this->_item[$pk]->main_member_slug));
+		// set main member name
+		$this->_item[$pk]->main_member_name = MembersmanagerHelper::getMemberName($this->_item[$pk]->main_member, $this->_item[$pk]->main_member_user, $this->_item[$pk]->main_member_name, $this->_item[$pk]->main_member_surname);
+		// build a return path
+		$this->_item[$pk]->return_path = urlencode(base64_encode($profile_link));
+		// check if we have children members
+		if (isset($this->_item[$pk]->idMain_memberMemberB) && MembersmanagerHelper::checkArray($this->_item[$pk]->idMain_memberMemberB))
+		{
+			foreach ($this->_item[$pk]->idMain_memberMemberB as $item)
+			{
+				// Build the item slug
+				$item->slug = (isset($item->token)) ? $item->id . ':' . $item->token : $item->id;
+				// set sub member name
+				$item->name = MembersmanagerHelper::getMemberName($item->id, $item->user, $item->name, $item->surname);
+				// setup the link to profile
+				$profile_link = MembersmanagerHelperRoute::getProfileRoute($item->slug);
+				// setup the link to profile
+				$item->profile_link = JRoute::_($profile_link);
+				// build a return path
+				$item->return_path = urlencode(base64_encode($profile_link));
+			}
+		}
+
 		return $this->_item[$pk];
-	} 
+	}
 
 	/**
 	 * Method to get an array of Member Objects.
@@ -235,8 +253,8 @@ class MembersmanagerModelProfile extends JModelItem
 
 		// Get from #__membersmanager_member as b
 		$query->select($db->quoteName(
-			array('b.id','b.asset_id','b.account','b.type','b.name','b.email','b.main_member','b.user','b.profile_image','b.website','b.mobile_phone','b.landline_phone','b.street','b.postal','b.city','b.region','b.country','b.postalcode','b.published','b.created_by','b.modified_by','b.created','b.modified','b.version','b.hits','b.ordering'),
-			array('id','asset_id','account','type','name','email','main_member','user','profile_image','website','mobile_phone','landline_phone','street','postal','city','region','country','postalcode','published','created_by','modified_by','created','modified','version','hits','ordering')));
+			array('b.id','b.account','b.token','b.type','b.name','b.surname','b.email','b.main_member','b.user','b.profile_image','b.published','b.created_by','b.modified_by','b.created','b.modified','b.version','b.hits','b.ordering'),
+			array('id','account','token','type','name','surname','email','main_member','user','profile_image','published','created_by','modified_by','created','modified','version','hits','ordering')));
 		$query->from($db->quoteName('#__membersmanager_member', 'b'));
 		$query->where('b.main_member = ' . $db->quote($id));
 
@@ -245,18 +263,6 @@ class MembersmanagerModelProfile extends JModelItem
 			array('e.description','e.name'),
 			array('type_description','type_name')));
 				$query->join('LEFT', ($db->quoteName('#__membersmanager_type', 'e')) . ' ON (' . $db->quoteName('b.type') . ' = ' . $db->quoteName('e.id') . ')');
-
-				// Get from #__membersmanager_region as j
-				$query->select($db->quoteName(
-			array('j.name'),
-			array('region_name')));
-				$query->join('LEFT', ($db->quoteName('#__membersmanager_region', 'j')) . ' ON (' . $db->quoteName('b.region') . ' = ' . $db->quoteName('j.id') . ')');
-
-				// Get from #__membersmanager_country as l
-				$query->select($db->quoteName(
-			array('l.name'),
-			array('country_name')));
-				$query->join('LEFT', ($db->quoteName('#__membersmanager_country', 'l')) . ' ON (' . $db->quoteName('b.country') . ' = ' . $db->quoteName('l.id') . ')');
 
 				// Get from #__users as g
 				$query->select($db->quoteName(
@@ -302,5 +308,5 @@ class MembersmanagerModelProfile extends JModelItem
 			return $this->uikitComp;
 		}
 		return false;
-	}  
+	}
 }
