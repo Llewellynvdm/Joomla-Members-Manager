@@ -138,9 +138,9 @@ class JFormFieldTypes extends JFormFieldList
 	/**
 	 * Method to get a list of options for a list input.
 	 *
-	 * @return	array		An array of JHtml options.
+	 * @return	array    An array of JHtml options.
 	 */
-	public function getOptions()
+	protected function getOptions()
 	{
 				// load the db opbject
 		$db = JFactory::getDBO();
@@ -162,7 +162,7 @@ class JFormFieldTypes extends JFormFieldList
 			$id = $jinput->getInt('id', 0);
 			if ($id > 0)
 			{
-				$type = MembersmanagerHelper::getVar('member', $id, 'id', 'type');
+				$type = MembersmanagerHelper::getVar('type', $id, 'id', 'type');
 				// check if part of user access
 				if (!MembersmanagerHelper::checkArray($accessTypes) || !in_array($type, $accessTypes))
 				{

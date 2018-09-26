@@ -26,8 +26,8 @@ function getReport_server(report_key){
 // get report to display
 function getReport(id, element, report_key){
 	// remove old data and add spinner
-	jQuery('#setreport').html('');
-	jQuery('#report-spinner').show();
+	jQuery('.setreport').html('');
+	jQuery('.report-spinner').show();
 	// get key
 	var key = id+element;
 	// first we see if we have local storage of this data
@@ -55,7 +55,7 @@ function getReport(id, element, report_key){
 // set the Report
 function setReport(data) {
 	// show data
-	jQuery('#setreport').html(data);
+	jQuery('.setreport').html(data);
 	// hide spinner
-	jQuery('#report-spinner').hide();
+	jQuery('.report-spinner').hide();
 }

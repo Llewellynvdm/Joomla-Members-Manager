@@ -1242,7 +1242,7 @@ abstract class MembersmanagerHelper
 	* @param  string   $component  The component these views belong to
 	* @param  string   $headsup    The message to show on click of button
 	*
-	* @return  string    On success the full html edit button
+	* @return  string    On success the full html link
 	* 
 	*/
 	public static function getEditButton(&$item, $view, $views, $ref = '', $component = 'com_membersmanager', $headsup = 'COM_MEMBERSMANAGER_ALL_UNSAVED_WORK_ON_THIS_PAGE_WILL_BE_LOST_ARE_YOU_SURE_YOU_WANT_TO_CONTINUE')
@@ -1371,8 +1371,14 @@ abstract class MembersmanagerHelper
 		{
 			// get user action permission to edit
 			$action = self::getActions($view, $record, $views, 'edit', str_replace('com_', '', $component));
+			// check if the view permission is set
+			if (($edit = $action->get($view . '.edit', 'none-set')) === 'none-set')
+			{
+				// fall back on the core permission then
+				$edit = $action->get('core.edit', 'none-set');
+			}
 			// can edit
-			if ($action->get($view . '.edit'))
+			if ($edit)
 			{
 				// set the edit link
 				if ($jRoute)
@@ -1650,7 +1656,7 @@ abstract class MembersmanagerHelper
 		if ($id > 0 && JFactory::getUser()->authorise('form.report.viewtab', $_component))
 		{
 			// get template
-			if (($template = self::getAnyTemplate($_component, 'profile_report_template')) === false || !self::checkString($template))
+			if (($template = self::getAnyTemplate($_component, 'report_template')) === false || !self::checkString($template))
 			{
 				return false;
 			}
@@ -1673,6 +1679,19 @@ abstract class MembersmanagerHelper
 				$placeholders = self::mergeArrays($placeholders);
 				// get the ID
 				$divID = self::randomkey(10);
+				// get the global settings
+				if (!self::checkObject(self::$params))
+				{
+					self::$params = JComponentHelper::getParams('com_membersmanager');
+				}
+				// get uikit version
+				$uikitVersion = self::$params->get('uikit_version', 2);
+				if (3 == $uikitVersion)
+				{
+					return '<a href="javascript:void(0)" onclick="printMe(\'' . JFactory::getConfig()->get( 'sitename' ) . '\', \'' . $divID . '\')" ></a>' . JText::_('COM_MEMBERSMANAGER_PRINT') . '<br /><div id="' . $divID . '">' .
+							self::setDynamicData($template, $placeholders) .
+						'</div>';
+				}
 				// return html
 				return '<a href="javascript:void(0)" onclick="printMe(\'' . JFactory::getConfig()->get( 'sitename' ) . '\', \'' . $divID . '\')" class="uk-icon-hover uk-icon-print"></a><br /><div id="' . $divID . '">' .
 						self::setDynamicData($template, $placeholders) .
@@ -2900,6 +2919,10 @@ abstract class MembersmanagerHelper
 	 */
 	protected static function getTabLinksTable($ids, &$item, &$comp, &$view, &$return)
 	{
+		// get the global settings
+		$params = JComponentHelper::getParams($comp->element);
+		// get the profile fields
+		$profile_fields = $params->get('profile_fields', false);
 		// set some defaults
 		$_return = '&ref=' . $view . '&refid=' . $item->id . '&return=' . urlencode(base64_encode('index.php?option=com_membersmanager&view=' . $view . '&layout=edit&id=' . $item->id . $return));
 		$rows = array();
@@ -2911,8 +2934,21 @@ abstract class MembersmanagerHelper
 		// build the links
 		foreach ($ids as $id)
 		{
-			$created = self::getVar('form', $id, 'id', 'created', '=', str_replace('com_', '', $comp->element));
-			$rows[] = '<td data-column="'.$comp->name.'">' . self::fancyDayTimeDate($created) . self::getEditButton($id, 'form', 'forms', $_return, $comp->element) . '</td>';
+			if (self::checkObject($profile_fields))
+			{
+				// the bucket
+				$bucket = array();
+				foreach ($profile_fields as $profile)
+				{
+					$bucket[$profile->field] = self::getVar('form', $id, 'id', $profile->field, '=', str_replace('com_', '', $comp->element));
+				}
+				$rows[] = '<td data-column="'.$comp->name.'">' . implode(', ', $bucket) . self::getEditButton($id, 'form', 'forms', $_return, $comp->element) . '</td>';
+			}
+			else
+			{
+				$created = self::getVar('form', $id, 'id', 'created', '=', str_replace('com_', '', $comp->element));
+				$rows[] = '<td data-column="'.$comp->name.'">' . self::fancyDayTimeDate($created) . self::getEditButton($id, 'form', 'forms', $_return, $comp->element) . '</td>';
+			}
 		}
 		// set the header
 		$head = array($comp->name);

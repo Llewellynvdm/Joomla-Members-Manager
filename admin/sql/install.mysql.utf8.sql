@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS `#__membersmanager_member` (
 	KEY `idx_account` (`account`),
 	KEY `idx_user` (`user`),
 	KEY `idx_token` (`token`)
-) ENGINE=MyISAM AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `#__membersmanager_type` (
 	`id` INT(11) NOT NULL AUTO_INCREMENT,
@@ -66,7 +66,7 @@ CREATE TABLE IF NOT EXISTS `#__membersmanager_type` (
 	KEY `idx_state` (`published`),
 	KEY `idx_name` (`name`),
 	KEY `idx_alias` (`alias`)
-) ENGINE=MyISAM AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
 
 

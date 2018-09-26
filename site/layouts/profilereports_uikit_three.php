@@ -34,7 +34,7 @@ defined('JPATH_BASE') or die('Restricted access');
 									'type' => $displayData->type,
 									'account' => $displayData->account));
 							?>
-							<span uk-icon="icon: chevron-right"></span>  <a href="#getreport" onclick="getReport(<?php echo (int) $value->id; ?>, '<?php echo $displayData->assessmentAvailable[$name][$_nr]->element; ?>', '<?php echo $report_key; ?>');" uk-toggle><?php echo $value->name; ?></a> (<?php echo MembersmanagerHelper::fancyDayTimeDate($value->created); ?>)
+							<span uk-icon="icon: chevron-right"></span>  <a href="#getreport<?php echo $displayData->id; ?>" onclick="getReport(<?php echo (int) $value->id; ?>, '<?php echo $displayData->assessmentAvailable[$name][$_nr]->element; ?>', '<?php echo $report_key; ?>');" uk-toggle><?php echo $value->name; ?></a> (<?php echo MembersmanagerHelper::fancyDayTimeDate($value->created); ?>)
 							<?php echo MembersmanagerHelper::getEditButton($value->id, 'form', 'form', '&return=' . $displayData->return_path, $displayData->assessmentAvailable[$name][$_nr]->element, null); ?>
 						</li>
 					<?php endforeach; ?>
@@ -48,7 +48,7 @@ defined('JPATH_BASE') or die('Restricted access');
 								'type' => $displayData->type,
 								'account' => $displayData->account));
 						?>
-						<span uk-icon="icon: chevron-right"></span>  <a href="#getreport" onclick="getReport(<?php echo (int) $values->id; ?>, '<?php echo $displayData->assessmentAvailable[$name][$_nr]->element; ?>', '<?php echo $report_key; ?>');" uk-toggle><?php echo $values->name; ?></a> (<?php echo MembersmanagerHelper::fancyDayTimeDate($values->created); ?>)
+						<span uk-icon="icon: chevron-right"></span>  <a href="#getreport<?php echo $displayData->id; ?>" onclick="getReport(<?php echo (int) $values->id; ?>, '<?php echo $displayData->assessmentAvailable[$name][$_nr]->element; ?>', '<?php echo $report_key; ?>');" uk-toggle><?php echo $values->name; ?></a> (<?php echo MembersmanagerHelper::fancyDayTimeDate($values->created); ?>)
 						<?php echo MembersmanagerHelper::getEditButton($values->id, 'form', 'form', '&return=' . $displayData->return_path, $displayData->assessmentAvailable[$name][$_nr]->element, null); ?>
 					</li>
 				<?php endif; ?>
@@ -64,7 +64,7 @@ defined('JPATH_BASE') or die('Restricted access');
 						'type' => $assessments->type,
 						'account' => $assessments->account));
 				?>
-				<span uk-icon="icon: chevron-right"></span>  <a href="#getreport" onclick="getReport(<?php echo (int) $assessments->id; ?>, '<?php echo $displayData->assessmentAvailable[$name]->element; ?>', '<?php echo $report_key; ?>');" uk-toggle><?php echo $assessments->name; ?></a> (<?php echo MembersmanagerHelper::fancyDayTimeDate($assessments->created); ?>)
+				<span uk-icon="icon: chevron-right"></span>  <a href="#getreport<?php echo $displayData->id; ?>" onclick="getReport(<?php echo (int) $assessments->id; ?>, '<?php echo $displayData->assessmentAvailable[$name]->element; ?>', '<?php echo $report_key; ?>');" uk-toggle><?php echo $assessments->name; ?></a> (<?php echo MembersmanagerHelper::fancyDayTimeDate($assessments->created); ?>)
 				<?php echo MembersmanagerHelper::getEditButton($assessments->id, 'form', 'form', '&return=' . $displayData->return_path, $displayData->assessmentAvailable[$name]->element, null); ?>
 			</li>
 		<?php else: ?>

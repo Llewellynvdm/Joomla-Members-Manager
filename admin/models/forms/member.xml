@@ -154,6 +154,7 @@
 			label="COM_MEMBERSMANAGER_MEMBER_TOKEN_LABEL"
 			size="10"
 			maxlength="50"
+			default=""
 			description="COM_MEMBERSMANAGER_MEMBER_TOKEN_DESCRIPTION"
 			class="text_area"
 			readonly="false"

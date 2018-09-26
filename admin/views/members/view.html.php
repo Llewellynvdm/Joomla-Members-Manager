@@ -207,7 +207,7 @@ class MembersmanagerViewMembers extends JViewLegacy
 		}
 
 		// Set Main Member User Selection
-		$this->main_memberUserOptions = JFormHelper::loadFieldType('Mainmembers')->getOptions();
+		$this->main_memberUserOptions = JFormHelper::loadFieldType('Mainmembers')->options;
 		if ($this->main_memberUserOptions)
 		{
 			// Main Member User Filter
@@ -229,7 +229,7 @@ class MembersmanagerViewMembers extends JViewLegacy
 		}
 
 		// Set Type Name Selection
-		$this->typeNameOptions = JFormHelper::loadFieldType('Types')->getOptions();
+		$this->typeNameOptions = JFormHelper::loadFieldType('Types')->options;
 		if ($this->typeNameOptions)
 		{
 			// Type Name Filter

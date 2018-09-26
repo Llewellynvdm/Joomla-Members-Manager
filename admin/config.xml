@@ -172,7 +172,8 @@
 			description="COM_MEMBERSMANAGER_CONFIG_IMAGE_FORMATS_DESCRIPTION"
 			class="list_class"
 			multiple="true"
-			filter="ARRAY">
+			filter="ARRAY"
+			default="">
 			<!-- Option Set. -->
 			<option value="jpg">
 				COM_MEMBERSMANAGER_CONFIG_JPG</option>
@@ -285,13 +286,14 @@
 			message="COM_MEMBERSMANAGER_CONFIG_EMAIL_MESSAGE"
 			hint="COM_MEMBERSMANAGER_CONFIG_EMAIL_HINT"
 		/>
-		<!-- Phone Field. Type: Tel. (joomla) -->
+		<!-- Phone Field. Type: Text. (joomla) -->
 		<field
-			type="tel"
+			type="text"
 			name="phone"
 			label="COM_MEMBERSMANAGER_CONFIG_PHONE_LABEL"
 			size="60"
 			maxlength="150"
+			default=""
 			description="COM_MEMBERSMANAGER_CONFIG_PHONE_DESCRIPTION"
 			class="text_area"
 			required="false"
@@ -300,13 +302,14 @@
 			message="COM_MEMBERSMANAGER_CONFIG_PHONE_MESSAGE"
 			hint="COM_MEMBERSMANAGER_CONFIG_PHONE_HINT"
 		/>
-		<!-- Mobile_phone Field. Type: Tel. (joomla) -->
+		<!-- Mobile_phone Field. Type: Text. (joomla) -->
 		<field
-			type="tel"
+			type="text"
 			name="mobile_phone"
 			label="COM_MEMBERSMANAGER_CONFIG_MOBILE_PHONE_LABEL"
 			size="10"
 			maxlength="50"
+			default=""
 			description="COM_MEMBERSMANAGER_CONFIG_MOBILE_PHONE_DESCRIPTION"
 			class="text_area"
 			filter="STRING"
@@ -314,13 +317,14 @@
 			message="COM_MEMBERSMANAGER_CONFIG_MOBILE_PHONE_MESSAGE"
 			hint="COM_MEMBERSMANAGER_CONFIG_MOBILE_PHONE_HINT"
 		/>
-		<!-- Fax Field. Type: Tel. (joomla) -->
+		<!-- Fax Field. Type: Text. (joomla) -->
 		<field
-			type="tel"
+			type="text"
 			name="fax"
 			label="COM_MEMBERSMANAGER_CONFIG_FAX_LABEL"
 			size="60"
 			maxlength="150"
+			default=""
 			description="COM_MEMBERSMANAGER_CONFIG_FAX_DESCRIPTION"
 			class="text_area"
 			filter="STRING"
@@ -335,6 +339,7 @@
 			label="COM_MEMBERSMANAGER_CONFIG_STREET_LABEL"
 			size="60"
 			maxlength="150"
+			default=""
 			description="COM_MEMBERSMANAGER_CONFIG_STREET_DESCRIPTION"
 			class="text_area"
 			filter="STRING"
@@ -348,6 +353,7 @@
 			label="COM_MEMBERSMANAGER_CONFIG_POSTAL_LABEL"
 			size="60"
 			maxlength="150"
+			default=""
 			description="COM_MEMBERSMANAGER_CONFIG_POSTAL_DESCRIPTION"
 			class="text_area"
 			filter="STRING"
@@ -361,6 +367,7 @@
 			label="COM_MEMBERSMANAGER_CONFIG_CITY_LABEL"
 			size="60"
 			maxlength="150"
+			default=""
 			description="COM_MEMBERSMANAGER_CONFIG_CITY_DESCRIPTION"
 			class="text_area"
 			filter="STRING"
@@ -374,6 +381,7 @@
 			label="COM_MEMBERSMANAGER_CONFIG_REGION_LABEL"
 			size="60"
 			maxlength="150"
+			default=""
 			description="COM_MEMBERSMANAGER_CONFIG_REGION_DESCRIPTION"
 			class="text_area"
 			filter="STRING"
@@ -387,6 +395,7 @@
 			label="COM_MEMBERSMANAGER_CONFIG_POSTALCODE_LABEL"
 			size="60"
 			maxlength="150"
+			default=""
 			description="COM_MEMBERSMANAGER_CONFIG_POSTALCODE_DESCRIPTION"
 			class="text_area"
 			filter="STRING"
@@ -417,6 +426,7 @@
 			label="COM_MEMBERSMANAGER_CONFIG_DOC_HEADER_LABEL"
 			rows="10"
 			cols="12"
+			default=""
 			description="COM_MEMBERSMANAGER_CONFIG_DOC_HEADER_DESCRIPTION"
 			message="COM_MEMBERSMANAGER_CONFIG_DOC_HEADER_MESSAGE"
 			class="text_area span12"
@@ -431,6 +441,7 @@
 			label="COM_MEMBERSMANAGER_CONFIG_DOC_FOOTER_LABEL"
 			rows="10"
 			cols="12"
+			default=""
 			description="COM_MEMBERSMANAGER_CONFIG_DOC_FOOTER_DESCRIPTION"
 			message="COM_MEMBERSMANAGER_CONFIG_DOC_FOOTER_MESSAGE"
 			class="text_area span12"

@@ -98,11 +98,11 @@ if ($displayData->setAssessment)
 			</ul>
 		</div>
 	</div>
-	<div id="getreport" class="uk-modal">
+	<div id="getreport<?php echo $displayData->id; ?>" class="uk-modal">
 		<div class="uk-modal-dialog">
 		<a class="uk-modal-close uk-close"></a>
-			<div id="report-spinner"><?php echo JText::_('COM_MEMBERSMANAGER_LOADING'); ?><span class="loading-dots"></span>.</div>
-			<div id="setreport"></div>
+			<div class="report-spinner"><?php echo JText::_('COM_MEMBERSMANAGER_LOADING'); ?><span class="loading-dots"></span>.</div>
+			<div class="setreport"></div>
 		</div>
 	</div>
 <?php else: ?>

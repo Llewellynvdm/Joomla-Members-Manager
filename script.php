@@ -424,7 +424,7 @@ class com_membersmanagerInstallerScript
 			echo '<a target="_blank" href="https://www.joomlacomponentbuilder.com/" title="Members Manager">
 				<img src="components/com_membersmanager/assets/images/vdm-component.jpg"/>
 				</a>
-				<h3>Upgrade to Version 2.0.0 Was Successful! Let us know if anything is not working as expected.</h3>';
+				<h3>Upgrade to Version 2.0.1 Was Successful! Let us know if anything is not working as expected.</h3>';
 		}
 	}
 }

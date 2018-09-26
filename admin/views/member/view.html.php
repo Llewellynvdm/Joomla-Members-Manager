@@ -239,6 +239,8 @@ class MembersmanagerViewMember extends JViewLegacy
 			$this->document->addStyleSheet( JURI::root(true) .'/media/com_membersmanager/uikit-v3/css/uikit'.$size.'.css', (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/css');
 			// add JavaScripts
 			$this->document->addScript( JURI::root(true) .'/media/com_membersmanager/uikit-v3/js/uikit'.$size.'.js', (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/javascript');
+			// add icons
+			$this->document->addScript( JURI::root(true) .'/media/com_membersmanager/uikit-v3/js/uikit-icons'.$size.'.js', (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/javascript');
 		}
 		// add var key
 		$this->document->addScriptDeclaration("var vastDevMod = '".$this->get('VDM')."';");

@@ -138,9 +138,9 @@ class JFormFieldMainmembers extends JFormFieldList
 	/**
 	 * Method to get a list of options for a list input.
 	 *
-	 * @return	array		An array of JHtml options.
+	 * @return	array    An array of JHtml options.
 	 */
-	public function getOptions()
+	protected function getOptions()
 	{
 				// load the db opbject
 		$db = JFactory::getDBO();
