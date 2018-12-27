@@ -2,7 +2,7 @@
 /**
  * @package    Joomla.Members.Manager
  *
- * @created    6th September, 2015
+ * @created    6th July, 2018
  * @author     Llewellyn van der Merwe <https://www.joomlacomponentbuilder.com/>
  * @github     Joomla Members Manager <https://github.com/vdm-io/Joomla-Members-Manager>
  * @copyright  Copyright (C) 2015. All Rights Reserved
@@ -88,11 +88,7 @@ $edit = "index.php?option=com_membersmanager&view=members&task=member.edit";
 		</td>
 		<td class="hidden-phone">
 			<div>
-			<?php if ($this->user->authorise('type.edit', 'com_membersmanager.type.' . (int)$item->type)): ?>
-				<a href="index.php?option=com_membersmanager&view=types&task=type.edit&id=<?php echo $item->type; ?>&ref=members"><?php echo $this->escape($item->type_name); ?></a>
-			<?php else: ?>
-				<?php echo $this->escape($item->type_name); ?>
-			<?php endif; ?>: <b>
+			<?php echo $this->escape($item->type); ?>: <b>
 			<?php echo JText::_($item->account); ?></b><br />
 <em>
 			<?php echo $this->escape($item->token); ?></em>

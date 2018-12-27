@@ -2,7 +2,7 @@
 /**
  * @package    Joomla.Members.Manager
  *
- * @created    6th September, 2015
+ * @created    6th July, 2018
  * @author     Llewellyn van der Merwe <https://www.joomlacomponentbuilder.com/>
  * @github     Joomla Members Manager <https://github.com/vdm-io/Joomla-Members-Manager>
  * @copyright  Copyright (C) 2015. All Rights Reserved
@@ -37,6 +37,8 @@ class MembersmanagerViewMembers extends JViewLegacy
 		$this->listOrder = $this->escape($this->state->get('list.ordering'));
 		$this->listDirn = $this->escape($this->state->get('list.direction'));
 		$this->saveOrder = $this->listOrder == 'ordering';
+		// set the return here value
+		$this->return_here = urlencode(base64_encode((string) JUri::getInstance()));
 		// get global action permissions
 		$this->canDo = MembersmanagerHelper::getActions('member');
 		$this->canEdit = $this->canDo->get('member.edit');
@@ -224,28 +226,6 @@ class MembersmanagerViewMembers extends JViewLegacy
 					'- Keep Original '.JText::_('COM_MEMBERSMANAGER_MEMBER_MAIN_MEMBER_LABEL').' -',
 					'batch[main_member]',
 					JHtml::_('select.options', $this->main_memberUserOptions, 'value', 'text')
-				);
-			}
-		}
-
-		// Set Type Name Selection
-		$this->typeNameOptions = JFormHelper::loadFieldType('Types')->options;
-		if ($this->typeNameOptions)
-		{
-			// Type Name Filter
-			JHtmlSidebar::addFilter(
-				'- Select '.JText::_('COM_MEMBERSMANAGER_MEMBER_TYPE_LABEL').' -',
-				'filter_type',
-				JHtml::_('select.options', $this->typeNameOptions, 'value', 'text', $this->state->get('filter.type'))
-			);
-
-			if ($this->canBatch && $this->canCreate && $this->canEdit)
-			{
-				// Type Name Batch Selection
-				JHtmlBatch_::addListSelection(
-					'- Keep Original '.JText::_('COM_MEMBERSMANAGER_MEMBER_TYPE_LABEL').' -',
-					'batch[type]',
-					JHtml::_('select.options', $this->typeNameOptions, 'value', 'text')
 				);
 			}
 		}

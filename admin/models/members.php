@@ -2,7 +2,7 @@
 /**
  * @package    Joomla.Members.Manager
  *
- * @created    6th September, 2015
+ * @created    6th July, 2018
  * @author     Llewellyn van der Merwe <https://www.joomlacomponentbuilder.com/>
  * @github     Joomla Members Manager <https://github.com/vdm-io/Joomla-Members-Manager>
  * @copyright  Copyright (C) 2015. All Rights Reserved
@@ -28,8 +28,7 @@ class MembersmanagerModelMembers extends JModelList
 				'a.created_by','created_by',
 				'a.modified_by','modified_by',
 				'a.account','account',
-				'a.main_member','main_member',
-				'a.type','type'
+				'a.main_member','main_member'
 			);
 		}
 
@@ -55,9 +54,6 @@ class MembersmanagerModelMembers extends JModelList
 
 		$main_member = $this->getUserStateFromRequest($this->context . '.filter.main_member', 'filter_main_member');
 		$this->setState('filter.main_member', $main_member);
-
-		$type = $this->getUserStateFromRequest($this->context . '.filter.type', 'filter_type');
-		$this->setState('filter.type', $type);
         
 		$sorting = $this->getUserStateFromRequest($this->context . '.filter.sorting', 'filter_sorting', 0, 'int');
 		$this->setState('filter.sorting', $sorting);
@@ -118,6 +114,8 @@ class MembersmanagerModelMembers extends JModelList
 				{
 					$item->email = JFactory::getUser($item->user)->email;
 				}
+				// convert type
+				$item->type = MembersmanagerHelper::jsonToString($item->type, ', ', 'type', 'id', 'name');
 			}
 		}
 
@@ -238,7 +236,7 @@ class MembersmanagerModelMembers extends JModelList
 			else
 			{
 				$search = $db->quote('%' . $db->escape($search) . '%');
-				$query->where('(a.name LIKE '.$search.' OR a.email LIKE '.$search.' OR a.account LIKE '.$search.' OR a.user LIKE '.$search.' OR a.token LIKE '.$search.' OR a.main_member LIKE '.$search.' OR a.useremail LIKE '.$search.' OR a.username LIKE '.$search.' OR a.surname LIKE '.$search.' OR a.type LIKE '.$search.')');
+				$query->where('(a.name LIKE '.$search.' OR a.email LIKE '.$search.' OR a.account LIKE '.$search.' OR a.user LIKE '.$search.' OR a.token LIKE '.$search.' OR a.main_member LIKE '.$search.' OR a.useremail LIKE '.$search.' OR a.username LIKE '.$search.' OR a.surname LIKE '.$search.')');
 			}
 		}
 
@@ -251,11 +249,6 @@ class MembersmanagerModelMembers extends JModelList
 		if ($main_member = $this->getState('filter.main_member'))
 		{
 			$query->where('a.main_member = ' . $db->quote($db->escape($main_member)));
-		}
-		// Filter by type.
-		if ($type = $this->getState('filter.type'))
-		{
-			$query->where('a.type = ' . $db->quote($db->escape($type)));
 		}
 
 		// Add the list ordering clause.
@@ -416,7 +409,6 @@ class MembersmanagerModelMembers extends JModelList
 		$id .= ':' . $this->getState('filter.modified_by');
 		$id .= ':' . $this->getState('filter.account');
 		$id .= ':' . $this->getState('filter.main_member');
-		$id .= ':' . $this->getState('filter.type');
 
 		return parent::getStoreId($id);
 	}

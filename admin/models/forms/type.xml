@@ -131,6 +131,86 @@
 			required="true"
 			multiple="true"
 		/>
+		<!-- Add_relationship Field. Type: Radio. (joomla) -->
+		<field
+			type="radio"
+			name="add_relationship"
+			label="COM_MEMBERSMANAGER_TYPE_ADD_RELATIONSHIP_LABEL"
+			description="COM_MEMBERSMANAGER_TYPE_ADD_RELATIONSHIP_DESCRIPTION"
+			class="btn-group btn-group-yesno"
+			default="0"
+			required="true">
+			<!-- Option Set. -->
+			<option value="1">
+				COM_MEMBERSMANAGER_TYPE_YES</option>
+			<option value="0">
+				COM_MEMBERSMANAGER_TYPE_NO</option>
+		</field>
+		<!-- Field_type Field. Type: List. (joomla) -->
+		<field
+			type="list"
+			name="field_type"
+			label="COM_MEMBERSMANAGER_TYPE_FIELD_TYPE_LABEL"
+			description="COM_MEMBERSMANAGER_TYPE_FIELD_TYPE_DESCRIPTION"
+			class="list_class"
+			multiple="false"
+			required="true"
+			default="1">
+			<!-- Option Set. -->
+			<option value="1">
+				COM_MEMBERSMANAGER_TYPE_CHECKBOXES</option>
+			<option value="2">
+				COM_MEMBERSMANAGER_TYPE_LIST</option>
+		</field>
+		<!-- Communicate Field. Type: Radio. (joomla) -->
+		<field
+			type="radio"
+			name="communicate"
+			label="COM_MEMBERSMANAGER_TYPE_COMMUNICATE_LABEL"
+			description="COM_MEMBERSMANAGER_TYPE_COMMUNICATE_DESCRIPTION"
+			class="btn-group btn-group-yesno"
+			default="0">
+			<!-- Option Set. -->
+			<option value="0">
+				COM_MEMBERSMANAGER_TYPE_NONE</option>
+			<option value="1">
+				COM_MEMBERSMANAGER_TYPE_ONLY_SELECTED</option>
+			<option value="2">
+				COM_MEMBERSMANAGER_TYPE_ALL</option>
+		</field>
+		<!-- View_relationship Field. Type: Types. (custom) -->
+		<field
+			type="types"
+			name="view_relationship"
+			label="COM_MEMBERSMANAGER_TYPE_VIEW_RELATIONSHIP_LABEL"
+			description="COM_MEMBERSMANAGER_TYPE_VIEW_RELATIONSHIP_DESCRIPTION"
+			class="list_class"
+			multiple="true"
+			required="false"
+			button="true"
+		/>
+		<!-- Edit_relationship Field. Type: Types. (custom) -->
+		<field
+			type="types"
+			name="edit_relationship"
+			label="COM_MEMBERSMANAGER_TYPE_EDIT_RELATIONSHIP_LABEL"
+			description="COM_MEMBERSMANAGER_TYPE_EDIT_RELATIONSHIP_DESCRIPTION"
+			class="list_class"
+			multiple="true"
+			required="false"
+			button="true"
+		/>
+		<!-- Type Field. Type: Types. (custom) -->
+		<field
+			type="types"
+			name="type"
+			label="COM_MEMBERSMANAGER_TYPE_TYPE_LABEL"
+			description="COM_MEMBERSMANAGER_TYPE_TYPE_DESCRIPTION"
+			class="list_class"
+			multiple="true"
+			required="false"
+			button="true"
+		/>
 		<!-- Alias Field. Type: Text. (joomla) -->
 		<field
 			type="text"

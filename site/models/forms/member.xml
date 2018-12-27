@@ -263,14 +263,14 @@
 			message="COM_MEMBERSMANAGER_MEMBER_SURNAME_MESSAGE"
 			hint="COM_MEMBERSMANAGER_MEMBER_SURNAME_HINT"
 		/>
-		<!-- Type Field. Type: Types. (custom) -->
+		<!-- Type Field. Type: Typesonmember. (custom) -->
 		<field
-			type="types"
+			type="typesonmember"
 			name="type"
 			label="COM_MEMBERSMANAGER_MEMBER_TYPE_LABEL"
 			description="COM_MEMBERSMANAGER_MEMBER_TYPE_DESCRIPTION"
 			class="list_class"
-			multiple="false"
+			multiple="true"
 			required="false"
 			button="true"
 		/>

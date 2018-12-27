@@ -2,7 +2,7 @@
 /**
  * @package    Joomla.Members.Manager
  *
- * @created    6th September, 2015
+ * @created    6th July, 2018
  * @author     Llewellyn van der Merwe <https://www.joomlacomponentbuilder.com/>
  * @github     Joomla Members Manager <https://github.com/vdm-io/Joomla-Members-Manager>
  * @copyright  Copyright (C) 2015. All Rights Reserved
@@ -34,7 +34,7 @@ defined('_JEXEC') or die('Restricted access');
 			<?php endif; ?>
 		</div>
 		<div class="uk-width-medium-1-2">
-			<a class="uk-button uk-button-success uk-width-1-1" href="index.php?option=com_membersmanager&view=members&task=member.edit">
+			<a class="uk-button uk-button-success uk-width-1-1" href="<?php echo JURI::root(); ?>index.php?option=com_membersmanager&view=members&task=member.edit&return=<?php echo urlencode(base64_encode((string) JUri::getInstance())); ?>">
 				<i class="uk-icon-plus"></i> <?php echo JText::_('COM_MEMBERSMANAGER_CREATE'); ?>
 			</a>
 		</div>

@@ -2,7 +2,7 @@
 /**
  * @package    Joomla.Members.Manager
  *
- * @created    6th September, 2015
+ * @created    6th July, 2018
  * @author     Llewellyn van der Merwe <https://www.joomlacomponentbuilder.com/>
  * @github     Joomla Members Manager <https://github.com/vdm-io/Joomla-Members-Manager>
  * @copyright  Copyright (C) 2015. All Rights Reserved
@@ -68,11 +68,11 @@ class MembersmanagerRouter extends JComponentRouterBase
 			return $segments;
 		}
 
-		if (isset($view) && isset($query['id']) && ($view === 'member' || $view === 'cpanel' || $view === 'profile'))
+		if (isset($view) && isset($query['id']) && ($view === 'member' || $view === 'members' || $view === 'cpanel' || $view === 'profile'))
 		{
 			if ($mId != (int) $query['id'] || $mView != $view)
 			{
-				if (($view === 'member' || $view === 'cpanel' || $view === 'profile'))
+				if (($view === 'member' || $view === 'members' || $view === 'cpanel' || $view === 'profile'))
 				{
 					$segments[] = $view;
 					$id = explode(':', $query['id']);
@@ -122,6 +122,21 @@ class MembersmanagerRouter extends JComponentRouterBase
 				if (is_numeric($segments[$count-1]))
 				{
 					$vars['id'] = (int) $segments[$count-1];
+				}
+				break;
+			case 'members':
+				$vars['view'] = 'members';
+				if (is_numeric($segments[$count-1]))
+				{
+					$vars['id'] = (int) $segments[$count-1];
+				}
+				elseif ($segments[$count-1])
+				{
+					$id = $this->getVar('member', $segments[$count-1], 'alias', 'id');
+					if($id)
+					{
+						$vars['id'] = $id;
+					}
 				}
 				break;
 			case 'cpanel':

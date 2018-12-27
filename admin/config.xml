@@ -46,6 +46,24 @@
 			default="10"
 		/>
 		<field type="spacer" name="spacerHistory" hr="true" />
+
+		<!-- Placeholder_prefix Field. Type: Text. (joomla) -->
+		<field
+			type="text"
+			name="placeholder_prefix"
+			label="COM_MEMBERSMANAGER_CONFIG_PLACEHOLDER_PREFIX_LABEL"
+			size="50"
+			maxlength="150"
+			default="member"
+			description="COM_MEMBERSMANAGER_CONFIG_PLACEHOLDER_PREFIX_DESCRIPTION"
+			class="text_area"
+			filter="WORD"
+			message="COM_MEMBERSMANAGER_CONFIG_PLACEHOLDER_PREFIX_MESSAGE"
+			hint="COM_MEMBERSMANAGER_CONFIG_PLACEHOLDER_PREFIX_HINT"
+			autocomplete="on"
+		/>
+		<!-- Spacer_hr Field. Type: Spacer. A None Database Field. (joomla) -->
+		<field type="spacer" name="spacer_hr" hr="true" class="spacer_hr" />
 		<field name="autorTitle"
 			type="spacer"
 			label="COM_MEMBERSMANAGER_CONFIG_AUTHOR"
@@ -161,9 +179,142 @@
 		/>
 	</fieldset>
 	<fieldset
+		name="members_custom_config"
+		label="COM_MEMBERSMANAGER_CONFIG_MEMBERS">
+
+		<!-- Members_display_type Field. Type: List. (joomla) -->
+		<field
+			type="list"
+			name="members_display_type"
+			label="COM_MEMBERSMANAGER_CONFIG_MEMBERS_DISPLAY_TYPE_LABEL"
+			description="COM_MEMBERSMANAGER_CONFIG_MEMBERS_DISPLAY_TYPE_DESCRIPTION"
+			multiple="false"
+			required="true"
+			default="1">
+			<!-- Option Set. -->
+			<option value="1">
+				COM_MEMBERSMANAGER_CONFIG_PANELS</option>
+			<option value="2">
+				COM_MEMBERSMANAGER_CONFIG_TABLE</option>
+			<option value="3">
+				COM_MEMBERSMANAGER_CONFIG_LIST</option>
+		</field>
+		<!-- Panels_template Field. Type: Textarea. (joomla) -->
+		<field
+			type="textarea"
+			name="panels_template"
+			label="COM_MEMBERSMANAGER_CONFIG_PANELS_TEMPLATE_LABEL"
+			rows="10"
+			cols="5"
+			default=""
+			description="COM_MEMBERSMANAGER_CONFIG_PANELS_TEMPLATE_DESCRIPTION"
+			class="text_area span12"
+			filter="RAW"
+			hint="COM_MEMBERSMANAGER_CONFIG_PANELS_TEMPLATE_HINT"
+			showon="members_display_type:1"
+		/>
+		<!-- Panel_template Field. Type: Textarea. (joomla) -->
+		<field
+			type="textarea"
+			name="panel_template"
+			label="COM_MEMBERSMANAGER_CONFIG_PANEL_TEMPLATE_LABEL"
+			rows="10"
+			cols="5"
+			description="COM_MEMBERSMANAGER_CONFIG_PANEL_TEMPLATE_DESCRIPTION"
+			class="text_area span12"
+			filter="RAW"
+			hint="COM_MEMBERSMANAGER_CONFIG_PANEL_TEMPLATE_HINT"
+			showon="members_display_type:1"
+		/>
+		<!-- Table_template Field. Type: Textarea. (joomla) -->
+		<field
+			type="textarea"
+			name="table_template"
+			label="COM_MEMBERSMANAGER_CONFIG_TABLE_TEMPLATE_LABEL"
+			rows="10"
+			cols="5"
+			default=""
+			description="COM_MEMBERSMANAGER_CONFIG_TABLE_TEMPLATE_DESCRIPTION"
+			class="text_area span12"
+			filter="RAW"
+			hint="COM_MEMBERSMANAGER_CONFIG_TABLE_TEMPLATE_HINT"
+			showon="members_display_type:2"
+		/>
+		<!-- Table_row_template Field. Type: Textarea. (joomla) -->
+		<field
+			type="textarea"
+			name="table_row_template"
+			label="COM_MEMBERSMANAGER_CONFIG_TABLE_ROW_TEMPLATE_LABEL"
+			rows="10"
+			cols="5"
+			default=""
+			description="COM_MEMBERSMANAGER_CONFIG_TABLE_ROW_TEMPLATE_DESCRIPTION"
+			class="text_area span12"
+			filter="RAW"
+			hint="COM_MEMBERSMANAGER_CONFIG_TABLE_ROW_TEMPLATE_HINT"
+			showon="members_display_type:2"
+		/>
+		<!-- List_template Field. Type: Textarea. (joomla) -->
+		<field
+			type="textarea"
+			name="list_template"
+			label="COM_MEMBERSMANAGER_CONFIG_LIST_TEMPLATE_LABEL"
+			rows="10"
+			cols="5"
+			default=""
+			description="COM_MEMBERSMANAGER_CONFIG_LIST_TEMPLATE_DESCRIPTION"
+			class="text_area span12"
+			filter="RAW"
+			hint="COM_MEMBERSMANAGER_CONFIG_LIST_TEMPLATE_HINT"
+			showon="members_display_type:3"
+		/>
+		<!-- List_item_template Field. Type: Textarea. (joomla) -->
+		<field
+			type="textarea"
+			name="list_item_template"
+			label="COM_MEMBERSMANAGER_CONFIG_LIST_ITEM_TEMPLATE_LABEL"
+			rows="10"
+			cols="5"
+			default=""
+			description="COM_MEMBERSMANAGER_CONFIG_LIST_ITEM_TEMPLATE_DESCRIPTION"
+			class="text_area span12"
+			filter="RAW"
+			hint="COM_MEMBERSMANAGER_CONFIG_LIST_ITEM_TEMPLATE_HINT"
+			showon="members_display_type:3"
+		/>
+	</fieldset>
+	<fieldset
 		name="profile_custom_config"
 		label="COM_MEMBERSMANAGER_CONFIG_PROFILE">
 
+		<!-- Button_forms_name Field. Type: Text. (joomla) -->
+		<field
+			type="text"
+			name="button_forms_name"
+			label="COM_MEMBERSMANAGER_CONFIG_BUTTON_FORMS_NAME_LABEL"
+			size="50"
+			maxlength="150"
+			description="COM_MEMBERSMANAGER_CONFIG_BUTTON_FORMS_NAME_DESCRIPTION"
+			class="text_area"
+			filter="STRING"
+			message="COM_MEMBERSMANAGER_CONFIG_BUTTON_FORMS_NAME_MESSAGE"
+			hint="COM_MEMBERSMANAGER_CONFIG_BUTTON_FORMS_NAME_HINT"
+			autocomplete="on"
+		/>
+		<!-- Button_report_name Field. Type: Text. (joomla) -->
+		<field
+			type="text"
+			name="button_report_name"
+			label="COM_MEMBERSMANAGER_CONFIG_BUTTON_REPORT_NAME_LABEL"
+			size="50"
+			maxlength="150"
+			description="COM_MEMBERSMANAGER_CONFIG_BUTTON_REPORT_NAME_DESCRIPTION"
+			class="text_area"
+			filter="STRING"
+			message="COM_MEMBERSMANAGER_CONFIG_BUTTON_REPORT_NAME_MESSAGE"
+			hint="COM_MEMBERSMANAGER_CONFIG_BUTTON_REPORT_NAME_HINT"
+			autocomplete="on"
+		/>
 		<!-- Image_formats Field. Type: List. (joomla) -->
 		<field
 			type="list"

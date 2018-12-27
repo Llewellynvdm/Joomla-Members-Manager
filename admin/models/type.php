@@ -2,7 +2,7 @@
 /**
  * @package    Joomla.Members.Manager
  *
- * @created    6th September, 2015
+ * @created    6th July, 2018
  * @author     Llewellyn van der Merwe <https://www.joomlacomponentbuilder.com/>
  * @github     Joomla Members Manager <https://github.com/vdm-io/Joomla-Members-Manager>
  * @copyright  Copyright (C) 2015. All Rights Reserved
@@ -79,6 +79,30 @@ class MembersmanagerModelType extends JModelAdmin
 				$registry = new Registry;
 				$registry->loadString($item->metadata);
 				$item->metadata = $registry->toArray();
+			}
+
+			if (!empty($item->view_relationship))
+			{
+				// Convert the view_relationship field to an array.
+				$view_relationship = new Registry;
+				$view_relationship->loadString($item->view_relationship);
+				$item->view_relationship = $view_relationship->toArray();
+			}
+
+			if (!empty($item->edit_relationship))
+			{
+				// Convert the edit_relationship field to an array.
+				$edit_relationship = new Registry;
+				$edit_relationship->loadString($item->edit_relationship);
+				$item->edit_relationship = $edit_relationship->toArray();
+			}
+
+			if (!empty($item->type))
+			{
+				// Convert the type field to an array.
+				$type = new Registry;
+				$type->loadString($item->type);
+				$item->type = $type->toArray();
 			}
 
 			if (!empty($item->groups_target))
@@ -245,6 +269,114 @@ class MembersmanagerModelType extends JModelAdmin
 				$form->setFieldAttribute('groups_access', 'filter', 'unset');
 				// Disable fields while saving.
 				$form->setFieldAttribute('groups_access', 'required', 'false');
+			}
+		}
+		// Modify the form based on Edit Add Relationship access controls.
+		if ($id != 0 && (!$user->authorise('type.edit.add_relationship', 'com_membersmanager.type.' . (int) $id))
+			|| ($id == 0 && !$user->authorise('type.edit.add_relationship', 'com_membersmanager')))
+		{
+			// Disable fields for display.
+			$form->setFieldAttribute('add_relationship', 'disabled', 'true');
+			// Disable fields for display.
+			$form->setFieldAttribute('add_relationship', 'readonly', 'true');
+			// Disable radio button for display.
+			$class = $form->getFieldAttribute('add_relationship', 'class', '');
+			$form->setFieldAttribute('add_relationship', 'class', $class.' disabled no-click');
+			// If there is no value continue.
+			if (!$form->getValue('add_relationship'))
+			{
+				// Disable fields while saving.
+				$form->setFieldAttribute('add_relationship', 'filter', 'unset');
+				// Disable fields while saving.
+				$form->setFieldAttribute('add_relationship', 'required', 'false');
+			}
+		}
+		// Modify the form based on Edit Field Type access controls.
+		if ($id != 0 && (!$user->authorise('type.edit.field_type', 'com_membersmanager.type.' . (int) $id))
+			|| ($id == 0 && !$user->authorise('type.edit.field_type', 'com_membersmanager')))
+		{
+			// Disable fields for display.
+			$form->setFieldAttribute('field_type', 'disabled', 'true');
+			// Disable fields for display.
+			$form->setFieldAttribute('field_type', 'readonly', 'true');
+			// If there is no value continue.
+			if (!$form->getValue('field_type'))
+			{
+				// Disable fields while saving.
+				$form->setFieldAttribute('field_type', 'filter', 'unset');
+				// Disable fields while saving.
+				$form->setFieldAttribute('field_type', 'required', 'false');
+			}
+		}
+		// Modify the form based on Edit Communicate access controls.
+		if ($id != 0 && (!$user->authorise('type.edit.communicate', 'com_membersmanager.type.' . (int) $id))
+			|| ($id == 0 && !$user->authorise('type.edit.communicate', 'com_membersmanager')))
+		{
+			// Disable fields for display.
+			$form->setFieldAttribute('communicate', 'disabled', 'true');
+			// Disable fields for display.
+			$form->setFieldAttribute('communicate', 'readonly', 'true');
+			// Disable radio button for display.
+			$class = $form->getFieldAttribute('communicate', 'class', '');
+			$form->setFieldAttribute('communicate', 'class', $class.' disabled no-click');
+			// If there is no value continue.
+			if (!$form->getValue('communicate'))
+			{
+				// Disable fields while saving.
+				$form->setFieldAttribute('communicate', 'filter', 'unset');
+				// Disable fields while saving.
+				$form->setFieldAttribute('communicate', 'required', 'false');
+			}
+		}
+		// Modify the form based on Edit View Relationship access controls.
+		if ($id != 0 && (!$user->authorise('type.edit.view_relationship', 'com_membersmanager.type.' . (int) $id))
+			|| ($id == 0 && !$user->authorise('type.edit.view_relationship', 'com_membersmanager')))
+		{
+			// Disable fields for display.
+			$form->setFieldAttribute('view_relationship', 'disabled', 'true');
+			// Disable fields for display.
+			$form->setFieldAttribute('view_relationship', 'readonly', 'true');
+			// If there is no value continue.
+			if (!$form->getValue('view_relationship'))
+			{
+				// Disable fields while saving.
+				$form->setFieldAttribute('view_relationship', 'filter', 'unset');
+				// Disable fields while saving.
+				$form->setFieldAttribute('view_relationship', 'required', 'false');
+			}
+		}
+		// Modify the form based on Edit Edit Relationship access controls.
+		if ($id != 0 && (!$user->authorise('type.edit.edit_relationship', 'com_membersmanager.type.' . (int) $id))
+			|| ($id == 0 && !$user->authorise('type.edit.edit_relationship', 'com_membersmanager')))
+		{
+			// Disable fields for display.
+			$form->setFieldAttribute('edit_relationship', 'disabled', 'true');
+			// Disable fields for display.
+			$form->setFieldAttribute('edit_relationship', 'readonly', 'true');
+			// If there is no value continue.
+			if (!$form->getValue('edit_relationship'))
+			{
+				// Disable fields while saving.
+				$form->setFieldAttribute('edit_relationship', 'filter', 'unset');
+				// Disable fields while saving.
+				$form->setFieldAttribute('edit_relationship', 'required', 'false');
+			}
+		}
+		// Modify the form based on Edit Type access controls.
+		if ($id != 0 && (!$user->authorise('type.edit.type', 'com_membersmanager.type.' . (int) $id))
+			|| ($id == 0 && !$user->authorise('type.edit.type', 'com_membersmanager')))
+		{
+			// Disable fields for display.
+			$form->setFieldAttribute('type', 'disabled', 'true');
+			// Disable fields for display.
+			$form->setFieldAttribute('type', 'readonly', 'true');
+			// If there is no value continue.
+			if (!$form->getValue('type'))
+			{
+				// Disable fields while saving.
+				$form->setFieldAttribute('type', 'filter', 'unset');
+				// Disable fields while saving.
+				$form->setFieldAttribute('type', 'required', 'false');
 			}
 		}
 		// Only load these values if no id is found
@@ -422,6 +554,42 @@ class MembersmanagerModelType extends JModelAdmin
 		}
 
 		return $data;
+	}
+
+	/**
+	 * Method to validate the form data.
+	 *
+	 * @param   JForm   $form   The form to validate against.
+	 * @param   array   $data   The data to validate.
+	 * @param   string  $group  The name of the field group to validate.
+	 *
+	 * @return  mixed  Array of filtered data if valid, false otherwise.
+	 *
+	 * @see     JFormRule
+	 * @see     JFilterInput
+	 * @since   12.2
+	 */
+	public function validate($form, $data, $group = null)
+	{
+		// check if the not_required field is set
+		if (MembersmanagerHelper::checkString($data['not_required']))
+		{
+			$requiredFields = (array) explode(',',(string) $data['not_required']);
+			$requiredFields = array_unique($requiredFields);
+			// now change the required field attributes value
+			foreach ($requiredFields as $requiredField)
+			{
+				// make sure there is a string value
+				if (MembersmanagerHelper::checkString($requiredField))
+				{
+					// change to false
+					$form->setFieldAttribute($requiredField, 'required', 'false');
+					// also clear the data set
+					$data[$requiredField] = '';
+				}
+			}
+		}
+		return parent::validate($form, $data, $group);
 	}
 
 	/**
@@ -839,6 +1007,54 @@ class MembersmanagerModelType extends JModelAdmin
 			$metadata = new JRegistry;
 			$metadata->loadArray($data['metadata']);
 			$data['metadata'] = (string) $metadata;
+		}
+
+		// Set the view_relationship items to data.
+		if (isset($data['view_relationship']) && is_array($data['view_relationship']))
+		{
+			$view_relationship = new JRegistry;
+			$view_relationship->loadArray($data['view_relationship']);
+			$data['view_relationship'] = (string) $view_relationship;
+		}
+		// Also check permission since the value may be removed due to permissions
+		// Then we do not want to clear it out, but simple ignore the empty view_relationship
+		elseif (!isset($data['view_relationship'])
+			&& JFactory::getUser()->authorise('type.edit.view_relationship', 'com_membersmanager'))
+		{
+			// Set the empty view_relationship to data
+			$data['view_relationship'] = '';
+		}
+
+		// Set the edit_relationship items to data.
+		if (isset($data['edit_relationship']) && is_array($data['edit_relationship']))
+		{
+			$edit_relationship = new JRegistry;
+			$edit_relationship->loadArray($data['edit_relationship']);
+			$data['edit_relationship'] = (string) $edit_relationship;
+		}
+		// Also check permission since the value may be removed due to permissions
+		// Then we do not want to clear it out, but simple ignore the empty edit_relationship
+		elseif (!isset($data['edit_relationship'])
+			&& JFactory::getUser()->authorise('type.edit.edit_relationship', 'com_membersmanager'))
+		{
+			// Set the empty edit_relationship to data
+			$data['edit_relationship'] = '';
+		}
+
+		// Set the type items to data.
+		if (isset($data['type']) && is_array($data['type']))
+		{
+			$type = new JRegistry;
+			$type->loadArray($data['type']);
+			$data['type'] = (string) $type;
+		}
+		// Also check permission since the value may be removed due to permissions
+		// Then we do not want to clear it out, but simple ignore the empty type
+		elseif (!isset($data['type'])
+			&& JFactory::getUser()->authorise('type.edit.type', 'com_membersmanager'))
+		{
+			// Set the empty type to data
+			$data['type'] = '';
 		}
 
 		// Set the groups_target string to JSON string.

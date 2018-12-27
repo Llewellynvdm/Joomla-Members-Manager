@@ -2,7 +2,7 @@
 /**
  * @package    Joomla.Members.Manager
  *
- * @created    6th September, 2015
+ * @created    6th July, 2018
  * @author     Llewellyn van der Merwe <https://www.joomlacomponentbuilder.com/>
  * @github     Joomla Members Manager <https://github.com/vdm-io/Joomla-Members-Manager>
  * @copyright  Copyright (C) 2015. All Rights Reserved
@@ -13,13 +13,30 @@
 defined('_JEXEC') or die('Restricted access');
 
 JHtml::_('bootstrap.modal');
+// check if this was directed here from a list view of member manager
+$return_to = $this->app->input->get('return', null, 'base64');
+if (!is_null($return_to) && \JUri::isInternal(base64_decode($return_to)))
+{
+	$return_to = base64_decode($return_to);
+}
 
 ?>
 
 <?php if ($this->user->id > 0): ?>
-	<a class="uk-button uk-width-1-1 uk-button-primary uk-button-small uk-margin-small-bottom" href="<?php echo MembersmanagerHelperRoute::getCpanelRoute(); ?>" title="<?php echo JText::_('COM_MEMBERSMANAGER_OPEN_CPANEL'); ?>">
-		<?php echo JText::_('COM_MEMBERSMANAGER_BACK_TO_CPANEL'); ?>
-	</a>
+	<?php if (!MembersmanagerHelper::checkString($return_to)): ?>
+		<a class="uk-button uk-width-1-1 uk-button-primary uk-button-small uk-margin-small-bottom" href="<?php echo JRoute::_(MembersmanagerHelperRoute::getCpanelRoute()); ?>" title="<?php echo JText::_('COM_MEMBERSMANAGER_OPEN_CPANEL'); ?>">
+			<?php echo JText::_('COM_MEMBERSMANAGER_BACK_TO_CPANEL'); ?>
+		</a>
+	<?php else: ?>
+		<div class="uk-button-group uk-width-1-1">
+			<a class="uk-button uk-width-1-2 uk-button-primary uk-button-small uk-margin-small-bottom" href="<?php echo JRoute::_($return_to); ?>" title="<?php echo JText::_('COM_MEMBERSMANAGER_GO_BACK'); ?>">
+				<?php echo JText::_('COM_MEMBERSMANAGER_BACK'); ?>
+			</a>
+			<a class="uk-button uk-width-1-2 uk-button-primary uk-button-small uk-margin-small-bottom" href="<?php echo JRoute::_(MembersmanagerHelperRoute::getCpanelRoute()); ?>" title="<?php echo JText::_('COM_MEMBERSMANAGER_OPEN_CPANEL'); ?>">
+				<?php echo JText::_('COM_MEMBERSMANAGER_CPANEL'); ?>
+			</a>
+		</div>
+	<?php endif; ?>
 	<?php echo $this->loadTemplate('profiles'); ?>
 	<script type="text/javascript">
 		// token 

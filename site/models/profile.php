@@ -2,7 +2,7 @@
 /**
  * @package    Joomla.Members.Manager
  *
- * @created    6th September, 2015
+ * @created    6th July, 2018
  * @author     Llewellyn van der Merwe <https://www.joomlacomponentbuilder.com/>
  * @github     Joomla Members Manager <https://github.com/vdm-io/Joomla-Members-Manager>
  * @copyright  Copyright (C) 2015. All Rights Reserved
@@ -82,7 +82,7 @@ class MembersmanagerModelProfile extends JModelItem
 			$app = JFactory::getApplication();
 			$app->enqueueMessage(JText::_('COM_MEMBERSMANAGER_NOT_AUTHORISED_TO_VIEW_PROFILE'), 'error');
 			// redirect away to the default view if no access allowed.
-			$app->redirect(JRoute::_('index.php?option=com_membersmanager&view=cpanel'));
+			$app->redirect(JRoute::_('index.php?option=com_membersmanager&view=members'));
 			return false;
 		}
 		$this->userId = $this->user->get('id');
@@ -156,7 +156,7 @@ class MembersmanagerModelProfile extends JModelItem
 					$app = JFactory::getApplication();
 					// If no data is found redirect to default page and show warning.
 					$app->enqueueMessage(JText::_('COM_MEMBERSMANAGER_NOT_FOUND_OR_ACCESS_DENIED'), 'warning');
-					$app->redirect(JRoute::_('index.php?option=com_membersmanager&view=cpanel'));
+					$app->redirect(JRoute::_('index.php?option=com_membersmanager&view=members'));
 					return false;
 				}
 			// Load the JEvent Dispatcher
@@ -167,6 +167,12 @@ class MembersmanagerModelProfile extends JModelItem
 				{
 					// Decode profile_image
 					$data->profile_image = rtrim($medium->decryptString($data->profile_image), "\0");
+				}
+				// Check if we can decode type
+				if (MembersmanagerHelper::checkJson($data->type))
+				{
+					// Decode type
+					$data->type = json_decode($data->type, true);
 				}
 				// Check if item has params, or pass whole item.
 				$params = (isset($data->params) && MembersmanagerHelper::checkJson($data->params)) ? json_decode($data->params) : $data;
@@ -229,6 +235,31 @@ class MembersmanagerModelProfile extends JModelItem
 			}
 		}
 
+			if (empty($this->_item[$pk]->id))
+			{
+				$id = 0;
+			}
+			else
+			{
+				$id = $this->_item[$pk]->id;
+			}			
+			// set the id and view name to session
+			if ($vdm = MembersmanagerHelper::get('profile__'.$id))
+			{
+				$this->vastDevMod = $vdm;
+			}
+			else
+			{
+				// set the vast development method key
+				$this->vastDevMod = MembersmanagerHelper::randomkey(50);
+				MembersmanagerHelper::set($this->vastDevMod, 'profile__'.$id);
+				MembersmanagerHelper::set('profile__'.$id, $this->vastDevMod);
+				// set a return value if found
+				$jinput = JFactory::getApplication()->input;
+				$return = $jinput->get('return', null, 'base64');
+				MembersmanagerHelper::set($this->vastDevMod . '__return', $return);
+			}
+
 		return $this->_item[$pk];
 	}
 
@@ -288,6 +319,12 @@ class MembersmanagerModelProfile extends JModelItem
 					// Decode profile_image
 					$item->profile_image = rtrim($medium->decryptString($item->profile_image), "\0");
 				}
+				// Check if we can decode type
+				if (MembersmanagerHelper::checkJson($item->type))
+				{
+					// Decode type
+					$item->type = json_decode($item->type, true);
+				}
 			}
 			return $items;
 		}
@@ -308,5 +345,10 @@ class MembersmanagerModelProfile extends JModelItem
 			return $this->uikitComp;
 		}
 		return false;
+	}
+
+	public function getVDM()
+	{
+		return $this->vastDevMod;
 	}
 }

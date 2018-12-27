@@ -2,7 +2,7 @@
 /**
  * @package    Joomla.Members.Manager
  *
- * @created    6th September, 2015
+ * @created    6th July, 2018
  * @author     Llewellyn van der Merwe <https://www.joomlacomponentbuilder.com/>
  * @github     Joomla Members Manager <https://github.com/vdm-io/Joomla-Members-Manager>
  * @copyright  Copyright (C) 2015. All Rights Reserved
@@ -285,11 +285,6 @@ jQuery('#adminForm').on('change', '#jform_account',function (e)
 <?php else: ?>
 	jQuery('#error-profile-image-uploader').html('<b><?php echo JText::_('COM_MEMBERSMANAGER_ALLOWED_IMAGE_FORMATS_ARE_NOT_SET_IN_THE_GLOBAL_SETTINGS_PLEASE_NOTIFY_YOUR_SYSTEM_ADMINISTRATOR'); ?></b>');
 <?php endif; ?>
-jQuery(document).ready(function(){
-  jQuery(window).load(function () {
-    jQuery("body").css('background', 'transparent');
-  });
-});
 jQuery('#adminForm').on('change', '#jform_token',function (e) {
 	e.preventDefault();
 	var tokenValue = jQuery('#jform_token').val();
@@ -302,12 +297,6 @@ jQuery('#adminForm').on('change', '#jform_user',function (e) {
 	// check if this token value is used
 	getUserDetails(userValue);
 });
-jQuery('#adminForm').on('change', '#contact_country',function (e) {
-	e.preventDefault();
-	getRegion();
-});
-var select_a_region = '<?php echo JText::_('COM_MEMBERSMANAGER_SELECT_A_REGION'); ?>';
-var create_a_region = '<?php echo JText::_('COM_MEMBERSMANAGER_CREATE_A_REGION'); ?>';
 
 <?php
 	$app = JFactory::getApplication();

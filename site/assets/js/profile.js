@@ -1,7 +1,7 @@
 /**
  * @package    Joomla.Members.Manager
  *
- * @created    6th September, 2015
+ * @created    6th July, 2018
  * @author     Llewellyn van der Merwe <https://www.joomlacomponentbuilder.com/>
  * @github     Joomla Members Manager <https://github.com/vdm-io/Joomla-Members-Manager>
  * @copyright  Copyright (C) 2015. All Rights Reserved
@@ -59,3 +59,18 @@ function setReport(data) {
 	// hide spinner
 	jQuery('.report-spinner').hide();
 }
+// load chart in modal
+function loadTheChartInModal(callback, targetDivID){
+	// remove old data and add spinner
+	jQuery('.setreport').html('');
+	jQuery('.report-spinner').show();
+	// add new div
+	jQuery('.setreport').html('<a href="javascript:void(0)" onclick="printMe(\'Report\', \'' + targetDivID + '_print\')" >Print</a><br /><div class="chartDiv" id="' + targetDivID + '_print"><div id="' + targetDivID + '" class="chart"></div></div>');
+	// allow modal to open
+	setTimeout(function() {
+		// hide spinner
+		jQuery('.report-spinner').hide();
+		// run call back
+		callback();
+	}, 800);
+} 

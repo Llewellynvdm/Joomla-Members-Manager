@@ -2,7 +2,7 @@
 /**
  * @package    Joomla.Members.Manager
  *
- * @created    6th September, 2015
+ * @created    6th July, 2018
  * @author     Llewellyn van der Merwe <https://www.joomlacomponentbuilder.com/>
  * @github     Joomla Members Manager <https://github.com/vdm-io/Joomla-Members-Manager>
  * @copyright  Copyright (C) 2015. All Rights Reserved
@@ -81,8 +81,8 @@ class MembersmanagerModelCpanel extends JModelItem
 		{
 			$app = JFactory::getApplication();
 			$app->enqueueMessage(JText::_('COM_MEMBERSMANAGER_NOT_AUTHORISED_TO_VIEW_CPANEL'), 'error');
-			// redirect away to the home page if no access allowed.
-			$app->redirect(JURI::root());
+			// redirect away to the default view if no access allowed.
+			$app->redirect(JRoute::_('index.php?option=com_membersmanager&view=members'));
 			return false;
 		}
 		$this->userId = $this->user->get('id');
@@ -132,7 +132,7 @@ class MembersmanagerModelCpanel extends JModelItem
 					$app = JFactory::getApplication();
 					// If no data is found redirect to default page and show warning.
 					$app->enqueueMessage(JText::_('COM_MEMBERSMANAGER_NOT_FOUND_OR_ACCESS_DENIED'), 'warning');
-					$app->redirect(JURI::root());
+					$app->redirect(JRoute::_('index.php?option=com_membersmanager&view=members'));
 					return false;
 				}
 

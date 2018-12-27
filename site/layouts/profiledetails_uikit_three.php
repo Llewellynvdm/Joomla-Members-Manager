@@ -2,7 +2,7 @@
 /**
  * @package    Joomla.Members.Manager
  *
- * @created    6th September, 2015
+ * @created    6th July, 2018
  * @author     Llewellyn van der Merwe <https://www.joomlacomponentbuilder.com/>
  * @github     Joomla Members Manager <https://github.com/vdm-io/Joomla-Members-Manager>
  * @copyright  Copyright (C) 2015. All Rights Reserved
@@ -28,25 +28,43 @@ if ($setInfo)
 		$infoDetails[$_nr] = MembersmanagerHelper::getAnyFormDetails($displayData->id, 'member', $info->element, 'array', 'profile');
 	}
 }
+// get DB
+$db = JFactory::getDBO();
+// set relationships to false
+$relationships = false;
+// get the types of relationships available to this member
+if (($relationshipTypes = MembersmanagerHelper::getRelationshipsByTypes($displayData->type, $db, false, true, false)) !== false)
+{
+	// load relationships
+	$relationships = MembersmanagerHelper::getRelationshipsByMember($displayData->id, $db, 'member');
+}
 
 ?>
-<?php if ($setInfo) : ?>
+<?php if ($setInfo || MembersmanagerHelper::checkArray($relationships)) : ?>
 <div>
-<?php if (count($infoNames) > 3) : ?>
+<?php if ($setInfo && count($infoNames) > 3) : ?>
 	<ul class="uk-child-width-expand" uk-tab>
 <?php else: ?>
 	<ul uk-tab>
 <?php endif; ?>
-		<li class="uk-active"><a href="#"><?php echo implode('</a></li><li><a href="#">', $infoNames); ?></a></li>
+		<?php if ($setInfo): ?>
+			<li class="uk-active"><a href="#"><?php echo implode('</a></li><li><a href="#">', $infoNames); ?></a></li>
+		<?php endif; ?>
+		<?php if (MembersmanagerHelper::checkArray($relationships)): ?>
+			<li><a href="#"><?php echo JText::_('COM_MEMBERSMANAGER_RELATIONSHIPS'); ?></a></li>
+		<?php endif; ?>
 	</ul>
 	<ul class="uk-switcher uk-margin">
-		<?php foreach($infoDetails as $_nr => $infoDetail): ?>
-			<?php if (isset($infoAvailable[$_nr]->params->membersmanager_relation_type) && 2 == $infoAvailable[$_nr]->params->membersmanager_relation_type): ?>
-				<li><?php echo JLayoutHelper::render('many_list_name_value', array('data' => $infoDetail, 'com' => $infoAvailable[$_nr]->element, 'user' => $displayData->_USER)); ?></li>
-			<?php else: ?>
-				<li><?php echo JLayoutHelper::render('list_name_value', array('data' => $infoDetail, 'com' => $infoAvailable[$_nr]->element, 'user' => $displayData->_USER)); ?></li>			
-			<?php endif; ?>
-		<?php endforeach; ?>
+		<?php if ($setInfo): ?>
+			<?php foreach($infoDetails as $_nr => $infoDetail): ?>
+				<?php if (isset($infoAvailable[$_nr]->params->membersmanager_relation_type) && 2 == $infoAvailable[$_nr]->params->membersmanager_relation_type): ?>
+					<li><?php echo JLayoutHelper::render('many_list_name_value', array('id' => $displayData->id, 'data' => $infoDetail, 'com' => $infoAvailable[$_nr]->element, 'return_path' => $displayData->return_path)); ?></li>
+				<?php else: ?>
+					<li><?php echo JLayoutHelper::render('list_name_value', array('data' => $infoDetail, 'com' => $infoAvailable[$_nr]->element, 'user' => $displayData->_USER)); ?></li>			
+				<?php endif; ?>
+			<?php endforeach; ?>
+		<?php endif; ?>
+		<?php echo JLayoutHelper::render('relation_list_name_value', array('id' => $displayData->id, 'relationshipTypes' => $relationshipTypes, 'relationships' => $relationships, 'return_path' => $displayData->return_path)); ?>
 	</ul>
 </div>
 <?php endif; ?>

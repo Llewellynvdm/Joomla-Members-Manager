@@ -2,7 +2,7 @@
 /**
  * @package    Joomla.Members.Manager
  *
- * @created    6th September, 2015
+ * @created    6th July, 2018
  * @author     Llewellyn van der Merwe <https://www.joomlacomponentbuilder.com/>
  * @github     Joomla Members Manager <https://github.com/vdm-io/Joomla-Members-Manager>
  * @copyright  Copyright (C) 2015. All Rights Reserved
@@ -48,6 +48,21 @@ defined('_JEXEC') or die('Restricted access');
 	</ul>
 </div>
 <?php if ($this->uikitVersion == 3) : ?>
+</div>
+<div id="getreport" class="uk-flex-top" uk-modal>
+	<div class="uk-modal-dialog uk-modal-body">
+	<button class="uk-modal-close-default" type="button" uk-close></button>
+		<div class="setreport" uk-overflow-auto></div>
+		<div class="report-spinner"><?php echo JText::_('COM_MEMBERSMANAGER_LOADING'); ?><span class="loading-dots"></span>.</div>
+	</div>
+</div>
+<?php else: ?>
+<div id="getreport" class="uk-modal">
+	<div class="uk-modal-dialog">
+	<a class="uk-modal-close uk-close"></a>
+		<div class="setreport"></div>
+		<div class="report-spinner"><?php echo JText::_('COM_MEMBERSMANAGER_LOADING'); ?><span class="loading-dots"></span>.</div>
+	</div>
 </div>
 <?php endif; ?>
 <?php else: ?>

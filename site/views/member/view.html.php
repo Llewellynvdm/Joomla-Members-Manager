@@ -2,7 +2,7 @@
 /**
  * @package    Joomla.Members.Manager
  *
- * @created    6th September, 2015
+ * @created    6th July, 2018
  * @author     Llewellyn van der Merwe <https://www.joomlacomponentbuilder.com/>
  * @github     Joomla Members Manager <https://github.com/vdm-io/Joomla-Members-Manager>
  * @copyright  Copyright (C) 2015. All Rights Reserved
@@ -232,14 +232,14 @@ class MembersmanagerViewMember extends JViewLegacy
 			if ($isAdmin || $uikit != 3)
 			{
 				// add JavaScripts
-				$this->document->addScript( JURI::root(true) .'/media/com_membersmanager/uikit-v2/js/uikit' . $size . '.js', (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/css');
+				$this->document->addScript( JURI::root(true) .'/media/com_membersmanager/uikit-v2/js/uikit' . $size . '.js', (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/javascript');
 			}
 			// add JavaScripts
-			$this->document->addScript( JURI::root(true) .'/media/com_membersmanager/uikit-v2/js/components/accordion' . $size . '.js', (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/css');
-			$this->document->addScript( JURI::root(true) .'/media/com_membersmanager/uikit-v2/js/components/tooltip' . $size . '.js', (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/css');
-			$this->document->addScript( JURI::root(true) .'/media/com_membersmanager/uikit-v2/js/components/lightbox' . $size . '.js', (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/css');
-			$this->document->addScript( JURI::root(true) .'/media/com_membersmanager/uikit-v2/js/components/notify' . $size . '.js', (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/css');
-			$this->document->addScript( JURI::root(true) .'/media/com_membersmanager/uikit-v2/js/components/upload' . $size . '.js', (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/css');
+			$this->document->addScript( JURI::root(true) .'/media/com_membersmanager/uikit-v2/js/components/accordion' . $size . '.js', (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/javascript');
+			$this->document->addScript( JURI::root(true) .'/media/com_membersmanager/uikit-v2/js/components/tooltip' . $size . '.js', (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/javascript');
+			$this->document->addScript( JURI::root(true) .'/media/com_membersmanager/uikit-v2/js/components/lightbox' . $size . '.js', (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/javascript');
+			$this->document->addScript( JURI::root(true) .'/media/com_membersmanager/uikit-v2/js/components/notify' . $size . '.js', (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/javascript');
+			$this->document->addScript( JURI::root(true) .'/media/com_membersmanager/uikit-v2/js/components/upload' . $size . '.js', (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/javascript');
 		}
 		// Use Uikit Version 3
 		elseif (3 == $this->uikitVersion && ($isAdmin || $uikit != 2))

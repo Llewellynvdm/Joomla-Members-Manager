@@ -2,7 +2,7 @@
 /**
  * @package    Joomla.Members.Manager
  *
- * @created    6th September, 2015
+ * @created    6th July, 2018
  * @author     Llewellyn van der Merwe <https://www.joomlacomponentbuilder.com/>
  * @github     Joomla Members Manager <https://github.com/vdm-io/Joomla-Members-Manager>
  * @copyright  Copyright (C) 2015. All Rights Reserved
@@ -49,7 +49,7 @@ if ((3 == $displayData->account || 4 == $displayData->account) && $displayData->
 	$addProfileLink = true;
 }
 // check if the edit button is to be added
-$editButton = MembersmanagerHelper::getEditButton($displayData, 'member', 'members', '&ref=profile&refid=' . $displayData->_REFID, 'com_membersmanager', 'COM_MEMBERSMANAGER_YOU_WILL_BE_REDIRECTED_TO_AN_EDIT_VIEW_YOU_SURE_YOU_WANT_TO_CONTINUE');
+$editButton = MembersmanagerHelper::getEditButton($displayData, 'member', 'members', '&ref=profile&refid=' . $displayData->_REFID, 'com_membersmanager', null);
 // set the header
 $header = array();
 $header[] = '<header class="uk-comment-header uk-grid-medium uk-flex-middle" uk-grid>';

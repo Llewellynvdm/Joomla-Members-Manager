@@ -1,7 +1,7 @@
 /**
  * @package    Joomla.Members.Manager
  *
- * @created    6th September, 2015
+ * @created    6th July, 2018
  * @author     Llewellyn van der Merwe <https://www.joomlacomponentbuilder.com/>
  * @github     Joomla Members Manager <https://github.com/vdm-io/Joomla-Members-Manager>
  * @copyright  Copyright (C) 2015. All Rights Reserved
@@ -278,16 +278,16 @@ function getUserDetails(user){
 	});
 }
 function getUserDetails_server(user){
-	var getUrl = JRouter("index.php?option=com_membersmanager&task=ajax.getUserDetails&format=json&vdm="+vastDevMod);
+	var getUrl = JRouter("index.php?option=com_membersmanager&task=ajax.getUserDetails&format=json&raw=true&vdm="+vastDevMod);
 	if(token.length > 0 && user > 0){
 		var request = 'token='+token+'&user='+user;
 	}
 	return jQuery.ajax({
 		type: 'GET',
 		url: getUrl,
-		dataType: 'jsonp',
+		dataType: 'json',
 		data: request,
-		jsonp: 'callback'
+		jsonp: false
 	});
 }
 function setUserDetails(result){
@@ -399,16 +399,16 @@ function removeFile(clearServer, target, flush, type){
 }
 
 function removeFile_server(currentFileName, target, flush, type){
-	var getUrl = JRouter("index.php?option=com_membersmanager&task=ajax.removeFile&format=json&vdm="+vastDevMod);
+	var getUrl = JRouter("index.php?option=com_membersmanager&task=ajax.removeFile&format=json&raw=true&vdm="+vastDevMod);
 	if(token.length > 0 && target.length > 0 && type.length > 0){
 		var request = 'token='+token+'&filename='+currentFileName+'&target='+target+'&flush='+flush+'&type='+type;
 	}
 	return jQuery.ajax({
 		type: 'GET',
 		url: getUrl,
-		dataType: 'jsonp',
+		dataType: 'json',
 		data: request,
-		jsonp: 'callback'
+		jsonp: false
 	});
 }
 function isJsonString(str) {
@@ -437,16 +437,16 @@ function isEmpty(obj) {
 
 
 function checkUnique_server(value, field){
-	var getUrl = JRouter("index.php?option=com_membersmanager&task=ajax.checkUnique&format=json&vdm="+vastDevMod);
+	var getUrl = JRouter("index.php?option=com_membersmanager&task=ajax.checkUnique&format=json&raw=true&vdm="+vastDevMod);
 	if(token.length > 0 && value.length  > 0 && field.length > 0){
 		var request = 'token='+token+'&value='+value+'&field='+field;
 	}
 	return jQuery.ajax({
 		type: 'GET',
 		url: getUrl,
-		dataType: 'jsonp',
+		dataType: 'json',
 		data: request,
-		jsonp: 'callback'
+		jsonp: false
 	});
 }
 function checkUnique(value, field, show){
@@ -474,66 +474,4 @@ function checkUnique(value, field, show){
 			}
 		});
 	}
-}
-
-// set regions that are on the page
-regions = {};
-var region = 0;
-jQuery(document).ready(function($)
-{
-	jQuery("#jform_region option").each(function()
-	{
-		var key =  jQuery(this).val();
-		var text =  jQuery(this).text();
-		regions[key] = text;
-	});
-	region = jQuery('#jform_region').val();
-	getRegion();
-});
-
-function getRegion_server(country){
-	var getUrl = "index.php?option=com_membersmanager&task=ajax.getRegion&format=json";
-	if(token.length > 0 && country > 0){
-		var request = 'token='+token+'&country='+country;
-	}
-	return jQuery.ajax({
-		type: 'GET',
-		url: getUrl,
-		dataType: 'jsonp',
-		data: request,
-		jsonp: 'callback'
-	});
-}
-function getRegion(){
-	jQuery("#loading").show();
-	// clear the selection
-	jQuery('#jform_region').find('option').remove().end();
-	jQuery('#jform_region').trigger('liszt:updated');
-	// get country value if set
-	var country = jQuery('#jform_country').val();
-	getRegion_server(country).done(function(result) {
-		setRegion(result);
-		jQuery("#loading").hide();
-		if (typeof regionButton !== 'undefined') {
-			// ensure button is correct
-			var region = jQuery('#jform_region').val();
-			regionButton(region);
-		}
-	});
-}
-function setRegion(array){
-	if (array) {
-		jQuery('#jform_region').append('<option value="">'+select_a_region+'</option>');
-		jQuery.each( array, function( i, id ) {
-			if (id in regions) {
-				jQuery('#jform_region').append('<option value="'+id+'">'+regions[id]+'</option>');
-			}
-			if (id == region) {
-				jQuery('#jform_region').val(id);
-			}
-		});
-	} else {
-		jQuery('#jform_region').append('<option value="">'+create_a_region+'</option>');
-	}
-	jQuery('#jform_region').trigger('liszt:updated');
 } 

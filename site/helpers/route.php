@@ -2,7 +2,7 @@
 /**
  * @package    Joomla.Members.Manager
  *
- * @created    6th September, 2015
+ * @created    6th July, 2018
  * @author     Llewellyn van der Merwe <https://www.joomlacomponentbuilder.com/>
  * @github     Joomla Members Manager <https://github.com/vdm-io/Joomla-Members-Manager>
  * @copyright  Copyright (C) 2015. All Rights Reserved
@@ -18,6 +18,49 @@ defined('_JEXEC') or die('Restricted access');
 abstract class MembersmanagerHelperRoute
 {
 	protected static $lookup;
+
+	/**
+	 * @param int The route of the Members
+	 */
+	public static function getMembersRoute($id = 0, $catid = 0)
+	{
+		if ($id > 0)
+		{
+			// Initialize the needel array.
+			$needles = array(
+				'members'  => array((int) $id)
+			);
+			// Create the link
+			$link = 'index.php?option=com_membersmanager&view=members&id='. $id;
+		}
+		else
+		{
+			// Initialize the needel array.
+			$needles = array(
+				'members'  => array()
+			);
+			// Create the link but don't add the id.
+			$link = 'index.php?option=com_membersmanager&view=members';
+		}
+		if ($catid > 1)
+		{
+			$categories = JCategories::getInstance('membersmanager.members');
+			$category = $categories->get($catid);
+			if ($category)
+			{
+				$needles['category'] = array_reverse($category->getPath());
+				$needles['categories'] = $needles['category'];
+				$link .= '&catid='.$catid;
+			}
+		}
+
+		if ($item = self::_findItem($needles))
+		{
+			$link .= '&Itemid='.$item;
+		}
+
+		return $link;
+	}
 
 	/**
 	 * @param int The route of the Cpanel
@@ -36,8 +79,10 @@ abstract class MembersmanagerHelperRoute
 		else
 		{
 			// Initialize the needel array.
-			$needles = array();
-			//Create the link but don't add the id.
+			$needles = array(
+				'cpanel'  => array()
+			);
+			// Create the link but don't add the id.
 			$link = 'index.php?option=com_membersmanager&view=cpanel';
 		}
 		if ($catid > 1)
@@ -77,8 +122,10 @@ abstract class MembersmanagerHelperRoute
 		else
 		{
 			// Initialize the needel array.
-			$needles = array();
-			//Create the link but don't add the id.
+			$needles = array(
+				'profile'  => array()
+			);
+			// Create the link but don't add the id.
 			$link = 'index.php?option=com_membersmanager&view=profile';
 		}
 		if ($catid > 1)
@@ -185,8 +232,8 @@ abstract class MembersmanagerHelperRoute
 			}
 		}
 		return $link;
-	}	
-	
+	}
+
 	protected static function _findItem($needles = null,$type = null)
 	{
 		$app      = JFactory::getApplication();
@@ -234,6 +281,10 @@ abstract class MembersmanagerHelperRoute
 							self::$lookup[$language][$view][$item->query['id']] = $item->id;
 						}
 					}
+					else
+					{
+						self::$lookup[$language][$view][0] = $item->id;
+					}
 				}
 			}
 		}
@@ -244,17 +295,24 @@ abstract class MembersmanagerHelperRoute
 			{
 				if (isset(self::$lookup[$language][$view]))
 				{
-					foreach ($ids as $id)
+					if (MembersmanagerHelper::checkArray($ids))
 					{
-						if (isset(self::$lookup[$language][$view][(int) $id]))
+						foreach ($ids as $id)
 						{
-							return self::$lookup[$language][$view][(int) $id];
+							if (isset(self::$lookup[$language][$view][(int) $id]))
+							{
+								return self::$lookup[$language][$view][(int) $id];
+							}
 						}
+					}
+					elseif (isset(self::$lookup[$language][$view][0]))
+					{
+						return self::$lookup[$language][$view][0];
 					}
 				}
 			}
 		}
-		
+
 		if ($type)
 		{
 			// Check if the global menu item has been set.

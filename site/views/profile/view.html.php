@@ -2,7 +2,7 @@
 /**
  * @package    Joomla.Members.Manager
  *
- * @created    6th September, 2015
+ * @created    6th July, 2018
  * @author     Llewellyn van der Merwe <https://www.joomlacomponentbuilder.com/>
  * @github     Joomla Members Manager <https://github.com/vdm-io/Joomla-Members-Manager>
  * @copyright  Copyright (C) 2015. All Rights Reserved
@@ -179,10 +179,26 @@ class MembersmanagerViewProfile extends JViewLegacy
 		}
 		// Set the Time To Live To JavaScript
 		$this->document->addScriptDeclaration("var expire = ". (int) $expire.";");
+		// load the google lib
+		$this->document->addScript('https://www.gstatic.com/charts/loader.js', (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/javascript');
+		// load the chart current
+		$this->document->addScriptDeclaration("google.charts.load('current');");
+		// add var key
+		$this->document->addScriptDeclaration("var vastDevMod = '".$this->get('VDM')."';");
 		// add javascript lang strings
 		JText::script('COM_MEMBERSMANAGER_THERE_WAS_NO_REPORT_FOUND'); 
 		// add the document default css file
 		$this->document->addStyleSheet(JURI::root(true) .'/components/com_membersmanager/assets/css/profile.css', (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/css');
+		// Set the Custom CSS script to view
+		$this->document->addStyleDeclaration("
+			.chartDiv {
+			  margin:0 !important;
+			}
+			.chart {
+			  width: 100%; 
+			  min-height: 450px;
+			}
+		");
 	}
 
 	/**

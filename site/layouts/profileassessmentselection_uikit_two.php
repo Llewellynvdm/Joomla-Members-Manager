@@ -1,0 +1,41 @@
+<?php
+/**
+ * @package    Joomla.Members.Manager
+ *
+ * @created    6th July, 2018
+ * @author     Llewellyn van der Merwe <https://www.joomlacomponentbuilder.com/>
+ * @github     Joomla Members Manager <https://github.com/vdm-io/Joomla-Members-Manager>
+ * @copyright  Copyright (C) 2015. All Rights Reserved
+ * @license    GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
+ */
+
+// No direct access to this file
+defined('JPATH_BASE') or die('Restricted access');
+
+
+
+?>
+<div id="assess-<?php echo MembersmanagerHelper::safeString($displayData->id); ?>" class="uk-offcanvas">
+	<div class="uk-offcanvas-bar uk-offcanvas-bar-flip">
+		<ul class="uk-nav uk-nav-offcanvas" data-uk-nav>
+			<?php foreach ($displayData->assessmentAvailable as $typeAssesmentName => $components) : ?>
+				<?php if  (MembersmanagerHelper::checkArray($components) || MembersmanagerHelper::checkObject($components)): ?>
+					<li class="uk-nav-header"><?php echo JText::sprintf('COM_MEMBERSMANAGER_S_OPTIONS', $typeAssesmentName); ?></li>
+					<?php if  (MembersmanagerHelper::checkArray($components)): ?>
+						<?php foreach ($components as $component) : ?>
+							<li><a href="index.php?option=<?php echo $component->element; ?>&view=form&field=member&field_id=<?php echo $displayData->id; ?>&layout=edit&return=<?php echo $displayData->return_path; ?>"><?php echo $component->name; ?></a></li>
+						<?php endforeach; ?>
+					<?php elseif  (MembersmanagerHelper::checkObject($components)): ?>
+						<?php if (($id = MembersmanagerHelper::getVar('form', $displayData->id, 'member', 'id', '=', str_replace("com_", "", $components->element))) !== false): ?>
+							<?php if (($link = MembersmanagerHelper::getEditURL($id, 'form', 'form', '&return=' . $displayData->return_path, $components->element)) !== false): ?>
+								<li><a href="<?php echo $link; ?>"><?php echo $components->name; ?></a></li>
+							<?php endif; ?>
+						<?php else: ?>
+							<li><a href="index.php?option=<?php echo $components->element; ?>&view=form&field=member&field_id=<?php echo $displayData->id; ?>&layout=edit&return=<?php echo $displayData->return_path; ?>"><?php echo $components->name; ?></a></li>
+						<?php endif; ?>
+					<?php endif; ?>
+				<?php endif; ?>
+			<?php endforeach; ?>
+		</ul>
+	</div>
+</div>

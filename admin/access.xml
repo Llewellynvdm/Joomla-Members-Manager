@@ -13,6 +13,7 @@
 		<action name="core.edit" title="JACTION_EDIT" description="JACTION_EDIT_COMPONENT_DESC" />
 		<action name="core.edit.state" title="JACTION_EDITSTATE" description="JACTION_ACCESS_EDITSTATE_DESC" />
 		<action name="core.edit.own" title="JACTION_EDITOWN" description="JACTION_EDITOWN_COMPONENT_DESC" />
+		    <action name="core.edit.value" title="JACTION_EDITVALUE" description="JACTION_EDITVALUE_COMPONENT_DESC" />
 		<action name="core.edit.created_by" title="COM_MEMBERSMANAGER_EDIT_CREATED_BY" description="COM_MEMBERSMANAGER_EDIT_CREATED_BY_DESC" />
 		<action name="core.edit.created" title="COM_MEMBERSMANAGER_EDIT_CREATED_DATE" description="COM_MEMBERSMANAGER_EDIT_CREATED_DATE_DESC" />
 		<action name="site.cpanel.access" title="COM_MEMBERSMANAGER_CPANEL_ACCESS_SITE" description="COM_MEMBERSMANAGER_CPANEL_ACCESS_SITE_DESC" />
@@ -22,6 +23,7 @@
 		<action name="member.access.password" title="COM_MEMBERSMANAGER_MEMBERS_ACCESS_PASSWORD" description="COM_MEMBERSMANAGER_MEMBERS_ACCESS_PASSWORD_DESC" />
 		<action name="member.access.password_check" title="COM_MEMBERSMANAGER_MEMBERS_ACCESS_PASSWORD_CHECK" description="COM_MEMBERSMANAGER_MEMBERS_ACCESS_PASSWORD_CHECK_DESC" />
 		<action name="member.access.profile_image" title="COM_MEMBERSMANAGER_MEMBERS_ACCESS_PROFILE_IMAGE" description="COM_MEMBERSMANAGER_MEMBERS_ACCESS_PROFILE_IMAGE_DESC" />
+		<action name="site.members.access" title="COM_MEMBERSMANAGER_MEMBERS_ACCESS_SITE" description="COM_MEMBERSMANAGER_MEMBERS_ACCESS_SITE_DESC" />
 		<action name="member.access.useremail" title="COM_MEMBERSMANAGER_MEMBERS_ACCESS_USEREMAIL" description="COM_MEMBERSMANAGER_MEMBERS_ACCESS_USEREMAIL_DESC" />
 		<action name="member.access.username" title="COM_MEMBERSMANAGER_MEMBERS_ACCESS_USERNAME" description="COM_MEMBERSMANAGER_MEMBERS_ACCESS_USERNAME_DESC" />
 		<action name="member.batch" title="COM_MEMBERSMANAGER_MEMBERS_BATCH_USE" description="COM_MEMBERSMANAGER_MEMBERS_BATCH_USE_DESC" />
@@ -48,6 +50,7 @@
 		<action name="member.version" title="COM_MEMBERSMANAGER_MEMBERS_EDIT_VERSION" description="COM_MEMBERSMANAGER_MEMBERS_EDIT_VERSION_DESC" />
 		<action name="member.export" title="COM_MEMBERSMANAGER_MEMBERS_EXPORT" description="COM_MEMBERSMANAGER_MEMBERS_EXPORT_DESC" />
 		<action name="member.import" title="COM_MEMBERSMANAGER_MEMBERS_IMPORT" description="COM_MEMBERSMANAGER_MEMBERS_IMPORT_DESC" />
+		<action name="member.submenu" title="COM_MEMBERSMANAGER_MEMBERS_SUBMENU" description="COM_MEMBERSMANAGER_MEMBERS_SUBMENU_DESC" />
 		<action name="member.view.account" title="COM_MEMBERSMANAGER_MEMBERS_VIEW_ACCOUNT" description="COM_MEMBERSMANAGER_MEMBERS_VIEW_ACCOUNT_DESC" />
 		<action name="member.view.email" title="COM_MEMBERSMANAGER_MEMBERS_VIEW_EMAIL" description="COM_MEMBERSMANAGER_MEMBERS_VIEW_EMAIL_DESC" />
 		<action name="member.view.main_member" title="COM_MEMBERSMANAGER_MEMBERS_VIEW_MAIN_MEMBER" description="COM_MEMBERSMANAGER_MEMBERS_VIEW_MAIN_MEMBER_DESC" />
@@ -66,17 +69,24 @@
 		<action name="type.create" title="COM_MEMBERSMANAGER_TYPES_CREATE" description="COM_MEMBERSMANAGER_TYPES_CREATE_DESC" />
 		<action name="type.delete" title="COM_MEMBERSMANAGER_TYPES_DELETE" description="COM_MEMBERSMANAGER_TYPES_DELETE_DESC" />
 		<action name="type.edit" title="COM_MEMBERSMANAGER_TYPES_EDIT" description="COM_MEMBERSMANAGER_TYPES_EDIT_DESC" />
+		<action name="type.edit.add_relationship" title="COM_MEMBERSMANAGER_TYPES_EDIT_ADD_RELATIONSHIP" description="COM_MEMBERSMANAGER_TYPES_EDIT_ADD_RELATIONSHIP_DESC" />
+		<action name="type.edit.communicate" title="COM_MEMBERSMANAGER_TYPES_EDIT_COMMUNICATE" description="COM_MEMBERSMANAGER_TYPES_EDIT_COMMUNICATE_DESC" />
 		<action name="type.edit.created_by" title="COM_MEMBERSMANAGER_TYPES_EDIT_CREATED_BY" description="COM_MEMBERSMANAGER_TYPES_EDIT_CREATED_BY_DESC" />
 		<action name="type.edit.created" title="COM_MEMBERSMANAGER_TYPES_EDIT_CREATED_DATE" description="COM_MEMBERSMANAGER_TYPES_EDIT_CREATED_DATE_DESC" />
 		<action name="type.edit.description" title="COM_MEMBERSMANAGER_TYPES_EDIT_DESCRIPTION" description="COM_MEMBERSMANAGER_TYPES_EDIT_DESCRIPTION_DESC" />
+		<action name="type.edit.edit_relationship" title="COM_MEMBERSMANAGER_TYPES_EDIT_EDIT_RELATIONSHIP" description="COM_MEMBERSMANAGER_TYPES_EDIT_EDIT_RELATIONSHIP_DESC" />
+		<action name="type.edit.field_type" title="COM_MEMBERSMANAGER_TYPES_EDIT_FIELD_TYPE" description="COM_MEMBERSMANAGER_TYPES_EDIT_FIELD_TYPE_DESC" />
 		<action name="type.edit.groups_access" title="COM_MEMBERSMANAGER_TYPES_EDIT_GROUPS_ACCESS" description="COM_MEMBERSMANAGER_TYPES_EDIT_GROUPS_ACCESS_DESC" />
 		<action name="type.edit.groups_target" title="COM_MEMBERSMANAGER_TYPES_EDIT_GROUPS_TARGET" description="COM_MEMBERSMANAGER_TYPES_EDIT_GROUPS_TARGET_DESC" />
 		<action name="type.edit.name" title="COM_MEMBERSMANAGER_TYPES_EDIT_NAME" description="COM_MEMBERSMANAGER_TYPES_EDIT_NAME_DESC" />
 		<action name="type.edit.own" title="COM_MEMBERSMANAGER_TYPES_EDIT_OWN" description="COM_MEMBERSMANAGER_TYPES_EDIT_OWN_DESC" />
 		<action name="type.edit.state" title="COM_MEMBERSMANAGER_TYPES_EDIT_STATE" description="COM_MEMBERSMANAGER_TYPES_EDIT_STATE_DESC" />
+		<action name="type.edit.type" title="COM_MEMBERSMANAGER_TYPES_EDIT_TYPE" description="COM_MEMBERSMANAGER_TYPES_EDIT_TYPE_DESC" />
 		<action name="type.version" title="COM_MEMBERSMANAGER_TYPES_EDIT_VERSION" description="COM_MEMBERSMANAGER_TYPES_EDIT_VERSION_DESC" />
+		<action name="type.edit.view_relationship" title="COM_MEMBERSMANAGER_TYPES_EDIT_VIEW_RELATIONSHIP" description="COM_MEMBERSMANAGER_TYPES_EDIT_VIEW_RELATIONSHIP_DESC" />
 		<action name="type.export" title="COM_MEMBERSMANAGER_TYPES_EXPORT" description="COM_MEMBERSMANAGER_TYPES_EXPORT_DESC" />
 		<action name="type.import" title="COM_MEMBERSMANAGER_TYPES_IMPORT" description="COM_MEMBERSMANAGER_TYPES_IMPORT_DESC" />
+		<action name="type.submenu" title="COM_MEMBERSMANAGER_TYPES_SUBMENU" description="COM_MEMBERSMANAGER_TYPES_SUBMENU_DESC" />
 	</section>
 	<section name="member">
 		<action name="member.edit" title="COM_MEMBERSMANAGER_MEMBERS_EDIT" description="COM_MEMBERSMANAGER_MEMBERS_EDIT_DESC" />
@@ -134,6 +144,26 @@
 		<action name="type.edit.description" title="COM_MEMBERSMANAGER_TYPES_EDIT_DESCRIPTION" description="COM_MEMBERSMANAGER_TYPES_EDIT_DESCRIPTION_DESC" />
 		<action name="type.edit.groups_target" title="COM_MEMBERSMANAGER_TYPES_EDIT_GROUPS_TARGET" description="COM_MEMBERSMANAGER_TYPES_EDIT_GROUPS_TARGET_DESC" />
 		<action name="type.edit.groups_access" title="COM_MEMBERSMANAGER_TYPES_EDIT_GROUPS_ACCESS" description="COM_MEMBERSMANAGER_TYPES_EDIT_GROUPS_ACCESS_DESC" />
+		<action name="type.edit.add_relationship" title="COM_MEMBERSMANAGER_TYPES_EDIT_ADD_RELATIONSHIP" description="COM_MEMBERSMANAGER_TYPES_EDIT_ADD_RELATIONSHIP_DESC" />
+		<action name="type.edit.field_type" title="COM_MEMBERSMANAGER_TYPES_EDIT_FIELD_TYPE" description="COM_MEMBERSMANAGER_TYPES_EDIT_FIELD_TYPE_DESC" />
+		<action name="type.edit.communicate" title="COM_MEMBERSMANAGER_TYPES_EDIT_COMMUNICATE" description="COM_MEMBERSMANAGER_TYPES_EDIT_COMMUNICATE_DESC" />
+		<action name="type.edit.view_relationship" title="COM_MEMBERSMANAGER_TYPES_EDIT_VIEW_RELATIONSHIP" description="COM_MEMBERSMANAGER_TYPES_EDIT_VIEW_RELATIONSHIP_DESC" />
+		<action name="type.edit.edit_relationship" title="COM_MEMBERSMANAGER_TYPES_EDIT_EDIT_RELATIONSHIP" description="COM_MEMBERSMANAGER_TYPES_EDIT_EDIT_RELATIONSHIP_DESC" />
+		<action name="type.edit.type" title="COM_MEMBERSMANAGER_TYPES_EDIT_TYPE" description="COM_MEMBERSMANAGER_TYPES_EDIT_TYPE_DESC" />
 		<action name="type.version" title="COM_MEMBERSMANAGER_TYPES_EDIT_VERSION" description="COM_MEMBERSMANAGER_TYPES_EDIT_VERSION_DESC" />
+	</section>
+	<section name="fieldgroup">
+		<action name="core.create" title="JACTION_CREATE" description="COM_FIELDS_GROUP_PERMISSION_CREATE_DESC" />
+		<action name="core.delete" title="JACTION_DELETE" description="COM_FIELDS_GROUP_PERMISSION_DELETE_DESC" />
+		<action name="core.edit" title="JACTION_EDIT" description="COM_FIELDS_GROUP_PERMISSION_EDIT_DESC" />
+		<action name="core.edit.state" title="JACTION_EDITSTATE" description="COM_FIELDS_GROUP_PERMISSION_EDITSTATE_DESC" />
+		<action name="core.edit.own" title="JACTION_EDITOWN" description="COM_FIELDS_GROUP_PERMISSION_EDITOWN_DESC" />
+		<action name="core.edit.value" title="JACTION_EDITVALUE" description="COM_FIELDS_GROUP_PERMISSION_EDITVALUE_DESC" />
+	</section>
+	<section name="field">
+		<action name="core.delete" title="JACTION_DELETE" description="COM_FIELDS_FIELD_PERMISSION_DELETE_DESC" />
+		<action name="core.edit" title="JACTION_EDIT" description="COM_FIELDS_FIELD_PERMISSION_EDIT_DESC" />
+		<action name="core.edit.state" title="JACTION_EDITSTATE" description="COM_FIELDS_FIELD_PERMISSION_EDITSTATE_DESC" />
+		<action name="core.edit.value" title="JACTION_EDITVALUE" description="COM_FIELDS_FIELD_PERMISSION_EDITVALUE_DESC" />
 	</section>
 </access>

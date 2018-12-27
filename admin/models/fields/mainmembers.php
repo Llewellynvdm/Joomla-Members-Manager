@@ -2,7 +2,7 @@
 /**
  * @package    Joomla.Members.Manager
  *
- * @created    6th September, 2015
+ * @created    6th July, 2018
  * @author     Llewellyn van der Merwe <https://www.joomlacomponentbuilder.com/>
  * @github     Joomla Members Manager <https://github.com/vdm-io/Joomla-Members-Manager>
  * @copyright  Copyright (C) 2015. All Rights Reserved
@@ -142,8 +142,36 @@ class JFormFieldMainmembers extends JFormFieldList
 	 */
 	protected function getOptions()
 	{
-				// load the db opbject
+		
+		// get the user
+		$my = JFactory::getUser();
+		// load the db opbject
 		$db = JFactory::getDBO();
+		// start the query
+		$query = $db->getQuery(true);
+		$query->select($db->quoteName(array('a.id','a.user','a.account','a.name','a.email','a.token'),array('id','main_member_user','account','name','email','token')));
+		$query->from($db->quoteName('#__membersmanager_member', 'a'));
+		$query->where($db->quoteName('a.published') . ' >= 1');
+		$query->where($db->quoteName('a.account') . ' = 1 OR ' . $db->quoteName('a.account') . ' = 2');
+		// check if current user is an admin
+		if (!$my->authorise('core.options', 'com_membersmanager'))
+		{
+			// get user access groups
+			if (($user_access_types =  MembersmanagerHelper::getAccess($my)) === false || !MembersmanagerHelper::checkArray($user_access_types))
+			{
+				return false;
+			}
+			//filter by type
+			$query->join('LEFT', $db->quoteName('#__membersmanager_type_map', 't') . ' ON (' . $db->quoteName('a.id') . ' = ' . $db->quoteName('t.member') . ')');
+			$user_access_types = implode(',', $user_access_types);
+			$query->where('t.type IN (' . $user_access_types . ')');
+			// also filter by access (will keep an eye on this)
+			$groups = implode(',', $my->getAuthorisedViewLevels());
+			$query->where('a.access IN (' . $groups . ')');
+		}
+		$query->order('a.user ASC');
+		$db->setQuery((string)$query);
+		$items = $db->loadObjectList();
 		// get the input from url
 		$jinput = JFactory::getApplication()->input;
 		// get the id
@@ -152,50 +180,8 @@ class JFormFieldMainmembers extends JFormFieldList
 		{
 			$main_member = MembersmanagerHelper::getVar('member', $id, 'id', 'main_member');
 		}
-		// get the user
-		$my = JFactory::getUser();
-		// start the query
-		$query = $db->getQuery(true);
-		$query->select($db->quoteName(array('a.id','a.user','a.account','a.name','a.email','a.token'),array('id','main_member_user','account','name','email','token')));
-		$query->from($db->quoteName('#__membersmanager_member', 'a'));
-		$query->where($db->quoteName('a.published') . ' >= 1');
-		$query->where($db->quoteName('a.account') . ' = 1 OR ' . $db->quoteName('a.account') . ' = 2');
-		// check if current user is a supper admin
-		if (!$my->authorise('core.admin'))
-		{
-			// get user access groups
-			$user_access_types =  MembersmanagerHelper::getAccess($my);
-			// user must have access
-			if (isset($user_access_types) && MembersmanagerHelper::checkArray($user_access_types))
-			{
-				// only get members of the type this user has access to
-				$query->where('a.type IN (' . implode(',', $user_access_types) . ')');
-				// get current member type
-				if (($type=  MembersmanagerHelper::getVar('member', $id, 'id', 'type')) !== false)
-				{
-					// check if this member is in the user access types
-					if (in_array($type, $user_access_types))
-					{
-						// no need to load this member
-						$main_member = 0;
-					}
-				}
-			}
-			elseif (isset($main_member) && $main_member > 0)
-			{
-				// load this main member only
-				$query->where($db->quoteName('a.id') . ' = ' . (int) $main_member);
-			}
-			else
-			{
-				return false;
-			}
-		}
-		$query->order('a.user ASC');
-		$db->setQuery((string)$query);
-		$items = $db->loadObjectList();
 		$options = array();
-		if ($items)
+		if (MembersmanagerHelper::checkArray($items))
 		{
 			// only add if more then one value found
 			if (count( (array) $items) > 1)

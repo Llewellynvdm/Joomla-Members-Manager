@@ -2,7 +2,7 @@
 /**
  * @package    Joomla.Members.Manager
  *
- * @created    6th September, 2015
+ * @created    6th July, 2018
  * @author     Llewellyn van der Merwe <https://www.joomlacomponentbuilder.com/>
  * @github     Joomla Members Manager <https://github.com/vdm-io/Joomla-Members-Manager>
  * @copyright  Copyright (C) 2015. All Rights Reserved
@@ -34,7 +34,7 @@ defined('JPATH_BASE') or die('Restricted access');
 									'type' => $displayData->type,
 									'account' => $displayData->account));
 							?>
-							<i class="uk-icon-bar-chart"></i>  <a href="#getreport<?php echo $displayData->id; ?>" onclick="getReport(<?php echo (int) $value->id; ?>, '<?php echo $displayData->assessmentAvailable[$name][$_nr]->element; ?>', '<?php echo $report_key; ?>');" data-uk-modal><?php echo $value->name; ?></a> (<?php echo MembersmanagerHelper::fancyDayTimeDate($value->created); ?>)
+							<i class="uk-icon-bar-chart"></i>  <a href="#getreport" onclick="getReport(<?php echo (int) $value->id; ?>, '<?php echo $displayData->assessmentAvailable[$name][$_nr]->element; ?>', '<?php echo $report_key; ?>');" data-uk-modal><?php echo $value->name; ?></a> (<?php echo MembersmanagerHelper::fancyDayTimeDate($value->created); ?>)
 							<?php echo MembersmanagerHelper::getEditButton($value->id, 'form', 'form', '&return=' . $displayData->return_path, $displayData->assessmentAvailable[$name][$_nr]->element, null); ?>
 						</li>
 					<?php endforeach; ?>
@@ -48,7 +48,7 @@ defined('JPATH_BASE') or die('Restricted access');
 								'type' => $displayData->type,
 								'account' => $displayData->account));
 						?>
-						<i class="uk-icon-bar-chart"></i>  <a href="#getreport<?php echo $displayData->id; ?>" onclick="getReport(<?php echo (int) $values->id; ?>, '<?php echo $displayData->assessmentAvailable[$name][$_nr]->element; ?>', '<?php echo $report_key; ?>');" data-uk-modal><?php echo $values->name; ?></a> (<?php echo MembersmanagerHelper::fancyDayTimeDate($values->created); ?>)
+						<i class="uk-icon-bar-chart"></i>  <a href="#getreport" onclick="getReport(<?php echo (int) $values->id; ?>, '<?php echo $displayData->assessmentAvailable[$name][$_nr]->element; ?>', '<?php echo $report_key; ?>');" data-uk-modal><?php echo $values->name; ?></a> (<?php echo MembersmanagerHelper::fancyDayTimeDate($values->created); ?>)
 						<?php echo MembersmanagerHelper::getEditButton($values->id, 'form', 'form', '&return=' . $displayData->return_path, $displayData->assessmentAvailable[$name][$_nr]->element, null); ?>
 					</li>
 				<?php endif; ?>
@@ -60,15 +60,15 @@ defined('JPATH_BASE') or die('Restricted access');
 					// set key
 					$report_key = MembersmanagerHelper::lock(array(
 						'id' => $assessments->id,
-						'element' => $displayData->assessmentAvailable[$name][$_nr]->element,
-						'type' => $assessments->type,
-						'account' => $assessments->account));
+						'element' => $displayData->assessmentAvailable[$name]->element,
+						'type' => $displayData->type,
+						'account' => $displayData->account));
 				?>
-				<i class="uk-icon-bar-chart"></i>  <a href="#getreport<?php echo $displayData->id; ?>" onclick="getReport(<?php echo (int) $assessments->id; ?>, '<?php echo $displayData->assessmentAvailable[$name]->element; ?>', '<?php echo $report_key; ?>');" data-uk-modal><?php echo $assessments->name; ?></a> (<?php echo MembersmanagerHelper::fancyDayTimeDate($assessments->created); ?>)
+				<i class="uk-icon-bar-chart"></i>  <a href="#getreport" onclick="getReport(<?php echo (int) $assessments->id; ?>, '<?php echo $displayData->assessmentAvailable[$name]->element; ?>', '<?php echo $report_key; ?>');" data-uk-modal><?php echo $assessments->name; ?></a> (<?php echo MembersmanagerHelper::fancyDayTimeDate($assessments->created); ?>)
 				<?php echo MembersmanagerHelper::getEditButton($assessments->id, 'form', 'form', '&return=' . $displayData->return_path, $displayData->assessmentAvailable[$name]->element, null); ?>
 			</li>
 		<?php else: ?>
-			<li><?php echo JText::sprintf('COM_MEMBERSMANAGER_NO_REPORTS_FOUND_IN_S', $name); ?></li>
+			<li><?php echo JText::sprintf('COM_MEMBERSMANAGER_NO_S_FOUND_IN_S',  MembersmanagerHelper::getButtonName('report', JText::_('COM_MEMBERSMANAGER_REPORTS')), $name); ?></li>
 		<?php endif; ?>
 	<?php endforeach; ?>
 	</ul>

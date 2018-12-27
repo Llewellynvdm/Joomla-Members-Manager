@@ -2,7 +2,7 @@
 /**
  * @package    Joomla.Members.Manager
  *
- * @created    6th September, 2015
+ * @created    6th July, 2018
  * @author     Llewellyn van der Merwe <https://www.joomlacomponentbuilder.com/>
  * @github     Joomla Members Manager <https://github.com/vdm-io/Joomla-Members-Manager>
  * @copyright  Copyright (C) 2015. All Rights Reserved
@@ -29,7 +29,7 @@ class MembersmanagerController extends JControllerLegacy
 	function display($cachable = false, $urlparams = false)
 	{
 		// set default view if not set
-		$view		= $this->input->getCmd('view', 'cpanel');
+		$view		= $this->input->getCmd('view', 'members');
 		$this->input->set('view', $view);
 		$isEdit		= $this->checkEditView($view);
 		$layout		= $this->input->get('layout', null, 'WORD');
@@ -68,7 +68,7 @@ class MembersmanagerController extends JControllerLegacy
 				else
 				{
 					// normal redirect back to the list default site view
-					$this->setRedirect(JRoute::_('index.php?option=com_membersmanager&view=cpanel', false));
+					$this->setRedirect(JRoute::_('index.php?option=com_membersmanager&view=members', false));
 				}
 				return false;
 			}

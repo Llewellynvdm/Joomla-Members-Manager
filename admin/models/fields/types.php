@@ -2,7 +2,7 @@
 /**
  * @package    Joomla.Members.Manager
  *
- * @created    6th September, 2015
+ * @created    6th July, 2018
  * @author     Llewellyn van der Merwe <https://www.joomlacomponentbuilder.com/>
  * @github     Joomla Members Manager <https://github.com/vdm-io/Joomla-Members-Manager>
  * @copyright  Copyright (C) 2015. All Rights Reserved
@@ -142,43 +142,14 @@ class JFormFieldTypes extends JFormFieldList
 	 */
 	protected function getOptions()
 	{
-				// load the db opbject
-		$db = JFactory::getDBO();
-		// get the user
+		// Get the user object.
 		$user = JFactory::getUser();
-		// access types
-		$accessTypes = MembersmanagerHelper::getAccess($user);
-		// start query
+		// Get the databse object.
+		$db = JFactory::getDBO();
 		$query = $db->getQuery(true);
 		$query->select($db->quoteName(array('a.id','a.name'),array('id','type_name')));
 		$query->from($db->quoteName('#__membersmanager_type', 'a'));
 		$query->where($db->quoteName('a.published') . ' >= 1');
-		// check if current user is a supper admin
-		if (!$user->authorise('core.admin'))
-		{		
-			// get the input from url
-			$jinput = JFactory::getApplication()->input;
-			// get the id
-			$id = $jinput->getInt('id', 0);
-			if ($id > 0)
-			{
-				$type = MembersmanagerHelper::getVar('type', $id, 'id', 'type');
-				// check if part of user access
-				if (!MembersmanagerHelper::checkArray($accessTypes) || !in_array($type, $accessTypes))
-				{
-					$accessTypes[] = $type;
-				}
-			}
-			// filter by access type
-			if (MembersmanagerHelper::checkArray($accessTypes))
-			{
-				$query->where($db->quoteName('a.id') . ' in (' . implode(',', $accessTypes) . ')');
-			}
-			else
-			{
-				return false;
-			}
-		}
 		$query->order('a.name ASC');
 		$db->setQuery((string)$query);
 		$items = $db->loadObjectList();

@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<metadata>
+	<layout title="COM_MEMBERSMANAGER_MENU_MEMBERS_TITLE" option="COM_MEMBERSMANAGER_MENU_MEMBERS_OPTION">
+		<message>
+			<![CDATA[COM_MEMBERSMANAGER_MENU_MEMBERS_DESC]]>
+		</message>
+	</layout>
+	<!-- Adding page parameters -->
+	<fields name="params">
+		<fieldset name="basic" label="COM_MEMBERSMANAGER"
+			addrulepath="/administrator/components/com_membersmanager/models/rules"
+			addfieldpath="/administrator/components/com_membersmanager/models/fields">
+		<!-- Members_display_type Field. Type: List. (joomla) -->
+		<field
+			type="list"
+			name="members_display_type"
+			label="COM_MEMBERSMANAGER_CONFIG_MEMBERS_DISPLAY_TYPE_LABEL"
+			description="COM_MEMBERSMANAGER_CONFIG_MEMBERS_DISPLAY_TYPE_DESCRIPTION"
+			multiple="false"
+			required="false"
+			default="">
+			<!--  Global & Option Set. -->
+			<option value="">
+				JGLOBAL_USE_GLOBAL</option>
+			<option value="1">
+				COM_MEMBERSMANAGER_CONFIG_PANELS</option>
+			<option value="2">
+				COM_MEMBERSMANAGER_CONFIG_TABLE</option>
+			<option value="3">
+				COM_MEMBERSMANAGER_CONFIG_LIST</option>
+		</field>			
+		<!-- Panels_template Field. Type: Textarea. (joomla) -->
+		<field
+			type="textarea"
+			name="panels_template"
+			label="COM_MEMBERSMANAGER_CONFIG_PANELS_TEMPLATE_LABEL"
+			rows="10"
+			cols="5"
+			default=""
+			description="COM_MEMBERSMANAGER_CONFIG_PANELS_TEMPLATE_DESCRIPTION"
+			class="text_area span12"
+			filter="RAW"
+			hint="COM_MEMBERSMANAGER_CONFIG_PANELS_TEMPLATE_HINT"
+			showon="members_display_type:1"
+		/>			
+		<!-- Panel_template Field. Type: Textarea. (joomla) -->
+		<field
+			type="textarea"
+			name="panel_template"
+			label="COM_MEMBERSMANAGER_CONFIG_PANEL_TEMPLATE_LABEL"
+			rows="10"
+			cols="5"
+			description="COM_MEMBERSMANAGER_CONFIG_PANEL_TEMPLATE_DESCRIPTION"
+			class="text_area span12"
+			filter="RAW"
+			hint="COM_MEMBERSMANAGER_CONFIG_PANEL_TEMPLATE_HINT"
+			showon="members_display_type:1"
+		/>			
+		<!-- Table_template Field. Type: Textarea. (joomla) -->
+		<field
+			type="textarea"
+			name="table_template"
+			label="COM_MEMBERSMANAGER_CONFIG_TABLE_TEMPLATE_LABEL"
+			rows="10"
+			cols="5"
+			default=""
+			description="COM_MEMBERSMANAGER_CONFIG_TABLE_TEMPLATE_DESCRIPTION"
+			class="text_area span12"
+			filter="RAW"
+			hint="COM_MEMBERSMANAGER_CONFIG_TABLE_TEMPLATE_HINT"
+			showon="members_display_type:2"
+		/>			
+		<!-- Table_row_template Field. Type: Textarea. (joomla) -->
+		<field
+			type="textarea"
+			name="table_row_template"
+			label="COM_MEMBERSMANAGER_CONFIG_TABLE_ROW_TEMPLATE_LABEL"
+			rows="10"
+			cols="5"
+			default=""
+			description="COM_MEMBERSMANAGER_CONFIG_TABLE_ROW_TEMPLATE_DESCRIPTION"
+			class="text_area span12"
+			filter="RAW"
+			hint="COM_MEMBERSMANAGER_CONFIG_TABLE_ROW_TEMPLATE_HINT"
+			showon="members_display_type:2"
+		/>			
+		<!-- List_template Field. Type: Textarea. (joomla) -->
+		<field
+			type="textarea"
+			name="list_template"
+			label="COM_MEMBERSMANAGER_CONFIG_LIST_TEMPLATE_LABEL"
+			rows="10"
+			cols="5"
+			default=""
+			description="COM_MEMBERSMANAGER_CONFIG_LIST_TEMPLATE_DESCRIPTION"
+			class="text_area span12"
+			filter="RAW"
+			hint="COM_MEMBERSMANAGER_CONFIG_LIST_TEMPLATE_HINT"
+			showon="members_display_type:3"
+		/>			
+		<!-- List_item_template Field. Type: Textarea. (joomla) -->
+		<field
+			type="textarea"
+			name="list_item_template"
+			label="COM_MEMBERSMANAGER_CONFIG_LIST_ITEM_TEMPLATE_LABEL"
+			rows="10"
+			cols="5"
+			default=""
+			description="COM_MEMBERSMANAGER_CONFIG_LIST_ITEM_TEMPLATE_DESCRIPTION"
+			class="text_area span12"
+			filter="RAW"
+			hint="COM_MEMBERSMANAGER_CONFIG_LIST_ITEM_TEMPLATE_HINT"
+			showon="members_display_type:3"
+		/>			
+		<!-- Target_account Field. Type: List. (joomla) -->
+		<field
+			type="list"
+			name="target_account"
+			label="COM_MEMBERSMANAGER_CONFIG_TARGET_ACCOUNT_LABEL"
+			description="COM_MEMBERSMANAGER_CONFIG_TARGET_ACCOUNT_DESCRIPTION"
+			class="list_class"
+			multiple="true"
+			required="true"
+			>
+			<!-- Option Set. -->
+			<option value="1">
+				COM_MEMBERSMANAGER_CONFIG_MAIN_LOGIN</option>
+			<option value="2">
+				COM_MEMBERSMANAGER_CONFIG_MAIN</option>
+			<option value="3">
+				COM_MEMBERSMANAGER_CONFIG_SUB</option>
+			<option value="4">
+				COM_MEMBERSMANAGER_CONFIG_SUB_LOGIN</option>
+		</field>			
+		<!-- Target_type Field. Type: Targettypes. (custom) -->
+		<field
+			type="targettypes"
+			name="target_type"
+			label="COM_MEMBERSMANAGER_CONFIG_TARGET_TYPE_LABEL"
+			description="COM_MEMBERSMANAGER_CONFIG_TARGET_TYPE_DESCRIPTION"
+			class="list_class"
+			multiple="true"
+			required="true"
+			
+		/>			
+		<!-- Components Field. Type: Onetoonecomponents. (custom) -->
+		<field
+			type="onetoonecomponents"
+			name="components"
+			label="COM_MEMBERSMANAGER_CONFIG_COMPONENTS_LABEL"
+			description="COM_MEMBERSMANAGER_CONFIG_COMPONENTS_DESCRIPTION"
+			class="list_class"
+			multiple="true"
+			required="false"
+			onchange="getOnlySelectedComponents();"
+			
+		/>			
+		<!-- Many_components Field. Type: Subform. (joomla) -->
+		<field
+			type="subform"
+			name="many_components"
+			label="COM_MEMBERSMANAGER_CONFIG_MANY_COMPONENTS_LABEL"
+			layout="joomla.form.field.subform.repeatable-table"
+			multiple="true"
+			buttons="add,remove,move"
+			description="COM_MEMBERSMANAGER_CONFIG_MANY_COMPONENTS_DESCRIPTION"
+			icon="list"
+			max="10"
+			min="0"
+			>
+			<form hidden="true" name="list_many_components_modal" repeat="true">
+				<!-- Component Field. Type: Onetomanycomponents. (custom) -->
+				<field
+					type="onetomanycomponents"
+					name="component"
+					label="COM_MEMBERSMANAGER_CONFIG_COMPONENT_LABEL"
+					description="COM_MEMBERSMANAGER_CONFIG_COMPONENT_DESCRIPTION"
+					class="list_class one_to_many_94829"
+					multiple="false"
+					required="false"
+					onchange="getOnlySelectedComponents();"
+					button="false"
+				/>
+				<!-- Placeholder Field. Type: Text. (joomla) -->
+				<field
+					type="text"
+					name="placeholder"
+					label="COM_MEMBERSMANAGER_CONFIG_PLACEHOLDER_LABEL"
+					size="10"
+					maxlength="50"
+					description="COM_MEMBERSMANAGER_CONFIG_PLACEHOLDER_DESCRIPTION"
+					class="text_area"
+					required="false"
+					filter="WORD"
+					hint="COM_MEMBERSMANAGER_CONFIG_PLACEHOLDER_HINT"
+					autocomplete="off"
+				/>
+				<!-- Qty Field. Type: Text. (joomla) -->
+				<field
+					type="text"
+					name="qty"
+					label="COM_MEMBERSMANAGER_CONFIG_QTY_LABEL"
+					size="10"
+					maxlength="50"
+					default="0"
+					description="COM_MEMBERSMANAGER_CONFIG_QTY_DESCRIPTION"
+					class="wmed wqty"
+					required="false"
+					filter="INT"
+					hint="COM_MEMBERSMANAGER_CONFIG_QTY_HINT"
+					onchange="if(!jQuery(this).val().match(/^\d+$/)){jQuery(this).val('')};"
+					
+				/>
+				<!-- Main_template Field. Type: Textarea. (joomla) -->
+				<field
+					type="textarea"
+					name="main_template"
+					label="COM_MEMBERSMANAGER_CONFIG_MAIN_TEMPLATE_LABEL"
+					rows="10"
+					cols="5"
+					default=""
+					description="COM_MEMBERSMANAGER_CONFIG_MAIN_TEMPLATE_DESCRIPTION"
+					class="text_area span12"
+					filter="RAW"
+					hint="COM_MEMBERSMANAGER_CONFIG_MAIN_TEMPLATE_HINT"
+					required="false"
+				/>
+				<!-- Item_template Field. Type: Textarea. (joomla) -->
+				<field
+					type="textarea"
+					name="item_template"
+					label="COM_MEMBERSMANAGER_CONFIG_ITEM_TEMPLATE_LABEL"
+					rows="10"
+					cols="5"
+					description="COM_MEMBERSMANAGER_CONFIG_ITEM_TEMPLATE_DESCRIPTION"
+					class="text_area span12"
+					filter="RAW"
+					hint="COM_MEMBERSMANAGER_CONFIG_ITEM_TEMPLATE_HINT"
+					required="false"
+				/>
+			</form>
+		</field>			
+		<!-- Note_core_member_placeholders Field. Type: Note. A None Database Field. (joomla) -->
+		<field type="note" name="note_core_member_placeholders" label="COM_MEMBERSMANAGER_CONFIG_NOTE_CORE_MEMBER_PLACEHOLDERS_LABEL" description="COM_MEMBERSMANAGER_CONFIG_NOTE_CORE_MEMBER_PLACEHOLDERS_DESCRIPTION" heading="h3" class="note_core_member_placeholders"  />
+		</fieldset>
+	</fields>
+</metadata>

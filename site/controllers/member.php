@@ -2,7 +2,7 @@
 /**
  * @package    Joomla.Members.Manager
  *
- * @created    6th September, 2015
+ * @created    6th July, 2018
  * @author     Llewellyn van der Merwe <https://www.joomlacomponentbuilder.com/>
  * @github     Joomla Members Manager <https://github.com/vdm-io/Joomla-Members-Manager>
  * @copyright  Copyright (C) 2015. All Rights Reserved
@@ -35,7 +35,7 @@ class MembersmanagerControllerMember extends JControllerForm
 	 */
 	public function __construct($config = array())
 	{
-		$this->view_list = 'cpanel'; // safeguard for setting the return view listing to the default site view.
+		$this->view_list = 'members'; // safeguard for setting the return view listing to the default site view.
 		parent::__construct($config);
 	}
 
@@ -316,7 +316,17 @@ class MembersmanagerControllerMember extends JControllerForm
 	protected function postSaveHook(JModelLegacy $model, $validData = array())
 	{
 		// safe all dynamic values (that has been posted)
-		MembersmanagerHelper::saveDynamicValues($validData, 'member');
+		if (isset($validData['id']))
+		{
+			MembersmanagerHelper::saveDynamicValues($validData, 'member');
+			// always sync the type with the type_map
+			if (isset($validData['type']))
+			{
+				MembersmanagerHelper::updateTypes($validData['id'], $validData['type']);
+			}
+			// safe all set relationships
+			MembersmanagerHelper::saveRelationships($validData);
+		}
 
 		return;
 	}

@@ -2,7 +2,7 @@
 /**
  * @package    Joomla.Members.Manager
  *
- * @created    6th September, 2015
+ * @created    6th July, 2018
  * @author     Llewellyn van der Merwe <https://www.joomlacomponentbuilder.com/>
  * @github     Joomla Members Manager <https://github.com/vdm-io/Joomla-Members-Manager>
  * @copyright  Copyright (C) 2015. All Rights Reserved
@@ -27,7 +27,8 @@ class MembersmanagerModelTypes extends JModelList
 				'a.ordering','ordering',
 				'a.created_by','created_by',
 				'a.modified_by','modified_by',
-				'a.name','name'
+				'a.name','name',
+				'a.add_relationship','add_relationship'
 			);
 		}
 
@@ -50,6 +51,9 @@ class MembersmanagerModelTypes extends JModelList
 		}
 		$name = $this->getUserStateFromRequest($this->context . '.filter.name', 'filter_name');
 		$this->setState('filter.name', $name);
+
+		$add_relationship = $this->getUserStateFromRequest($this->context . '.filter.add_relationship', 'filter_add_relationship');
+		$this->setState('filter.add_relationship', $add_relationship);
         
 		$sorting = $this->getUserStateFromRequest($this->context . '.filter.sorting', 'filter_sorting', 0, 'int');
 		$this->setState('filter.sorting', $sorting);
@@ -140,9 +144,43 @@ class MembersmanagerModelTypes extends JModelList
 				}
 			}
 		}
+
+		// set selection value to a translatable value
+		if (MembersmanagerHelper::checkArray($items))
+		{
+			foreach ($items as $nr => &$item)
+			{
+				// convert add_relationship
+				$item->add_relationship = $this->selectionTranslation($item->add_relationship, 'add_relationship');
+			}
+		}
+
         
 		// return items
 		return $items;
+	}
+
+	/**
+	 * Method to convert selection values to translatable string.
+	 *
+	 * @return translatable string
+	 */
+	public function selectionTranslation($value,$name)
+	{
+		// Array of add_relationship language strings
+		if ($name === 'add_relationship')
+		{
+			$add_relationshipArray = array(
+				1 => 'COM_MEMBERSMANAGER_TYPE_YES',
+				0 => 'COM_MEMBERSMANAGER_TYPE_NO'
+			);
+			// Now check if value is found in this array
+			if (isset($add_relationshipArray[$value]) && MembersmanagerHelper::checkString($add_relationshipArray[$value]))
+			{
+				return $add_relationshipArray[$value];
+			}
+		}
+		return $value;
 	}
 	
 	/**
@@ -204,6 +242,11 @@ class MembersmanagerModelTypes extends JModelList
 			}
 		}
 
+		// Filter by Add_relationship.
+		if ($add_relationship = $this->getState('filter.add_relationship'))
+		{
+			$query->where('a.add_relationship = ' . $db->quote($db->escape($add_relationship)));
+		}
 
 		// Add the list ordering clause.
 		$orderCol = $this->state->get('list.ordering', 'a.id');
@@ -330,6 +373,7 @@ class MembersmanagerModelTypes extends JModelList
 		$id .= ':' . $this->getState('filter.created_by');
 		$id .= ':' . $this->getState('filter.modified_by');
 		$id .= ':' . $this->getState('filter.name');
+		$id .= ':' . $this->getState('filter.add_relationship');
 
 		return parent::getStoreId($id);
 	}
