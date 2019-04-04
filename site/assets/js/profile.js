@@ -11,16 +11,16 @@
 /* JS Document */
 // Get report based on id & element from Server
 function getReport_server(report_key){
-	var getUrl = JRouter("index.php?option=com_membersmanager&task=ajax.getReport&format=json");
+	var getUrl = JRouter("index.php?option=com_membersmanager&task=ajax.getReport&raw=true&format=json&vdm="+vastDevMod);
 	if(token.length > 0 && report_key.length > 0){
 		var request = 'token='+token+'&key='+report_key;
 	}
 	return jQuery.ajax({
 		type: 'GET',
 		url: getUrl,
-		dataType: 'jsonp',
+		dataType: 'json',
 		data: request,
-		jsonp: 'callback'
+		jsonp: false
 	});
 }
 // get report to display
@@ -73,4 +73,44 @@ function loadTheChartInModal(callback, targetDivID){
 		// run call back
 		callback();
 	}, 800);
+}
+
+// Get messages based on id & element from Server
+function getListMessages_server(messages_key){
+	var getUrl = JRouter("index.php?option=com_membersmanager&task=ajax.getListMessages&raw=true&format=json&vdm="+vastDevMod);
+	if(token.length > 0 && messages_key.length > 0){
+		var request = 'token='+token+'&key='+messages_key;
+	}
+	return jQuery.ajax({
+		type: 'POST',
+		url: getUrl,
+		dataType: 'json',
+		data: request,
+		jsonp: false
+	});
+}
+// get messages to display
+function getListMessages(messages_key){
+	// remove old data and add spinner
+	jQuery('.setlistmessages').html('');
+	jQuery('.listmessages-spinner').show();
+	// first we see if we have local storage of this data
+	getListMessages_server(messages_key).done(function(result) {
+		if(result.html){
+			setListMessages(result.html);
+		} else if(result.error){
+			// set an error if item date could not return
+			setListMessages(result.error);
+		} else {
+			// set an error if item date could not return
+			setListMessages('<li>'+Joomla.JText._('COM_MEMBERSMANAGER_THERE_WAS_NO_MESSAGES_FOUND')+'</li>');
+		}
+	});
 } 
+// set the Messages
+function setListMessages(data) {
+	// show data
+	jQuery('.setlistmessages').html(data);
+	// hide spinner
+	jQuery('.listmessages-spinner').hide();
+}

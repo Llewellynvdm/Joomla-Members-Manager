@@ -82,7 +82,7 @@ class MembersmanagerModelProfile extends JModelItem
 			$app = JFactory::getApplication();
 			$app->enqueueMessage(JText::_('COM_MEMBERSMANAGER_NOT_AUTHORISED_TO_VIEW_PROFILE'), 'error');
 			// redirect away to the default view if no access allowed.
-			$app->redirect(JRoute::_('index.php?option=com_membersmanager&view=members'));
+			$app->redirect(JRoute::_('index.php?option=com_membersmanager&view=cpanel'));
 			return false;
 		}
 		$this->userId = $this->user->get('id');
@@ -120,12 +120,6 @@ class MembersmanagerModelProfile extends JModelItem
 			array('id','account','token','type','name','surname','email','main_member','user','profile_image','published','created_by','modified_by','created','modified','version','hits','checked_out')));
 				$query->from($db->quoteName('#__membersmanager_member', 'a'));
 
-				// Get from #__membersmanager_type as d
-				$query->select($db->quoteName(
-			array('d.description','d.name'),
-			array('type_description','type_name')));
-				$query->join('LEFT', ($db->quoteName('#__membersmanager_type', 'd')) . ' ON (' . $db->quoteName('a.type') . ' = ' . $db->quoteName('d.id') . ')');
-
 				// Get from #__membersmanager_member as aa
 				$query->select($db->quoteName(
 			array('aa.name','aa.surname','aa.email','aa.user','aa.token'),
@@ -156,12 +150,9 @@ class MembersmanagerModelProfile extends JModelItem
 					$app = JFactory::getApplication();
 					// If no data is found redirect to default page and show warning.
 					$app->enqueueMessage(JText::_('COM_MEMBERSMANAGER_NOT_FOUND_OR_ACCESS_DENIED'), 'warning');
-					$app->redirect(JRoute::_('index.php?option=com_membersmanager&view=members'));
+					$app->redirect(JRoute::_('index.php?option=com_membersmanager&view=cpanel'));
 					return false;
 				}
-			// Load the JEvent Dispatcher
-			JPluginHelper::importPlugin('content');
-			$this->_dispatcher = JEventDispatcher::getInstance();
 				// Check if we can decode profile_image
 				if (!empty($data->profile_image) && $mediumkey && !is_numeric($data->profile_image) && $data->profile_image === base64_encode(base64_decode($data->profile_image, true)))
 				{
@@ -174,15 +165,6 @@ class MembersmanagerModelProfile extends JModelItem
 					// Decode type
 					$data->type = json_decode($data->type, true);
 				}
-				// Check if item has params, or pass whole item.
-				$params = (isset($data->params) && MembersmanagerHelper::checkJson($data->params)) ? json_decode($data->params) : $data;
-				// Make sure the content prepare plugins fire on type_description
-				$_type_description = new stdClass();
-				$_type_description->text =& $data->type_description; // value must be in text
-				// Since all values are now in text (Joomla Limitation), we also add the field name (type_description) to context
-				$this->_dispatcher->trigger("onContentPrepare", array('com_membersmanager.member.type_description', &$_type_description, &$params, 0));
-				// Checking if type_description has uikit components that must be loaded.
-				$this->uikitComp = MembersmanagerHelper::getUikitComp($data->type_description,$this->uikitComp);
 				// set idMain_memberMemberB to the $data object.
 				$data->idMain_memberMemberB = $this->getIdMain_memberMemberDdbb_B($data->id);
 
@@ -204,19 +186,31 @@ class MembersmanagerModelProfile extends JModelItem
 			}
 		}
 
+		// get the return value.
+		$_uri = (string) JUri::getInstance();
+		$_return = urlencode(base64_encode($_uri));		
+		// build a return path
+		$this->_item[$pk]->return_path = $_return;
 		// set name
 		$this->_item[$pk]->name = MembersmanagerHelper::getMemberName($this->_item[$pk]->id, $this->_item[$pk]->user, $this->_item[$pk]->name, $this->_item[$pk]->surname);
 		// Build the item slug
 		$this->_item[$pk]->slug = (isset($this->_item[$pk]->token)) ? $this->_item[$pk]->id . ':' . $this->_item[$pk]->token : $this->_item[$pk]->id;
 		$this->_item[$pk]->main_member_slug = (isset($this->_item[$pk]->main_member_token)) ? $this->_item[$pk]->main_member . ':' . $this->_item[$pk]->main_member_token : $this->_item[$pk]->main_member;
 		// setup the link to profile
-		$profile_link = MembersmanagerHelperRoute::getProfileRoute($this->_item[$pk]->slug);
-		$this->_item[$pk]->profile_link = JRoute::_($profile_link);
-		$this->_item[$pk]->main_member_profile_link = JRoute::_(MembersmanagerHelperRoute::getProfileRoute($this->_item[$pk]->main_member_slug));
+		$this->_item[$pk]->profile_link = JRoute::_(MembersmanagerHelperRoute::getProfileRoute($this->_item[$pk]->slug) . '&return=' . $_return);
+		$this->_item[$pk]->main_member_profile_link = JRoute::_(MembersmanagerHelperRoute::getProfileRoute($this->_item[$pk]->main_member_slug) . '&return=' . $_return);
 		// set main member name
 		$this->_item[$pk]->main_member_name = MembersmanagerHelper::getMemberName($this->_item[$pk]->main_member, $this->_item[$pk]->main_member_user, $this->_item[$pk]->main_member_name, $this->_item[$pk]->main_member_surname);
-		// build a return path
-		$this->_item[$pk]->return_path = urlencode(base64_encode($profile_link));
+		// set the type names
+		if (isset($this->_item[$pk]->type) && MembersmanagerHelper::checkArray($this->_item[$pk]->type))
+		{
+			$types = array();
+			foreach ($this->_item[$pk]->type as $type)
+			{
+				$types[] = ($_type_name = MembersmanagerHelper::getVar('type', $type, 'id', 'name', '=', 'membersmanager')) ? $_type_name : '';
+			}
+			$this->_item[$pk]->type_name = implode(', ', $types);
+		}
 		// check if we have children members
 		if (isset($this->_item[$pk]->idMain_memberMemberB) && MembersmanagerHelper::checkArray($this->_item[$pk]->idMain_memberMemberB))
 		{
@@ -227,11 +221,19 @@ class MembersmanagerModelProfile extends JModelItem
 				// set sub member name
 				$item->name = MembersmanagerHelper::getMemberName($item->id, $item->user, $item->name, $item->surname);
 				// setup the link to profile
-				$profile_link = MembersmanagerHelperRoute::getProfileRoute($item->slug);
-				// setup the link to profile
-				$item->profile_link = JRoute::_($profile_link);
+				$item->profile_link = JRoute::_(MembersmanagerHelperRoute::getProfileRoute($item->slug) . '&return=' . $_return);
+				// set the type names
+				if (isset($item->type) && MembersmanagerHelper::checkArray($item->type))
+				{
+					$types = array();
+					foreach ($item->type as $type)
+					{
+						$types[] = ($_type_name = MembersmanagerHelper::getVar('type', $type, 'id', 'name', '=', 'membersmanager')) ? $_type_name : '';
+					}
+					$item->type_name = implode(', ', $types);
+				}
 				// build a return path
-				$item->return_path = urlencode(base64_encode($profile_link));
+				$item->return_path = $_return;
 			}
 		}
 
@@ -242,7 +244,7 @@ class MembersmanagerModelProfile extends JModelItem
 			else
 			{
 				$id = $this->_item[$pk]->id;
-			}			
+			}
 			// set the id and view name to session
 			if ($vdm = MembersmanagerHelper::get('profile__'.$id))
 			{
@@ -288,12 +290,6 @@ class MembersmanagerModelProfile extends JModelItem
 			array('id','account','token','type','name','surname','email','main_member','user','profile_image','published','created_by','modified_by','created','modified','version','hits','ordering')));
 		$query->from($db->quoteName('#__membersmanager_member', 'b'));
 		$query->where('b.main_member = ' . $db->quote($id));
-
-				// Get from #__membersmanager_type as e
-				$query->select($db->quoteName(
-			array('e.description','e.name'),
-			array('type_description','type_name')));
-				$query->join('LEFT', ($db->quoteName('#__membersmanager_type', 'e')) . ' ON (' . $db->quoteName('b.type') . ' = ' . $db->quoteName('e.id') . ')');
 
 				// Get from #__users as g
 				$query->select($db->quoteName(

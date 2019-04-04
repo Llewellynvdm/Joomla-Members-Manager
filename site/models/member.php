@@ -113,7 +113,7 @@ class MembersmanagerModelMember extends JModelAdmin
 			else
 			{
 				$id = $item->id;
-			}			
+			}
 			// set the id and view name to session
 			if ($vdm = MembersmanagerHelper::get('member__'.$id))
 			{
@@ -1584,7 +1584,7 @@ class MembersmanagerModelMember extends JModelAdmin
 			// start message bucket
 			$message = array();
 			// check if user already linked
-			if (isset($data['user']) && $data['user'] > 0)
+			if (isset($data['user']) && is_numeric($data['user']) && $data['user'] > 0)
 			{
 				// set user ID
 				$bucket['id'] = $data['user'];
@@ -1636,32 +1636,33 @@ class MembersmanagerModelMember extends JModelAdmin
 				{
 					// make sure to set the user value
 					$data['user'] = $done;
+					$app->enqueueMessage(JText::_('COM_MEMBERSMANAGER_MEMBER_WAS_CREATED_SUCCESSFULLY_AND_THE_LOGIN_DETAILS_WAS_EMAILED_TO_THE_MEMBER'), 'Success');
+				}
+				else
+				{
+					// set the error
+					$app->enqueueMessage($done, 'Error');
+					// we still check if user was created.... (TODO)
+					if (($didCreate = JUserHelper::getUserId($bucket['username'])))
+					{
+						$data['user'] = $didCreate;
+					}
+				}
+				// once we are sure we have an user ID
+				if (isset($data['user']) && is_numeric($data['user']) && $data['user'] > 0)
+				{
 					// check if we have groups
 					if (($typeGroups = MembersmanagerHelper::getMemberGroupsByType($data['type'])) !== false)
 					{
 						// update the user groups
-						JUserHelper::setUserGroups((int) $done, (array) $typeGroups);
+						JUserHelper::setUserGroups((int) $data['user'], (array) $typeGroups);
 					}
 					else
 					{
 						// notice that the group was not set for this user
 						$app->enqueueMessage(JText::_('COM_MEMBERSMANAGER_MEMBER_WAS_NOT_ADDED_TO_ANY_GROUPS_PLEASE_INFORM_YOUR_SYSTEM_ADMINISTRATOR'), 'Error');
 					}
-					$app->enqueueMessage(JText::_('COM_MEMBERSMANAGER_MEMBER_WAS_CREATED_SUCCESSFULLY_AND_THE_LOGIN_DETAILS_WAS_EMAILED_TO_THE_MEMBER'), 'Success');
 				}
-				else
-				{
-					$app->enqueueMessage($done, 'Error');
-				}
-				// we still check if user was created.... (TODO)
-				if (!is_numeric($done) && ($didCreate = JUserHelper::getUserId($bucket['username'])))
-				{
-					$data['user'] = $didCreate;
-				}
-			}
-			// check if the user was set
-			if (isset($data['user']) && $data['user'] > 0)
-			{
 				// the login member must always own it self for edit permissions
 				$data['created_by'] = $data['user'];
 			}

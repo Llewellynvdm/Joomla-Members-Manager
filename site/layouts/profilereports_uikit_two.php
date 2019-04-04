@@ -12,10 +12,13 @@
 // No direct access to this file
 defined('JPATH_BASE') or die('Restricted access');
 
-
+// switch hidden state
+$hidden = ($displayData->setCharts) ? ' uk-hidden' : '';
 
 ?>
-<div class="extra<?php echo $displayData->id; ?> uk-hidden">
+<?php if ($displayData->_USER->id > 0): ?>
+<div class="extra<?php echo $displayData->id; echo $hidden; ?>">
+<?php endif; ?>
 <?php if ($displayData->setAssessment): ?>
 <div class="uk-scrollable-box">
 	<ul class="uk-list">
@@ -76,4 +79,6 @@ defined('JPATH_BASE') or die('Restricted access');
 <?php else: ?>
 	<small><?php echo JText::_('COM_MEMBERSMANAGER_NO_REPORTS_FOUND'); ?>...</small>
 <?php endif; ?>
+<?php if ($displayData->_USER->id > 0): ?>
 </div>
+<?php endif; ?>

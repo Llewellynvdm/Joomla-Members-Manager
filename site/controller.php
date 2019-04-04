@@ -29,7 +29,7 @@ class MembersmanagerController extends JControllerLegacy
 	function display($cachable = false, $urlparams = false)
 	{
 		// set default view if not set
-		$view		= $this->input->getCmd('view', 'members');
+		$view		= $this->input->getCmd('view', 'cpanel');
 		$this->input->set('view', $view);
 		$isEdit		= $this->checkEditView($view);
 		$layout		= $this->input->get('layout', null, 'WORD');
@@ -68,7 +68,7 @@ class MembersmanagerController extends JControllerLegacy
 				else
 				{
 					// normal redirect back to the list default site view
-					$this->setRedirect(JRoute::_('index.php?option=com_membersmanager&view=members', false));
+					$this->setRedirect(JRoute::_('index.php?option=com_membersmanager&view=cpanel', false));
 				}
 				return false;
 			}

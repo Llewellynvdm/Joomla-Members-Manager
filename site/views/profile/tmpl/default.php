@@ -22,20 +22,28 @@ if (!is_null($return_to) && \JUri::isInternal(base64_decode($return_to)))
 
 ?>
 
-<?php if ($this->user->id > 0): ?>
+<?php if ($this->user->id > 0 || 2 == $this->params->get('login_required', 1)): ?>
 	<?php if (!MembersmanagerHelper::checkString($return_to)): ?>
-		<a class="uk-button uk-width-1-1 uk-button-primary uk-button-small uk-margin-small-bottom" href="<?php echo JRoute::_(MembersmanagerHelperRoute::getCpanelRoute()); ?>" title="<?php echo JText::_('COM_MEMBERSMANAGER_OPEN_CPANEL'); ?>">
-			<?php echo JText::_('COM_MEMBERSMANAGER_BACK_TO_CPANEL'); ?>
-		</a>
-	<?php else: ?>
-		<div class="uk-button-group uk-width-1-1">
-			<a class="uk-button uk-width-1-2 uk-button-primary uk-button-small uk-margin-small-bottom" href="<?php echo JRoute::_($return_to); ?>" title="<?php echo JText::_('COM_MEMBERSMANAGER_GO_BACK'); ?>">
-				<?php echo JText::_('COM_MEMBERSMANAGER_BACK'); ?>
-			</a>
-			<a class="uk-button uk-width-1-2 uk-button-primary uk-button-small uk-margin-small-bottom" href="<?php echo JRoute::_(MembersmanagerHelperRoute::getCpanelRoute()); ?>" title="<?php echo JText::_('COM_MEMBERSMANAGER_OPEN_CPANEL'); ?>">
+		<?php if ($this->user->authorise('site.cpanel.access', 'com_[[[core]]')): ?>
+			<a class="uk-button uk-width-1-1 uk-button-primary uk-button-small uk-margin-small-bottom" href="<?php echo JRoute::_(MembersmanagerHelperRoute::getCpanelRoute()); ?>" title="<?php echo JText::_('COM_MEMBERSMANAGER_OPEN_CPANEL'); ?>">
 				<?php echo JText::_('COM_MEMBERSMANAGER_CPANEL'); ?>
 			</a>
-		</div>
+		<?php endif; ?>
+	<?php else: ?>
+		<?php if ($this->user->authorise('site.cpanel.access', 'com_[[[core]]')): ?>
+			<div class="uk-button-group uk-width-1-1">
+				<a class="uk-button uk-width-1-2 uk-button-primary uk-button-small uk-margin-small-bottom" href="<?php echo JRoute::_($return_to); ?>" title="<?php echo JText::_('COM_MEMBERSMANAGER_GO_BACK'); ?>">
+					<?php echo JText::_('COM_MEMBERSMANAGER_BACK'); ?>
+				</a>
+				<a class="uk-button uk-width-1-2 uk-button-primary uk-button-small uk-margin-small-bottom" href="<?php echo JRoute::_(MembersmanagerHelperRoute::getCpanelRoute()); ?>" title="<?php echo JText::_('COM_MEMBERSMANAGER_OPEN_CPANEL'); ?>">
+					<?php echo JText::_('COM_MEMBERSMANAGER_CPANEL'); ?>
+				</a>
+			</div>
+		<?php else: ?>
+			<a class="uk-button uk-width-1-1 uk-button-primary uk-button-small uk-margin-small-bottom" href="<?php echo JRoute::_($return_to); ?>" title="<?php echo JText::_('COM_MEMBERSMANAGER_GO_BACK'); ?>">
+				<?php echo JText::_('COM_MEMBERSMANAGER_BACK'); ?>
+			</a>
+		<?php endif; ?>
 	<?php endif; ?>
 	<?php echo $this->loadTemplate('profiles'); ?>
 	<script type="text/javascript">

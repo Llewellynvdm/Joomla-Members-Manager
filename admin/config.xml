@@ -47,6 +47,17 @@
 		/>
 		<field type="spacer" name="spacerHistory" hr="true" />
 
+		<!-- Default_accesslevel Field. Type: Accesslevel. (joomla) -->
+		<field
+			type="accesslevel"
+			name="default_accesslevel"
+			label="COM_MEMBERSMANAGER_CONFIG_DEFAULT_ACCESSLEVEL_LABEL"
+			description="COM_MEMBERSMANAGER_CONFIG_DEFAULT_ACCESSLEVEL_DESCRIPTION"
+			required="true"
+			multiple="false"
+		/>
+		<!-- Spacer_hr_one Field. Type: Spacer. A None Database Field. (joomla) -->
+		<field type="spacer" name="spacer_hr_one" hr="true" class="spacer_hr_one" />
 		<!-- Placeholder_prefix Field. Type: Text. (joomla) -->
 		<field
 			type="text"
@@ -62,8 +73,8 @@
 			hint="COM_MEMBERSMANAGER_CONFIG_PLACEHOLDER_PREFIX_HINT"
 			autocomplete="on"
 		/>
-		<!-- Spacer_hr Field. Type: Spacer. A None Database Field. (joomla) -->
-		<field type="spacer" name="spacer_hr" hr="true" class="spacer_hr" />
+		<!-- Spacer_hr_two Field. Type: Spacer. A None Database Field. (joomla) -->
+		<field type="spacer" name="spacer_hr_two" hr="true" class="spacer_hr_two" />
 		<field name="autorTitle"
 			type="spacer"
 			label="COM_MEMBERSMANAGER_CONFIG_AUTHOR"
@@ -287,6 +298,21 @@
 		name="profile_custom_config"
 		label="COM_MEMBERSMANAGER_CONFIG_PROFILE">
 
+		<!-- Login_required Field. Type: Radio. (joomla) -->
+		<field
+			type="radio"
+			name="login_required"
+			label="COM_MEMBERSMANAGER_CONFIG_LOGIN_REQUIRED_LABEL"
+			description="COM_MEMBERSMANAGER_CONFIG_LOGIN_REQUIRED_DESCRIPTION"
+			class="btn-group btn-group-yesno"
+			default="1"
+			required="true">
+			<!-- Option Set. -->
+			<option value="1">
+				COM_MEMBERSMANAGER_CONFIG_YES</option>
+			<option value="2">
+				COM_MEMBERSMANAGER_CONFIG_NO</option>
+		</field>
 		<!-- Button_forms_name Field. Type: Text. (joomla) -->
 		<field
 			type="text"

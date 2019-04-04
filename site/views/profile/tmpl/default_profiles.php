@@ -20,6 +20,7 @@ defined('_JEXEC') or die('Restricted access');
 <div class="uk-block">
 	<?php $this->item->_USER = &$this->user; ?>
 	<?php $this->item->_REFID = $this->item->id; ?>
+	<?php $this->item->_UIKIT = $this->uikitVersion; ?>
 	<?php $this->item->_IMAGELINK = MembersmanagerHelper::getFolderPath('url'); ?>
 	<ul class="uk-comment-list">
 		<li>
@@ -28,11 +29,12 @@ defined('_JEXEC') or die('Restricted access');
 			<?php else: ?>
 				<?php echo JLayoutHelper::render('profile_uikit_two', $this->item); ?>
 			<?php endif; ?>
-			<?php if (isset($this->item->idMain_memberMemberB) && MembersmanagerHelper::checkArray($this->item->idMain_memberMemberB)): ?>
+			<?php if ($this->user->id > 0 && isset($this->item->idMain_memberMemberB) && MembersmanagerHelper::checkArray($this->item->idMain_memberMemberB)): ?>
 			<ul>
 				<?php foreach ($this->item->idMain_memberMemberB as $item): ?>
 					<?php $item->_USER = &$this->user; ?>
 					<?php $item->_REFID = $this->item->id; ?>
+					<?php $item->_UIKIT = $this->uikitVersion; ?>
 					<?php $item->_IMAGELINK = $this->item->_IMAGELINK; ?>
 					<li>
 						<?php if ($this->uikitVersion == 3) : ?>
@@ -56,12 +58,25 @@ defined('_JEXEC') or die('Restricted access');
 		<div class="report-spinner"><?php echo JText::_('COM_MEMBERSMANAGER_LOADING'); ?><span class="loading-dots"></span>.</div>
 	</div>
 </div>
+<div id="getlistmessages" uk-offcanvas="mode: reveal; overlay: true">
+	<div class="uk-offcanvas-bar">
+		<button class="uk-offcanvas-close" type="button" uk-close></button>
+		<ul class="setlistmessages uk-nav uk-nav-primary uk-nav-center uk-margin-auto-vertical"></ul>
+		<div class="listmessages-spinner uk-panel"><?php echo JText::_('COM_MEMBERSMANAGER_LOADING'); ?><span class="loading-dots"></span>.</div>
+	</div>
+</div>
 <?php else: ?>
 <div id="getreport" class="uk-modal">
 	<div class="uk-modal-dialog">
 	<a class="uk-modal-close uk-close"></a>
 		<div class="setreport"></div>
 		<div class="report-spinner"><?php echo JText::_('COM_MEMBERSMANAGER_LOADING'); ?><span class="loading-dots"></span>.</div>
+	</div>
+</div>
+<div id="getlistmessages" class="uk-offcanvas">
+	<div class="uk-offcanvas-bar">
+		<ul class="setlistmessages uk-nav uk-nav-offcanvas" data-uk-nav></ul>
+		<div class="listmessages-spinner uk-panel"><?php echo JText::_('COM_MEMBERSMANAGER_LOADING'); ?><span class="loading-dots"></span>.</div>
 	</div>
 </div>
 <?php endif; ?>

@@ -503,7 +503,7 @@ class com_membersmanagerInstallerScript
 			$query = $db->getQuery(true);
 			// Field to update.
 			$fields = array(
-				$db->quoteName('params') . ' = ' . $db->quote('{"autorName":"Llewellyn van der Merwe","autorEmail":"llewellyn@joomlacomponentbuilder.com","placeholder_prefix":"member","members_display_type":"1","many_components":"0","crop_profile":"1","profile_height":"300","profile_width":"200","dynamic_salt":"1->!,3->E,4->A,6->b,9->d","country":"Namibia","check_in":"-1 day","save_history":"1","history_limit":"10","uikit_version":"2","uikit_load":"1","uikit_min":"","uikit_style":""}'),
+				$db->quoteName('params') . ' = ' . $db->quote('{"autorName":"Llewellyn van der Merwe","autorEmail":"llewellyn@joomlacomponentbuilder.com","default_accesslevel":"1","placeholder_prefix":"member","members_display_type":"1","many_components":"0","login_required":"1","crop_profile":"1","profile_height":"300","profile_width":"200","dynamic_salt":"1->!,3->E,4->A,6->b,9->d","country":"Namibia","check_in":"-1 day","save_history":"1","history_limit":"10","uikit_version":"2","uikit_load":"1","uikit_min":"","uikit_style":""}'),
 			);
 			// Condition.
 			$conditions = array(

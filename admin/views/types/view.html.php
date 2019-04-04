@@ -134,6 +134,11 @@ class MembersmanagerViewTypes extends JViewLegacy
 				JToolBarHelper::custom('types.exportData', 'download', '', 'COM_MEMBERSMANAGER_EXPORT_DATA', true);
 			}
 		}
+		if ($this->user->authorise('type.update_types', 'com_membersmanager'))
+		{
+			// add Update Types button.
+			JToolBarHelper::custom('types.updateTypes', 'wrench', '', 'COM_MEMBERSMANAGER_UPDATE_TYPES', false);
+		}
 
 		if ($this->canDo->get('core.import') && $this->canDo->get('type.import'))
 		{

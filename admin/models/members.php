@@ -27,13 +27,206 @@ class MembersmanagerModelMembers extends JModelList
 				'a.ordering','ordering',
 				'a.created_by','created_by',
 				'a.modified_by','modified_by',
-				'a.account','account',
-				'a.main_member','main_member'
+				'a.account','account'
 			);
 		}
 
 		parent::__construct($config);
 	}
+
+	/**
+	 * Load all the users found in Joomla into membersmanager
+	 *
+	 * @since   2.7.5
+	 *
+	 * @return  bool true on success
+	 */
+	public function importJoomlaUsers()
+	{
+		if (($types = $this->getMemberTypes()) !== false)
+		{
+			// get all already set users
+			$active_users = (($users = MembersmanagerHelper::getVars('member', 1, 'published', 'user')) !== false) ? $users : array();
+			// set so defaults
+			$userBucket = array();
+			$trigger = false;
+			foreach ($types as $type => $groups)
+			{
+				$this->loadMembers($userBucket, $type, $groups, $active_users, $trigger);
+				// trigger message to run import again
+				if ($trigger)
+				{
+					JFactory::getApplication()->enqueueMessage(JText::_('COM_MEMBERSMANAGER_ONLY_ONE_THOUSAND_MEMBERS_CAN_BE_IMPORTED_AT_A_TIME_SINCE_YOU_HAVE_MORE_THEN_ONE_THOUSAND_USERS_YOU_WILL_NEED_TO_RUN_THE_IMPORT_AGAIN_UNTIL_YOU_SEE_A_GREEN_SUCCESS_MESSAGE'), 'warning');
+					return false;
+				}
+			}
+			// now insert the members in table
+			if ($this->insertMembers($userBucket, $active_users) || !$trigger)
+			{
+				return true;
+			}
+			JFactory::getApplication()->enqueueMessage(JText::_('COM_MEMBERSMANAGER_NO_USERS_WERE_FOUND_THAT_MATCH_THE_TARGET_GROUPS_SET_IN_THE_MEMBER_TYPES'), 'warning');
+			return false;
+		}
+		JFactory::getApplication()->enqueueMessage(JText::_('COM_MEMBERSMANAGER_NO_MEMBER_TYPES_ARE_SET_PLEASE_SET_SOME_AND_TRY_AGAIN'), 'warning');
+		return false;
+	}
+
+	/**
+	* Gets an array of objects of types of members.
+	 *
+	 * @return  object[]  An array of results.
+	 *
+	 */
+	protected function getMemberTypes()
+	{
+		// get types that allow relationships
+		$query = $this->_db->getQuery(true);
+		$query->select(array('a.id', 'a.groups_target'));
+		$query->from('#__membersmanager_type AS a');
+		$query->where($this->_db->quoteName('a.published') . ' >= 1');
+		$this->_db->setQuery($query);
+		$this->_db->execute();
+		// only continue if we have member types and all relationship types
+		if (($types = $this->_db->loadAssocList('id', 'groups_target')) !== false && MembersmanagerHelper::checkArray($types))
+		{
+			return $types;
+		}
+		return false;
+	}
+
+	/**
+	* Load members
+	 *
+	 * @return  void
+	 *
+	 */
+	protected function loadMembers(&$userBucket, &$type, &$groups, &$active_users, &$trigger)
+	{
+		if (!$trigger && MembersmanagerHelper::checkJson($groups))
+		{
+			$groups = (array) json_decode($groups, true);
+			if (MembersmanagerHelper::checkArray($groups))
+			{
+				foreach ($groups as $group_id)
+				{
+					if (($users = JAccess::getUsersByGroup($group_id)) !== false && MembersmanagerHelper::checkArray($users))
+					{
+						foreach ($users as $user_id)
+						{
+							// make sure this user is not already set
+							if (!in_array($user_id, $active_users))
+							{
+								if (!isset($userBucket[$user_id]))
+								{
+									$userBucket[$user_id] = array($type);
+								}
+								else
+								{
+									$userBucket[$user_id][] = $type;
+								}
+							}
+							else
+							{
+								// we need to do something here (TODO)
+							}
+							// if at any time we hit the 1000 mark we must reset
+							if (count($userBucket) >= 1000)
+							{
+								$trigger = true;
+								return $this->insertMembers($userBucket, $active_users);
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	* Insert the members into the members table
+	 *
+	 * @return  void
+	 *
+	 */
+	protected function insertMembers(&$userBucket, $users)
+	{
+		// check if we found users
+		if (MembersmanagerHelper::checkArray($userBucket))
+		{
+			// Get a db connection.
+			$db = JFactory::getDbo();
+			$todayDate = JFactory::getDate()->toSql();
+			// Create a new query object.
+			$query = $db->getQuery(true);
+			// Insert columns.
+			$columns = array('user', 'token', 'name', 'username', 'useremail', 'account', 'type', 'created_by', 'created', 'published', 'access', 'version');
+			// Prepare the insert query.
+			$query->insert($db->quoteName('#__membersmanager_member'))->columns($db->quoteName($columns));
+			// limiting counter
+			$limiter = 0;
+			foreach ($userBucket as $user_id => $values)
+			{
+				// set the type
+				$type = new JRegistry;
+				$type->loadArray($values);
+				// get user
+				$member = JFactory::getUser($user_id);
+				// build unique token
+				$token = MembersmanagerHelper::safeString($member->name, 'L', '-', false, false);
+				while (!MembersmanagerHelper::checkUnique(0, 'token', $token, 'member'))
+				{
+					$token = JString::increment($token, 'dash');
+				}
+				// build member
+				$values = array();
+				$values[] = (int) $user_id;
+				$values[] = $db->quote($token);
+				$values[] = $db->quote($member->name);
+				$values[] = $db->quote($member->username);
+				$values[] = $db->quote($member->email);
+				$values[] = 1;
+				$values[] = $db->quote((string) $type);
+				$values[] = (int) $user_id;
+				$values[] = $db->quote($todayDate);
+				$values[] = 1;
+				$values[] = 1;
+				$values[] = 1;
+
+				// load values
+				$query->values(implode(',', $values));
+				// clear memory
+				unset($userBucket[$user_id]);
+				$limiter++;
+				// check if we have 100 rows, the insert and start new
+				if ($limiter >= 100)
+				{
+					// reset counter
+					$limiter = 0;
+					// run query
+					$db->setQuery($query);
+					$db->execute();
+					// reset query
+					$query = $db->getQuery(true);
+					// Prepare the new insert query.
+					$query->insert($db->quoteName('#__membersmanager_member'))->columns($db->quoteName($columns));
+				}
+				// make sure to update the user array that are active
+				$users[] = $user_id;
+			}
+			// reset the bucket
+			$userBucket = array();
+			// only run if queries remain
+			if ($limiter > 0)
+			{
+				$db->setQuery($query);
+				$db->execute();
+			}
+			return true;
+		}
+		return false;
+	}
+
 	
 	/**
 	 * Method to auto-populate the model state.
@@ -51,9 +244,6 @@ class MembersmanagerModelMembers extends JModelList
 		}
 		$account = $this->getUserStateFromRequest($this->context . '.filter.account', 'filter_account');
 		$this->setState('filter.account', $account);
-
-		$main_member = $this->getUserStateFromRequest($this->context . '.filter.main_member', 'filter_main_member');
-		$this->setState('filter.main_member', $main_member);
         
 		$sorting = $this->getUserStateFromRequest($this->context . '.filter.sorting', 'filter_sorting', 0, 'int');
 		$this->setState('filter.sorting', $sorting);
@@ -245,11 +435,6 @@ class MembersmanagerModelMembers extends JModelList
 		{
 			$query->where('a.account = ' . $db->quote($db->escape($account)));
 		}
-		// Filter by main_member.
-		if ($main_member = $this->getState('filter.main_member'))
-		{
-			$query->where('a.main_member = ' . $db->quote($db->escape($main_member)));
-		}
 
 		// Add the list ordering clause.
 		$orderCol = $this->state->get('list.ordering', 'a.id');
@@ -408,7 +593,6 @@ class MembersmanagerModelMembers extends JModelList
 		$id .= ':' . $this->getState('filter.created_by');
 		$id .= ':' . $this->getState('filter.modified_by');
 		$id .= ':' . $this->getState('filter.account');
-		$id .= ':' . $this->getState('filter.main_member');
 
 		return parent::getStoreId($id);
 	}

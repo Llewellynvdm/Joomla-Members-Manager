@@ -171,7 +171,7 @@ class MembersmanagerViewMember extends JViewLegacy
 	{
 		if(strlen($var) > 30)
 		{
-    		// use the helper htmlEscape method instead and shorten the string
+    			// use the helper htmlEscape method instead and shorten the string
 			return MembersmanagerHelper::htmlEscape($var, $this->_charset, true, 30);
 		}
 		// use the helper htmlEscape method instead.
@@ -191,15 +191,22 @@ class MembersmanagerViewMember extends JViewLegacy
 			$this->document = JFactory::getDocument();
 		}
 		$this->document->setTitle(JText::_($isNew ? 'COM_MEMBERSMANAGER_MEMBER_NEW' : 'COM_MEMBERSMANAGER_MEMBER_EDIT'));
-		// we need this to fix the form display (TODO)
-		$this->document->addStyleSheet(JURI::root()."administrator/templates/isis/css/template.css", (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/css');
-		$this->document->addScript(JURI::root()."administrator/templates/isis/js/template.js", (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/javascript');
+		// only add the ISIS template css & js if needed (default is 1 = true)
+		// you can override this in the global component options
+		// just add a (radio yes/no field) with a name called add_isis_template
+		// to your components config area
+		if ($this->params->get('add_isis_template', 1))
+		{
+			// we need this to fix the form display (TODO)
+			$this->document->addStyleSheet(JURI::root() . "administrator/templates/isis/css/template.css", (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/css');
+			$this->document->addScript(JURI::root() . "administrator/templates/isis/js/template.js", (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/javascript');
+		}
 		// the default style of this view
 		$this->document->addStyleSheet(JURI::root()."components/com_membersmanager/assets/css/member.css", (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/css');
 		// Add Ajax Token
 		$this->document->addScriptDeclaration("var token = '".JSession::getFormToken()."';");
 		// default javascript of this view
-		$this->document->addScript(JURI::root().$this->script, (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/javascript');
+		$this->document->addScript(JURI::root(). $this->script, (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/javascript');
 		$this->document->addScript(JURI::root(). "components/com_membersmanager/views/member/submitbutton.js", (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/javascript'); 
 
 		// get Uikit Version

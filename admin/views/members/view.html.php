@@ -134,6 +134,11 @@ class MembersmanagerViewMembers extends JViewLegacy
 				JToolBarHelper::custom('members.exportData', 'download', '', 'COM_MEMBERSMANAGER_EXPORT_DATA', true);
 			}
 		}
+		if ($this->user->authorise('member.import_joomla_users', 'com_membersmanager'))
+		{
+			// add Import Joomla Users button.
+			JToolBarHelper::custom('members.importJoomlaUsers', 'joomla', '', 'COM_MEMBERSMANAGER_IMPORT_JOOMLA_USERS', false);
+		}
 
 		if ($this->canDo->get('core.import') && $this->canDo->get('member.import'))
 		{
@@ -204,28 +209,6 @@ class MembersmanagerViewMembers extends JViewLegacy
 					'- Keep Original '.JText::_('COM_MEMBERSMANAGER_MEMBER_ACCOUNT_LABEL').' -',
 					'batch[account]',
 					JHtml::_('select.options', $this->accountOptions, 'value', 'text')
-				);
-			}
-		}
-
-		// Set Main Member User Selection
-		$this->main_memberUserOptions = JFormHelper::loadFieldType('Mainmembers')->options;
-		if ($this->main_memberUserOptions)
-		{
-			// Main Member User Filter
-			JHtmlSidebar::addFilter(
-				'- Select '.JText::_('COM_MEMBERSMANAGER_MEMBER_MAIN_MEMBER_LABEL').' -',
-				'filter_main_member',
-				JHtml::_('select.options', $this->main_memberUserOptions, 'value', 'text', $this->state->get('filter.main_member'))
-			);
-
-			if ($this->canBatch && $this->canCreate && $this->canEdit)
-			{
-				// Main Member User Batch Selection
-				JHtmlBatch_::addListSelection(
-					'- Keep Original '.JText::_('COM_MEMBERSMANAGER_MEMBER_MAIN_MEMBER_LABEL').' -',
-					'batch[main_member]',
-					JHtml::_('select.options', $this->main_memberUserOptions, 'value', 'text')
 				);
 			}
 		}

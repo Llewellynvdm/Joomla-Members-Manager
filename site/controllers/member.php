@@ -35,7 +35,7 @@ class MembersmanagerControllerMember extends JControllerForm
 	 */
 	public function __construct($config = array())
 	{
-		$this->view_list = 'members'; // safeguard for setting the return view listing to the default site view.
+		$this->view_list = 'cpanel'; // safeguard for setting the return view listing to the default site view.
 		parent::__construct($config);
 	}
 

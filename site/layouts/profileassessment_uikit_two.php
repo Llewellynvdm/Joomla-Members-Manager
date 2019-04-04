@@ -28,35 +28,38 @@ if ($displayData->setAssessment)
 			$displayData->assessments[$_name]  = array();
 			foreach ($assessment as $_nr => $assess)
 			{
-				$displayData->assessments[$_name][$_nr] = MembersmanagerHelper::getAnyFormDetails($displayData->id, 'member', $assess->element, 'object', 'profile');
-				if (MembersmanagerHelper::checkArray($displayData->assessments[$_name][$_nr]))
+				if ($displayData->_USER->authorise('form.report.viewtab', $assess->element))
 				{
-					foreach ($displayData->assessments[$_name][$_nr] as $_pointer => &$value)
+					$displayData->assessments[$_name][$_nr] = MembersmanagerHelper::getAnyFormDetails($displayData->id, 'member', $assess->element, 'object', 'profile');
+					if (MembersmanagerHelper::checkArray($displayData->assessments[$_name][$_nr]))
 					{
-						if (isset($value->name) && MembersmanagerHelper::checkString($value->name))
+						foreach ($displayData->assessments[$_name][$_nr] as $_pointer => &$value)
 						{
-							$value->name = $assess->name . ' - ' . $value->name;
+							if (isset($value->name) && MembersmanagerHelper::checkString($value->name))
+							{
+								$value->name = $assess->name . ' - ' . $value->name;
+							}
+							else
+							{
+								$value->name = $assess->name;
+							}
+						}
+					}
+					elseif (MembersmanagerHelper::checkObject($displayData->assessments[$_name][$_nr]))
+					{
+						if (isset($displayData->assessments[$_name][$_nr]->name) && MembersmanagerHelper::checkString($displayData->assessments[$_name][$_nr]->name))
+						{
+							$displayData->assessments[$_name][$_nr]->name = $assess->name . ' - ' . $displayData->assessments[$_name][$_nr]->name;
 						}
 						else
 						{
-							$value->name = $assess->name;
+							$displayData->assessments[$_name][$_nr]->name = $assess->name;
 						}
-					}
-				}
-				elseif (MembersmanagerHelper::checkObject($displayData->assessments[$_name][$_nr]))
-				{
-					if (isset($displayData->assessments[$_name][$_nr]->name) && MembersmanagerHelper::checkString($displayData->assessments[$_name][$_nr]->name))
-					{
-						$displayData->assessments[$_name][$_nr]->name = $assess->name . ' - ' . $displayData->assessments[$_name][$_nr]->name;
-					}
-					else
-					{
-						$displayData->assessments[$_name][$_nr]->name = $assess->name;
 					}
 				}
 			}
 		}
-		elseif (MembersmanagerHelper::checkObject($assessment) && isset($assessment->element))
+		elseif ($displayData->_USER->authorise('form.report.viewtab', $assessment->element)  && MembersmanagerHelper::checkObject($assessment) && isset($assessment->element))
 		{
 			$displayData->assessments[$_name] = MembersmanagerHelper::getAnyFormDetails($displayData->id, 'member', $assessment->element, 'object', 'profile');
 			if (MembersmanagerHelper::checkObject($displayData->assessments[$_name]))
@@ -76,13 +79,15 @@ if ($displayData->setAssessment)
 
 ?>
 <?php if ($displayData->setAssessment) : ?>
-	<?php if (MembersmanagerHelper::checkString($displayData->type_name) && $displayData->_USER->authorise('member.view.type', 'com_membersmanager.member.' . (int) $displayData->id)) : ?>
+	<?php if (isset($displayData->type_name) && MembersmanagerHelper::checkString($displayData->type_name) && $displayData->_USER->authorise('member.view.type', 'com_membersmanager.member.' . (int) $displayData->id)) : ?>
 		<h5><?php echo JText::sprintf('COM_MEMBERSMANAGER_ACCESS_S_S', MembersmanagerHelper::safeString($displayData->type_name, 'W'), implode(', ', (array) array_keys($displayData->assessmentAvailable))); ?></h5>
 	<?php else: ?>
 		<h5><?php echo JText::sprintf('COM_MEMBERSMANAGER_ACCESS_MEMBER_S', implode(', ', (array) array_keys($displayData->assessmentAvailable))); ?></h5>
 	<?php endif; ?>
-	<?php echo JLayoutHelper::render('profilebuttons_uikit_two', $displayData); ?>
-	<?php echo JLayoutHelper::render('profileextra_uikit_two', $displayData); ?>
+	<?php if ($displayData->_USER->id > 0): ?>
+		<?php echo JLayoutHelper::render('profilebuttons_uikit_two', $displayData); ?>
+		<?php echo JLayoutHelper::render('profileextra_uikit_two', $displayData); ?>
+	<?php endif; ?>
 	<?php echo JLayoutHelper::render('profilereports_uikit_two', $displayData); ?>
 	<?php echo JLayoutHelper::render('profileassessmentselection_uikit_two', $displayData); ?>
 <?php else: ?>

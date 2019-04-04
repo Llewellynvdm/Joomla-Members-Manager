@@ -14,3 +14,13 @@
 #jform_main_member_chzn {
   width: 100% !important;
 }
+.btn-toolbar .btn-wrapper {
+    display: inline-block;
+    margin: 0 0 8px 5px;
+}
+.form-inline, .form-inline-header {
+    display: inline-block;
+}
+.form-inline-header .control-group, .form-inline-header .control-label, .form-inline-header .controls {
+    display: inline-block;
+}

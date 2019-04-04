@@ -146,6 +146,31 @@ class MembersmanagerModelMembers extends JModelList
 
 				// get member details
 				$item = (object) MembersmanagerHelper::getAnyFormDetails($id, 'id', 'com_membersmanager', 'placeholder', 'report', 'id', 'member', 1);
+				// add company details
+				if (($tmp = MembersmanagerHelper::getAnyCompanyDetails('com_membersmanager', 'placeholder')) !== false && MembersmanagerHelper::checkArray($tmp))
+				{
+					foreach ($tmp as $placeholder_key => $value)
+					{
+						$item->{$placeholder_key} = $value;
+					}
+					// not needed
+					unset($tmp);
+				}
+				// also as related to the current logged in member
+				$current_member_id = MembersmanagerHelper::getVar('member', JFactory::getUser()->get('id'), 'user', 'id', '=', 'membersmanager');
+				if ($current_member_id && ($tmp = MembersmanagerHelper::getAnyFormDetails($current_member_id, 'id', 'com_membersmanager', 'placeholder', 'report', 'id', 'member', 1)) !== false && MembersmanagerHelper::checkArray($tmp))
+				{
+					foreach ($tmp as $placeholder_key => $value)
+					{
+						if (strpos($placeholder_key, '[member_') !== false)
+						{
+							$placeholder_key = str_replace('[member_', '[staff_', $placeholder_key);
+							$item->{$placeholder_key} = $value;
+						}
+					}
+					// not needed
+					unset($tmp);
+				}
 				// now load the one to one component data
 				if (MembersmanagerHelper::checkArray($components))
 				{
@@ -155,12 +180,31 @@ class MembersmanagerModelMembers extends JModelList
 						if (($tmp = MembersmanagerHelper::getAnyFormDetails($id, 'member', $component, 'placeholder', 'report', 'member', 'form', 1)) !== false && MembersmanagerHelper::checkArray($tmp))
 						{
 							// add to the item array
-							foreach ($tmp as $placholder_key => $value)
+							foreach ($tmp as $placeholder_key => $value)
 							{
 								// keep first data set
-								if (!isset($item->{$placholder_key}))
+								if (!isset($item->{$placeholder_key}))
 								{
-									$item->{$placholder_key} = $value;
+									$item->{$placeholder_key} = $value;
+								}
+							}
+							// not needed
+							unset($tmp);
+						}
+						// also as related to the current logged in member
+						if ($current_member_id && ($tmp = MembersmanagerHelper::getAnyFormDetails($current_member_id, 'member', $component, 'placeholder', 'report', 'member', 'form', 1)) !== false && MembersmanagerHelper::checkArray($tmp))
+						{
+							// add to the item array
+							foreach ($tmp as $placeholder_key => $value)
+							{
+								if (strpos($placeholder_key, '[member_') !== false)
+								{
+									$placeholder_key = str_replace('[member_', '[staff_', $placeholder_key);
+									// keep first data set
+									if (!isset($item->{$placeholder_key}))
+									{
+										$item->{$placeholder_key} = $value;
+									}
 								}
 							}
 							// not needed

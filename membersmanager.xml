@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension type="component" version="3.2" method="upgrade">
 	<name>COM_MEMBERSMANAGER</name>
-	<creationDate>27th December, 2018</creationDate>
+	<creationDate>4th April, 2019</creationDate>
 	<author>Llewellyn van der Merwe</author>
 	<authorEmail>llewellyn@joomlacomponentbuilder.com</authorEmail>
 	<authorUrl>https://www.joomlacomponentbuilder.com/</authorUrl>

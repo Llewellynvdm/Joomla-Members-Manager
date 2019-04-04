@@ -34,6 +34,52 @@ class MembersmanagerModelTypes extends JModelList
 
 		parent::__construct($config);
 	}
+
+	/**
+	 * update/sync all the member types
+	 *
+	 * @return  bool true on success
+	 */
+	public function updateTypes()
+	{
+		if (($members = $this->getMembers()) !== false)
+		{
+			// set so defaults
+			$bucket = array();
+			$trigger = false;
+			foreach ($members as $id => $types)
+			{
+				MembersmanagerHelper::updateTypes($id, $types);
+			}
+			return true;
+		}
+		JFactory::getApplication()->enqueueMessage(JText::_('COM_MEMBERSMANAGER_NO_MEMBERS_ARE_SET_PLEASE_SET_SOME_AND_TRY_AGAIN'), 'warning');
+		return false;
+	}
+
+	/**
+	* Gets an array of members.
+	 *
+	 * @return  array  An array of members.
+	 *
+	 */
+	protected function getMembers()
+	{
+		// get types that allow relationships
+		$query = $this->_db->getQuery(true);
+		$query->select(array('a.id', 'a.type'));
+		$query->from('#__membersmanager_member AS a');
+		$query->where($this->_db->quoteName('a.published') . ' >= 1');
+		$this->_db->setQuery($query);
+		$this->_db->execute();
+		// only continue if we have member types and all relationship types
+		if (($members = $this->_db->loadAssocList('id', 'type')) !== false && MembersmanagerHelper::checkArray($members))
+		{
+			return $members;
+		}
+		return false;
+	}
+
 	
 	/**
 	 * Method to auto-populate the model state.

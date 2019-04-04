@@ -33,28 +33,31 @@ if ($displayData->setAssessment)
 		{
 			foreach ($assessment as $_nr => $assess)
 			{
-				foreach ($targets as $target)
+				if ($displayData->_USER->authorise('form.report.viewtab', $assess->element))
 				{
-					if (($carts = MembersmanagerHelper::getAnyAvailableCharts(null, $target, $assess->element)) !== false)
+					foreach ($targets as $target)
 					{
-						foreach ($carts as $key => $cartData)
+						if (($carts = MembersmanagerHelper::getAnyAvailableCharts(null, $target, $assess->element)) !== false)
 						{
-							if (($dataTable = MembersmanagerHelper::getAnyMultiChartDataTable($displayData->id, $target, $key, $assess->element)) !== ''
-								&& ($code = MembersmanagerHelper::getAnyChartCode($key . $_y, $dataTable, $cartData['details'], 'profile', $assess->element)) !== false)
+							foreach ($carts as $key => $cartData)
 							{
-								// load code
-								$displayData->charts[$_name][] = $code;
-								// add script to document
-								$document->addScriptDeclaration($code['script']);
-								// set loading of charts
-								$displayData->setCharts = true;
+								if (($dataTable = MembersmanagerHelper::getAnyMultiChartDataTable($displayData->id, $target, $key, $assess->element)) !== ''
+									&& ($code = MembersmanagerHelper::getAnyChartCode($key . $_y, $dataTable, $cartData['details'], 'profile', $assess->element)) !== false)
+								{
+									// load code
+									$displayData->charts[$_name][] = $code;
+									// add script to document
+									$document->addScriptDeclaration($code['script']);
+									// set loading of charts
+									$displayData->setCharts = true;
+								}
 							}
 						}
 					}
 				}
 			}
 		}
-		elseif (MembersmanagerHelper::checkObject($assessment) && isset($assessment->element))
+		elseif ($displayData->_USER->authorise('form.report.viewtab', $assessment->element) && MembersmanagerHelper::checkObject($assessment) && isset($assessment->element))
 		{
 			foreach ($targets as $target)
 			{
@@ -78,9 +81,11 @@ if ($displayData->setAssessment)
 		}
 	}
 }
+// switch hidden state
+$hidden = ($displayData->setCharts) ? '' : ' hidden';
 
 ?>
-<div class="extra<?php echo $displayData->id; ?>">
+<div class="extra<?php echo $displayData->id; ?>"<?php echo $hidden; ?>>
 <?php if ($displayData->setCharts): ?>
 	<?php foreach ($displayData->charts as $name => $codes): ?>
 		<?php foreach ($codes as $code): ?>

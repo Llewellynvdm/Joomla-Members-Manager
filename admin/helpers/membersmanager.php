@@ -27,6 +27,7 @@ abstract class MembersmanagerHelper
 		self::loadSession();
 	}
 
+
 	/**
 	* the params
 	**/
@@ -161,7 +162,7 @@ abstract class MembersmanagerHelper
 				// set edit link
 				$selection['setMemberEditURL:id|created_by'] =  $f . 'edit_url' . $b;
 				// Get the medium encryption.
-				$mediumkey = MembersmanagerHelper::getCryptKey('medium');
+				$mediumkey = self::getCryptKey('medium');
 				if ($mediumkey)
 				{
 					// Get the encryption object.
@@ -221,7 +222,17 @@ abstract class MembersmanagerHelper
 	**/
 	protected static function setProfileLink($object)
 	{
-		return JRoute::_('index.php?option=com_membersmanager&view=profile&id='. $object->get('id') . ':' . $object->get('token') . '&return=' . self::$return_here);
+		// get the global settings
+		if (!self::checkObject(self::$params))
+		{
+			self::$params = JComponentHelper::getParams('com_membersmanager');
+		}
+		// only load link if open to public or is logged in
+		if (2 == self::$params->get('login_required', 1) || JFactory::getUser()->id > 0)
+		{
+			return JRoute::_('index.php?option=com_membersmanager&view=profile&id='. $object->get('id') . ':' . $object->get('token') . '&return=' . self::$return_here);
+		}
+		return '';
 	}
 
 	/**
@@ -290,9 +301,24 @@ abstract class MembersmanagerHelper
 				$_return = urlencode(base64_encode((string) JUri::getInstance()));
 				if ($return)
 				{
-					return self::getCreateURL('message', 'message', $return . '&return=' . $_return, 'com_communicate');
+					return self::getCreateURL('compose', 'compose', $return . '&return=' . $_return, 'com_communicate');
 				}
-				return self::getCreateURL('message', 'message', '&return=' . $_return, 'com_communicate');
+				return self::getCreateURL('compose', 'compose', '&return=' . $_return, 'com_communicate');
+			}
+			elseif ($key && 'message_number' === $key && is_numeric($return) && $return > 0)
+			{
+				// get the messages numbers
+				if (($messages = self::getMessages($return)) !== false)
+				{
+					// return result
+					return count( (array) $messages);
+				}
+				return 0;
+			}
+			elseif ($key && 'list_messages' === $key && is_numeric($default) && $default > 0)
+			{
+				// return result
+				return self::getListMessages($default, $return);
 			}
 			// get the global settings of com_communicate (singleton)
 			$params = JComponentHelper::getParams('com_communicate');
@@ -304,6 +330,103 @@ abstract class MembersmanagerHelper
 			return $params;
 		}
 		return $default;
+	}
+
+	/**
+	* return a list of messages
+	**/
+	protected static function getListMessages(&$id, &$return)
+	{
+		// get the messages
+		if (($messages = self::getMessages($id)) !== false)
+		{
+			// set the return value
+			$_return = '';
+			if (self::checkString($return))
+			{
+				$_return = '&return=' . $return;
+			}
+			// now build the html
+			$bucket = array('received' => array(), 'send' => array());
+			foreach($messages as $message)
+			{
+				// get time stamp
+				$timestamp = strtotime($message->created);
+				$date = self::fancyDynamicDate($timestamp);
+				// get key
+				$key = '&key=' . self::lock($message->id); // to insure that the access is only given by the sytem
+				// build link
+				$link = JRoute::_('index.php?option=com_communicate&view=message&id=' . $message->id . $_return . $key);
+				// set read status
+				$b = '<a href="' . $link . '">';
+				$_b = '</a>';
+				if ($message->hits == 0)
+				{
+					$b = '<a href="' . $link . '">&bigstar;&nbsp;';
+				}
+				// build the bucket of messages
+				if ($id == $message->recipient)
+				{
+					$bucket['received'][] = $b .  $message->subject . '<br />&nbsp;&nbsp;<small>&rarr;&nbsp;' . $date . '</small>' . $_b;
+				}
+				else
+				{
+					if (($name = self::getMemberName($message->recipient, null, null, null, false)) === false)
+					{
+						$name = $message->email;
+					}
+					$bucket['send'][] = $b . $name . '<br />&nbsp;&nbsp;' . $message->subject . '<br />&nbsp;&nbsp;<small>&larr;&nbsp;' . $date . '</small>' . $_b;
+				}
+			}
+			// now build the actual list
+			$html = array();
+			foreach ($bucket as $_name => $_messages)
+			{
+				if (self::checkArray($_messages))
+				{
+					$html[] = '<li class="uk-nav-header">' . $_name . '</li>';
+					$html[] = '<li>' . implode('</li><li>', $_messages) . '</li>';
+				}
+			}
+			// make sure we have messages
+			if (self::checkArray($html))
+			{
+				return implode("", $html);
+			}
+		}
+		return false;
+	}
+
+	/**
+	* get messages
+	**/
+	public static function getMessages(&$id)
+	{
+		// Get the user object.
+		$user = JFactory::getUser();
+		// get database object
+		$db = JFactory::getDBO();
+		$query = $db->getQuery(true);
+		$query->select(array('a.id', 'a.member','a.recipient','a.created','a.subject','a.kind','a.email','a.hits'));
+		$query->from('#__communicate_message AS a');
+		$query->where('(a.recipient = ' . (int) $id . ' OR a.member = ' . (int) $id . ')');
+		$query->where('a.published = 1');
+		// Implement View Level Access
+		if (!$user->authorise('core.options', 'com_communicate'))
+		{
+			$groups = implode(',', $user->getAuthorisedViewLevels());
+			$query->where('a.access IN (' . $groups . ')');
+		}
+		$query->order('a.created desc');
+		$db->setQuery($query);
+		$db->execute();
+		// check if we have found any
+		if ($db->getNumRows())
+		{
+			// get all messages
+			return $db->loadObjectList();
+		}
+		return false;
 	}
 
 	/**
@@ -342,7 +465,7 @@ abstract class MembersmanagerHelper
 	public static function getAnyPlaceHolders($_component, $type = 'report', $addCompany = false)
 	{
 		// check if we are in the correct class
-		if ('com_membersmanager' !== $_component)
+		if ('com_membersmanager' !== $_component && 'com_corecomponent' !== $_component)
 		{
 			// check if the class and method exist
 			if (($helperClass = self::getHelperClass($_component)) !== false && method_exists($helperClass, 'getPlaceHolders'))
@@ -681,9 +804,57 @@ abstract class MembersmanagerHelper
 		// check if access is needed
 		if (!$user->authorise('core.options', 'com_membersmanager'))
 		{
-			if (($userID = $user->get('id', false)) !== false && $userID > 0 && ($types = self::getVar('member', $userID, 'user', 'type')) !== false)
+			// get all types in system
+			$query = $db->getQuery(true);
+			$query->select(array('a.groups_access', 'a.groups_target'));
+			$query->from('#__membersmanager_type AS a');
+			$query->where($db->quoteName('a.published') . ' >= 1');
+			// also filter by access (will keep an eye on this)
+			$groups = implode(',', $user->getAuthorisedViewLevels());
+			$query->where('a.access IN (' . $groups . ')');
+			$db->setQuery($query);
+			$db->execute();
+			// get all types
+			$types = $db->loadAssocList();
+			// make sure we have types, and user access groups
+			if (self::checkArray($types) && ($userID = $user->get('id', false)) !== false && $userID > 0 && ($member_type = self::getVar('member', $userID, 'user', 'type')) !== false)
 			{
-				return self::getMemberGroupsByType($types, 'groups_access');
+				// get the groups this member belong to
+				$member_access = self::getMemberGroupsByType($member_type);
+				// function to setup the group array
+				$setGroups = function ($groups) {
+					// convert to array
+					if (self::checkJson($groups))
+					{
+						return (array) json_decode($groups, true);
+					}
+					elseif (is_numeric($groups))
+					{
+						return array($groups);
+					}
+					return false;
+				};
+				// our little function to check if two arrays intersect on values
+				$intersect = function ($a, $b) { $b = array_flip($b); foreach ($a as $v) { if (isset($b[$v])) return true; } return false; };
+				// type bucket
+				$bucketTypes = array();
+				foreach ($types as $groups)
+				{
+					$groups_access = $setGroups($groups['groups_access']);
+					if (self::checkArray($groups_target) && $intersect($groups_access, $member_access))
+					{
+						$groups_target = $setGroups($groups['groups_target']);
+						foreach ($groups_target as $group_target)
+						{
+							$bucketTypes[$group_target] = $group_target;
+						}
+					}
+				}
+				// check if we found any
+				if (self::checkArray($bucketTypes))
+				{
+					return $bucketTypes;
+				}
 			}
 			return false;
 		}
@@ -712,7 +883,7 @@ abstract class MembersmanagerHelper
 		{
 			// get all types in system
 			$query = $db->getQuery(true);
-			$query->select(array('a.id', 'a.groups_target')); // groups_target = type_link
+			$query->select(array('a.id', 'a.groups_access'));
 			$query->from('#__membersmanager_type AS a');
 			$query->where($db->quoteName('a.published') . ' >= 1');
 			// also filter by access (will keep an eye on this)
@@ -721,10 +892,12 @@ abstract class MembersmanagerHelper
 			$db->setQuery($query);
 			$db->execute();
 			// get all types
-			$types = $db->loadAssocList('id', 'groups_target');
+			$types = $db->loadAssocList('id', 'groups_access');
 			// make sure we have types, and user access groups
-			if (self::checkArray($types) && ($groups_access = self::getAccessGroups($user, $db)) !== false)
+			if (self::checkArray($types) && ($userID = $user->get('id', false)) !== false && $userID > 0 && ($member_type = self::getVar('member', $userID, 'user', 'type')) !== false)
 			{
+				// get the access groups
+				$groups_access = self::getMemberGroupsByType($member_type);
 				// function to setup the group array
 				$setGroups = function ($groups) {
 					// convert to array
@@ -833,6 +1006,32 @@ abstract class MembersmanagerHelper
 			$date = strtotime($date);
 		}
 		return date('jS \o\f F Y',$date);
+	}
+
+	/**
+	 *	get date based in period past
+	 */
+	public static function fancyDynamicDate($date)
+	{
+		if (!self::isValidTimeStamp($date))
+		{
+			$date = strtotime($date);
+		}
+		// older then year
+		$lastyear = date("Y", strtotime("-1 year"));
+		$tragetyear = date("Y", $date);
+		if ($tragetyear <= $lastyear)
+		{
+			return date('m/d/y', $date);
+		}
+		// same day
+		$yesterday = strtotime("-1 day");
+		if ($date > $yesterday)
+		{
+			return date('g:i A', $date);
+		}
+		// just month day
+		return date('M j', $date);
 	}
 
 	/**
@@ -1992,6 +2191,10 @@ abstract class MembersmanagerHelper
 				{
 					$checked_out = (int) $item->checked_out;
 				}
+				else
+				{
+					$checked_out = self::getVar($view, $item->id, 'id', 'checked_out', '=', str_replace('com_', '', $component));
+				}
 			}
 			elseif (self::checkArray($item) && isset($item['id']))
 			{
@@ -2000,6 +2203,14 @@ abstract class MembersmanagerHelper
 				{
 					$checked_out = (int) $item['checked_out'];
 				}
+				else
+				{
+					$checked_out = self::getVar($view, $item['id'], 'id', 'checked_out', '=', str_replace('com_', '', $component));
+				}
+			}
+			elseif (is_numeric($item) && $item > 0)
+			{
+				$checked_out = self::getVar($view, $item, 'id', 'checked_out', '=', str_replace('com_', '', $component));
 			}
 			// set the link title
 			$title = self::safeString(JText::_('COM_MEMBERSMANAGER_EDIT') . ' ' . $view, 'W');
@@ -2052,6 +2263,118 @@ abstract class MembersmanagerHelper
 	}
 
 	/**
+	* Get an edit text button
+	* 
+	* @param  string   $text       The button text
+	* @param  int      $item       The item to edit
+	* @param  string   $view       The type of item to edit
+	* @param  string   $views      The list view controller name
+	* @param  string   $ref        The return path
+	* @param  string   $component  The component these views belong to
+	* @param  string   $headsup    The message to show on click of button
+	*
+	* @return  string    On success the full html link
+	* 
+	*/
+	public static function getEditTextButton($text, &$item, $view, $views, $ref = '', $component = 'com_membersmanager', $jRoute = true, $class = 'uk-button', $headsup = 'COM_MEMBERSMANAGER_ALL_UNSAVED_WORK_ON_THIS_PAGE_WILL_BE_LOST_ARE_YOU_SURE_YOU_WANT_TO_CONTINUE')
+	{
+		// make sure we have text
+		if (!self::checkString($text))
+		{
+			return self::getEditButton($item, $view, $views, $ref, $component, $headsup);
+		}
+		// get URL
+		$url = self::getEditURL($item, $view, $views, $ref, $component, $jRoute);
+		// check if we found any
+		if (self::checkString($url))
+		{
+			// get the global settings
+			if (!self::checkObject(self::$params))
+			{
+				self::$params = JComponentHelper::getParams('com_membersmanager');
+			}
+			// get UIKIT version
+			$uikit = self::$params->get('uikit_version', 2);
+			// check that we have the ID
+			if (self::checkObject($item) && isset($item->id))
+			{
+				// check if the checked_out is available
+				if (isset($item->checked_out))
+				{
+					$checked_out = (int) $item->checked_out;
+				}
+				else
+				{
+					$checked_out = self::getVar($view, $item->id, 'id', 'checked_out', '=', str_replace('com_', '', $component));
+				}
+			}
+			elseif (self::checkArray($item) && isset($item['id']))
+			{
+				// check if the checked_out is available
+				if (isset($item['checked_out']))
+				{
+					$checked_out = (int) $item['checked_out'];
+				}
+				else
+				{
+					$checked_out = self::getVar($view, $item['id'], 'id', 'checked_out', '=', str_replace('com_', '', $component));
+				}
+			}
+			elseif (is_numeric($item) && $item > 0)
+			{
+				$checked_out = self::getVar($view, $item, 'id', 'checked_out', '=', str_replace('com_', '', $component));
+			}
+			// set the link title
+			$title = self::safeString(JText::_('COM_MEMBERSMANAGER_EDIT') . ' ' . $view, 'W');
+			// check that there is a check message
+			if (self::checkString($headsup))
+			{
+				if (3 == $uikit)
+				{
+					$href = 'onclick="UIkit.modal.confirm(\''.JText::_($headsup).'\').then( function(){ window.location.href = \'' . $url . '\' } )"  href="javascript:void(0)"';
+				}
+				else
+				{
+					$href = 'onclick="UIkit2.modal.confirm(\''.JText::_($headsup).'\', function(){ window.location.href = \'' . $url . '\' })"  href="javascript:void(0)"';
+				}
+			}
+			else
+			{
+				$href = 'href="' . $url . '"';
+			}
+			// return UIKIT version 3
+			if (3 == $uikit)
+			{
+				// check if it is checked out
+				if (isset($checked_out) && $checked_out > 0)
+				{
+					// is this user the one who checked it out
+					if ($checked_out == JFactory::getUser()->id)
+					{
+						return ' <a class="' . $class . '" ' . $href . ' title="' . $title . '">' . $text . '</a>';
+					}
+					return ' <a class="' . $class . '" href="#" disabled title="' . JText::sprintf('COM_MEMBERSMANAGER__HAS_BEEN_CHECKED_OUT_BY_S', self::safeString($view, 'W'), JFactory::getUser($checked_out)->name) . '">' . $text . '</a>'; 
+				}
+				// return normal edit link
+				return ' <a class="' . $class . '" ' . $href . ' title="' . $title . '">' . $text . '</a>';
+			}
+			// check if it is checked out (return UIKIT version 2)
+			if (isset($checked_out) && $checked_out > 0)
+			{
+				// is this user the one who checked it out
+				if ($checked_out == JFactory::getUser()->id)
+				{
+					return ' <a class="' . $class . '" ' . $href . ' title="' . $title . '">' . $text . '</a>';
+				}
+				return ' <a class="' . $class . '" href="#" disabled title="' . JText::sprintf('COM_MEMBERSMANAGER__HAS_BEEN_CHECKED_OUT_BY_S', self::safeString($view, 'W'), JFactory::getUser($checked_out)->name) . '">' . $text . '</a>'; 
+			}
+			// return normal edit link
+			return ' <a class="' . $class . '" ' . $href . ' title="' . $title . '">' . $text . '</a>';
+		}
+		return '';
+	}
+
+	/**
 	* Get the edit URL
 	* 
 	* @param  int      $item        The item to edit
@@ -2064,8 +2387,13 @@ abstract class MembersmanagerHelper
 	* @return  string    On success the edit url
 	* 
 	*/
-	public static function  getEditURL(&$item, $view, $views, $ref = '', $component = 'com_membersmanager', $jRoute = true)
+	public static function getEditURL(&$item, $view, $views, $ref = '', $component = 'com_membersmanager', $jRoute = true)
 	{
+		// make sure the user has access to view
+		if (!JFactory::getUser()->authorise($view. '.access', $component))
+		{
+			return false;
+		}
 		// build record
 		$record = new stdClass();
 		// check that we have the ID
@@ -2182,7 +2510,7 @@ abstract class MembersmanagerHelper
 	public static function  getCreateURL($view, $views, $ref = '', $component = 'com_membersmanager', $jRoute = true)
 	{
 		// can create
-		if (JFactory::getUser()->authorise($view . '.create', $component))
+		if (JFactory::getUser()->authorise($view. '.access', $component) && JFactory::getUser()->authorise($view . '.create', $component))
 		{
 			// set create task
 			$create = "&task=" . $view . ".edit";
@@ -2348,9 +2676,36 @@ abstract class MembersmanagerHelper
 			// add and update the header footer and header if setDynamicData is found on placeholder request
 			if (method_exists(__CLASS__, 'setDynamicData') && 'placeholder' == $method)
 			{
+				// get the placeholder prefix
+				$prefix = self::$params->get('placeholder_prefix', 'member');
+				// member array keeper
+				$member_keeper = array('[IF ' . $prefix . '_' => '|!f r3c1p13nt_', '[' . $prefix . '_' => '|r3c1p13nt_');
+				// get the global templates
+				$doc_header = self::$params->get('doc_header', '');
+				if (self::checkString($doc_header))
+				{
+					// preserve any possible member placeholders
+					$doc_header = str_replace(array_keys($member_keeper), array_values($member_keeper), $doc_header);
+					// update document header with company details
+					$doc_header = self::setDynamicData($doc_header, self::$companyDetails[$method]);
+					// reverse the preservation of member placeholders
+					$doc_header = str_replace(array_values($member_keeper), array_keys($member_keeper), $doc_header);
+				}
+				// get the global templates
+				$doc_footer = self::$params->get('doc_footer', '');
+				if (self::checkString($doc_footer))
+				{
+					// preserve any possible member placeholders
+					$doc_footer = str_replace(array_keys($member_keeper), array_values($member_keeper), $doc_footer);
+					// update document footer with company details
+					$doc_footer = self::setDynamicData($doc_footer, self::$companyDetails[$method]);
+					// reverse the preservation of member placeholders
+					$doc_footer = str_replace(array_values($member_keeper), array_keys($member_keeper), $doc_footer);
+				}
+
 				// add document header and footer
-				self::$companyDetails[$method][$f.'company_doc_header'.$b] = self::setDynamicData(self::$params->get('doc_header', ''), self::$companyDetails[$method]);
-				self::$companyDetails[$method][$f.'company_doc_footer'.$b] = self::setDynamicData(self::$params->get('doc_footer', ''), self::$companyDetails[$method]);
+				self::$companyDetails[$method][$f.'company_doc_header'.$b] = $doc_header;
+				self::$companyDetails[$method][$f.'company_doc_footer'.$b] = $doc_footer;
 			}
 			// if object is called for
 			if ('object' == $method)
@@ -2872,11 +3227,11 @@ abstract class MembersmanagerHelper
 					self::joinMemberDetails($query, $filter, $db);
 				}
 				// Implement View Level Access (if set in table)
-				if (!$user->authorise('core.options', '[[[com_component]]]') && isset($columns['access']))
+				if (!$user->authorise('core.options', 'com_membersmanager') && isset($columns['access']))
 				{
 					// ensure to always filter by access
-					$accessGroups = implode(',', $user->getAuthorisedViewLevels());
-					$query->where('a.access IN (' . $accessGroups . ')');
+					// $accessGroups = implode(',', $user->getAuthorisedViewLevels()); TODO first fix save to correct access groups
+					// $query->where('a.access IN (' . $accessGroups . ')');
 				}
 				// check if we have more get where details
 				if (method_exists(__CLASS__, "whereMemberDetails"))
@@ -3827,6 +4182,8 @@ abstract class MembersmanagerHelper
 	 */
 	protected static function setInfoComponents()
 	{
+		// filter per user access
+		$user = JFactory::getUser();
 		$db = JFactory::getDBO();
 		// get components
 		$query = $db->getQuery(true);
@@ -3843,8 +4200,9 @@ abstract class MembersmanagerHelper
 			// filter out the components we need
 			$listComponents = array_filter(
 				$listComponents,
-				function ($component) {
-					if (self::checkJson($component->params) && strpos($component->params, 'activate_membersmanager_info') !== false)
+				function ($component) use($user) {
+					if (self::checkJson($component->params) && strpos($component->params, 'activate_membersmanager_info') !== false
+						&& $user->authorise('form.access', $component->element))
 					{
 						// check if this component is active
 						$component->params = json_decode($component->params);
@@ -4078,6 +4436,8 @@ abstract class MembersmanagerHelper
 	 */
 	protected static function setAssessmentComponents()
 	{
+		// filter per user access
+		$user = JFactory::getUser();
 		$db = JFactory::getDBO();
 		// get components
 		$query = $db->getQuery(true);
@@ -4094,8 +4454,9 @@ abstract class MembersmanagerHelper
 			// filter out the components we need
 			$listComponents = array_filter(
 				$listComponents,
-				function ($component) {
-					if (self::checkJson($component->params) && strpos($component->params, 'activate_membersmanager_assessment') !== false)
+				function ($component) use($user) {
+					if (self::checkJson($component->params) && strpos($component->params, 'activate_membersmanager_assessment') !== false
+						&& $user->authorise('form.access', $component->element))
 					{
 						// check if this component is active
 						$component->params = json_decode($component->params);
@@ -4167,6 +4528,8 @@ abstract class MembersmanagerHelper
 					return false;
 				}
 			);
+			// get user object
+			$user = JFactory::getUser();
 			// get the database object
 			$db = JFactory::getDBO();
 			// set the tabs
@@ -4190,14 +4553,18 @@ abstract class MembersmanagerHelper
 								$tables = array();
 								foreach ($component as $_nr => $comp)
 								{
-									if (($ids = self::getVars('form', $item->id, $view, 'id', 'IN', str_replace('com_', '', $comp->element))) !== false && self::checkArray($ids))
+									// first check access
+									if ($user->authorise('form.edit', $comp->element))
 									{
-										// load the table
-										$tables[] = self::getTabLinksTable($ids, $item, $comp, $view, $return, $db);
-									}
-									elseif (($tmp = self::getTabLinksTable(null, $item, $comp, $view, $return, $db)) !== false)
-									{
-										$tables[] = $tmp;
+										if (($ids = self::getVars('form', $item->id, $view, 'id', 'IN', str_replace('com_', '', $comp->element))) !== false && self::checkArray($ids))
+										{
+											// load the table
+											$tables[] = self::getTabLinksTable($ids, $item, $comp, $view, $return, $db);
+										}
+										elseif (($tmp = self::getTabLinksTable(null, $item, $comp, $view, $return, $db)) !== false)
+										{
+											$tables[] = $tmp;
+										}
 									}
 								}
 								// load the tables to the layout
@@ -4225,7 +4592,7 @@ abstract class MembersmanagerHelper
 									$layout = array();
 								}
 							}
-							elseif (self::checkObject($component) && isset($component->element))
+							elseif (self::checkObject($component) && isset($component->element) && $user->authorise('form.edit', $component->element))
 							{
 								if (($id = self::getVar('form', $item->id, $view, 'id', '=', str_replace('com_', '', $component->element))) === false) // get item ID
 								{
@@ -4398,6 +4765,7 @@ abstract class MembersmanagerHelper
 	 * @param   int      $id          The item id
 	 * @param   object   $component   The target component details
 	 * @param   array   $document   The document array to load script
+	 * @param   array   $footer   The document footer array to load scripts
 	 *
 	 * @return string
 	 *
@@ -4439,6 +4807,7 @@ abstract class MembersmanagerHelper
 	 *
 	 * @param   object   $component   The target component
 	 * @param   array   $document   The document array to load script
+	 * @param   array   $footer   The document footer array to load scripts
 	 *
 	 * @return string
 	 *
@@ -4688,9 +5057,24 @@ abstract class MembersmanagerHelper
 				return false;
 			}
 		);
+		// set type if not set
+		if (!isset($data['type']) && $view == 'member')
+		{
+			$data['type'] = self::getVar($view, $data['id'], 'id', 'type');
+		}
+		// set account if not set
+		if (!isset($data['account']) && $view == 'member')
+		{
+			$data['account'] = self::getVar($view, $data['id'], 'id', 'account');
+		}
 		// check if we have methods
 		if (self::checkArray($methods) && isset($data['type'], $data['account']))
 		{
+			// get the global settings
+			if (!self::checkObject(self::$params))
+			{
+				self::$params = JComponentHelper::getParams('com_membersmanager');
+			}
 			// get the app object
 			$app = JFactory::getApplication();
 			// get the post object
@@ -4699,7 +5083,7 @@ abstract class MembersmanagerHelper
 			$user = JFactory::getUser();
 			// get the database object
 			$db = JFactory::getDBO();
-			// start looping the metods
+			// start looping the methods
 			foreach ($methods as $method)
 			{
 				// get components
@@ -4722,10 +5106,15 @@ abstract class MembersmanagerHelper
 							// check if user are allowed to edit form values or create form values
 							if (self::checkArray($_data))
 							{
+								// get the local params
+								$params = JComponentHelper::getParams($_component);
 								// make sure the ID is set
-								if (!isset($_data['id']) || !is_numeric($_data['id']))
+								if (!isset($_data['id']) || !is_numeric($_data['id']) || $_data['id'] == 0)
 								{
+									// set id to zero as this will cause new item to be created
 									$_data['id'] = 0;
+									// set default access
+									$_data['access'] = $params->get('default_accesslevel', self::$params->get('default_accesslevel', 1));
 								}
 								// check if user may edit
 								if ($_data['id'] > 0 && !$user->authorise('form.edit', $_component . '.form.' . (int) $_data['id']))
@@ -4794,7 +5183,7 @@ abstract class MembersmanagerHelper
 										continue;
 									}
 									// remove all fields not part of the allowed edit fields
-									if (($fields = JComponentHelper::getParams($_component)->get('edit_fields', false)) !== false && self::checkObject($fields))
+									if (($fields = $params->get('edit_fields', false)) !== false && self::checkObject($fields))
 									{
 										// build a fields array bucket
 										$fieldActive = array();
@@ -4810,6 +5199,7 @@ abstract class MembersmanagerHelper
 										$fieldActive['created_by'] = 'created_by';
 										$fieldActive['modified'] = 'modified';
 										$fieldActive['modified_by'] = 'modified_by';
+										$fieldActive['access'] = 'access';
 										$fieldActive['version'] = 'version';
 										$fieldActive['rules'] = 'rules';
 										// get the database columns of this table
@@ -5108,6 +5498,95 @@ abstract class MembersmanagerHelper
 		return $none;
 	}
 
+
+	/**
+	 * bc math wrapper (very basic not for accounting)
+	 *
+	 * @param   string   $type    The type bc math
+	 * @param   int      $val1    The first value
+	 * @param   int      $val2    The second value
+	 * @param   int      $scale   The scale value
+	 *
+	 * @return int
+	 *
+	 */
+	public static function bcmath($type, $val1, $val2, $scale = 0)
+	{
+		// build function name
+		$function = 'bc' . $type;
+		// use the bcmath function if available
+		if (function_exists($function))
+		{
+			return $function($val1, $val2, $scale);
+		}
+		// if function does not exist we use +-*/ operators (fallback - not ideal)
+		switch ($type)
+		{
+			// Multiply two numbers
+			case 'mul':
+				return (string) round($val1 * $val2, $scale);
+				break;
+			// Divide of two numbers
+			case 'div':
+				return (string) round($val1 / $val2, $scale);
+				break;
+			// Adding two numbers
+			case 'add':
+				return (string) round($val1 + $val2, $scale);
+				break;
+			// Subtract one number from the other
+			case 'sub':
+				return (string) round($val1 - $val2, $scale);
+				break;
+			// Raise an arbitrary precision number to another
+			case 'pow':
+				return (string) round(pow($val1, $val2), $scale);
+				break;
+			// Compare two arbitrary precision numbers
+			case 'comp':
+				return (round($val1,2) == round($val2,2));
+				break;
+		}
+		return false;
+	}
+
+	/**
+	 * Basic sum of an array with more precision
+	 *
+	 * @param   array   $array    The values to sum
+	 * @param   int      $scale   The scale value
+	 *
+	 * @return float
+	 *
+	 */
+	public static function bcsum($array, $scale = 4)
+	{
+		// use the bcadd function if available
+		if (function_exists('bcadd'))
+		{
+			// set the start value
+			$value = 0.0;
+			// loop the values and run bcadd
+			foreach($array as $val)
+			{
+				$value = bcadd($value, $val, $scale);
+			}
+			return $value;
+		}
+		// fall back on array sum
+		return array_sum($array);
+	}
+
+	/**
+	 * get Core Name
+	 *
+	 * @return  string the core component name
+	 *
+	 */
+	public static function getCoreName()
+	{
+		return 'membersmanager';
+	}
 	/**
 	* Load the Component xml manifest.
 	**/

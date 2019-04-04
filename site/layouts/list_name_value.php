@@ -28,9 +28,10 @@ else
 {
 	$updated = false;
 }
+$tracker = 0;
 
 ?>
-<?php if (isset($displayData['data']) && MembersmanagerHelper::checkArray($displayData['data'])) :?>
+<?php if (isset($displayData['data']) && MembersmanagerHelper::checkArray($displayData['data'])): ?>
 	<ul class="uk-list uk-list-striped">
 	<?php foreach ($displayData['data'] as $name => $value): ?>
 		<?php if (!in_array($name, $notDisplay) && (MembersmanagerHelper::checkString($value) || is_numeric($value)) && $displayData['user']->authorise('form.view.' . $name, $displayData['com'] . '.form.' . (int) $displayData['data']['id'])): ?>
@@ -44,13 +45,16 @@ else
 				}
 			?>
 			<li><?php echo $label; ?>: <b><?php echo $value; ?></b></li>
+			<?php $tracker++; ?>
 		<?php endif; ?>
 	<?php endforeach; ?>
 	</ul>
+	<?php if ($updated > 0 && $tracker > 0): ?>
+		<br />
+		<small><?php echo JText::_('COM_MEMBERSMANAGER_TIME_STAMP'); ?>: <?php echo MembersmanagerHelper::fancyDateTime($updated); ?></small>
+	<?php else: ?>
+		<small><?php echo JText::_('COM_MEMBERSMANAGER_NO_ACCESS_TO_VIEW_DETAILS'); ?>...</small>
+	<?php endif; ?>
 <?php else: ?>
 	<small><?php echo JText::_('COM_MEMBERSMANAGER_NO_DETAILS_FOUND'); ?>...</small>
-<?php endif; ?>
-<?php if ($updated > 0) :?>
-	<br />
-	<small><?php echo JText::_('COM_MEMBERSMANAGER_TIME_STAMP'); ?>: <?php echo MembersmanagerHelper::fancyDateTime($updated); ?></small>
 <?php endif; ?>

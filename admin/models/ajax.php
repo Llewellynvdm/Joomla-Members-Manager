@@ -62,9 +62,10 @@ class MembersmanagerModelAjax extends JModelList
 	// get placeholder header if available
 	public function getPlaceHolderHeaders($component)
 	{
-		if ('com_membersmanager' === $component)
+		if ('com_membersmanager' === $component || 'com_corecomponent' === $component)
 		{
-			return JText::_('COM_MEMBERSMANAGER');
+			// just return the core placeholders
+			return JText::_('COM_MEMBERSMANAGER_CORE_PLACEHOLDERS');
 		}
 		return MembersmanagerHelper::getComponentName($component);
 	}
@@ -74,7 +75,7 @@ class MembersmanagerModelAjax extends JModelList
 	{
 		$view = $this->getViewID();
 		// make sure we are in the (allowed) view
-		if (isset($view['a_view']) && ($view['a_view'] === 'message' || $view['a_view'] === 'profile'))
+		if (isset($view['a_view']) && ($view['a_view'] === 'compose' || $view['a_view'] === 'profile'))
 		{
 			// build image name
 			$imageName =  md5($image . 'jnst_f0r_dumm!es');
@@ -205,7 +206,7 @@ class MembersmanagerModelAjax extends JModelList
 			{
 				MembersmanagerHelper::resizeImage($this->fileName, $this->fileFormat, $this->target, $this->folderPath, $this->fullPath);
 			}
-			// Get the basic encription.
+			// Get the basic encryption.
 			$basickey = MembersmanagerHelper::getCryptKey('basic');
 			$basic = null;
 			// set link options
@@ -438,8 +439,8 @@ class MembersmanagerModelAjax extends JModelList
 	protected function _getPackageFromUpload()
 	{		
 		// Get the uploaded file information
-		$app	= JFactory::getApplication();
-		$input	= $app->input;
+		$app = JFactory::getApplication();
+		$input = $app->input;
 
 		// See JInputFiles::get.
 		$userfiles = $input->files->get('files', null, 'array');
@@ -473,9 +474,9 @@ class MembersmanagerModelAjax extends JModelList
 		}
 
 		// Build the appropriate paths
-		$config		= JFactory::getConfig();
-		$tmp_dest	= $config->get('tmp_path') . '/' . $userfile['name'];
-		$tmp_src	= $userfile['tmp_name'];
+		$config = JFactory::getConfig();
+		$tmp_dest = $config->get('tmp_path') . '/' . $userfile['name'];
+		$tmp_src = $userfile['tmp_name'];
 
 		// Move uploaded file
 		jimport('joomla.filesystem.file');
@@ -545,12 +546,12 @@ class MembersmanagerModelAjax extends JModelList
 			}
 		}
 		
-		$config			= JFactory::getConfig();
+		$config = JFactory::getConfig();
 		// set Package Name
-		$check['packagename']	= $archivename;
+		$check['packagename'] = $archivename;
 		
 		// set directory
-		$check['dir']		= $config->get('tmp_path'). '/' .$archivename;
+		$check['dir'] = $config->get('tmp_path'). '/' .$archivename;
 		
 		return $check;
 	}
@@ -567,8 +568,8 @@ class MembersmanagerModelAjax extends JModelList
 	{
 		jimport('joomla.filesystem.file');
 		
-		$config		= JFactory::getConfig();
-		$package	= $config->get('tmp_path'). '/' .$package;
+		$config = JFactory::getConfig();
+		$package = $config->get('tmp_path'). '/' .$package;
 
 		// Is the package file a valid file?
 		if (is_file($package))
@@ -668,8 +669,8 @@ class MembersmanagerModelAjax extends JModelList
 			$string = '';
 			$header = '';
 		}
-		// get placeholders
-		if ($placeholders = MembersmanagerHelper::getAnyPlaceHolders($getType))
+		// get the core component helper class & get placeholders
+		if (($helperClass = MembersmanagerHelper::getHelperClass(MembersmanagerHelper::getCoreName())) !== false &&  ($placeholders = $helperClass::getAnyPlaceHolders($getType)) !== false)
 		{
 			return '<div>' . $header . '<code style="display: inline-block; padding: 2px; margin: 3px;">' .
 				implode('</code> <code style="display: inline-block; padding: 2px; margin: 3px;">', $placeholders) .

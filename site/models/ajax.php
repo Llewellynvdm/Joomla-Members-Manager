@@ -64,9 +64,10 @@ class MembersmanagerModelAjax extends JModelList
 	// get placeholder header if available
 	public function getPlaceHolderHeaders($component)
 	{
-		if ('com_membersmanager' === $component)
+		if ('com_membersmanager' === $component || 'com_corecomponent' === $component)
 		{
-			return JText::_('COM_MEMBERSMANAGER');
+			// just return the core placeholders
+			return JText::_('COM_MEMBERSMANAGER_CORE_PLACEHOLDERS');
 		}
 		return MembersmanagerHelper::getComponentName($component);
 	}
@@ -76,7 +77,7 @@ class MembersmanagerModelAjax extends JModelList
 	{
 		$view = $this->getViewID();
 		// make sure we are in the (allowed) view
-		if (isset($view['a_view']) && ($view['a_view'] === 'message' || $view['a_view'] === 'profile'))
+		if (isset($view['a_view']) && ($view['a_view'] === 'compose' || $view['a_view'] === 'profile'))
 		{
 			// build image name
 			$imageName =  md5($image . 'jnst_f0r_dumm!es');
@@ -207,7 +208,7 @@ class MembersmanagerModelAjax extends JModelList
 			{
 				MembersmanagerHelper::resizeImage($this->fileName, $this->fileFormat, $this->target, $this->folderPath, $this->fullPath);
 			}
-			// Get the basic encription.
+			// Get the basic encryption.
 			$basickey = MembersmanagerHelper::getCryptKey('basic');
 			$basic = null;
 			// set link options
@@ -440,8 +441,8 @@ class MembersmanagerModelAjax extends JModelList
 	protected function _getPackageFromUpload()
 	{		
 		// Get the uploaded file information
-		$app	= JFactory::getApplication();
-		$input	= $app->input;
+		$app = JFactory::getApplication();
+		$input = $app->input;
 
 		// See JInputFiles::get.
 		$userfiles = $input->files->get('files', null, 'array');
@@ -475,9 +476,9 @@ class MembersmanagerModelAjax extends JModelList
 		}
 
 		// Build the appropriate paths
-		$config		= JFactory::getConfig();
-		$tmp_dest	= $config->get('tmp_path') . '/' . $userfile['name'];
-		$tmp_src	= $userfile['tmp_name'];
+		$config = JFactory::getConfig();
+		$tmp_dest = $config->get('tmp_path') . '/' . $userfile['name'];
+		$tmp_src = $userfile['tmp_name'];
 
 		// Move uploaded file
 		jimport('joomla.filesystem.file');
@@ -547,12 +548,12 @@ class MembersmanagerModelAjax extends JModelList
 			}
 		}
 		
-		$config			= JFactory::getConfig();
+		$config = JFactory::getConfig();
 		// set Package Name
-		$check['packagename']	= $archivename;
+		$check['packagename'] = $archivename;
 		
 		// set directory
-		$check['dir']		= $config->get('tmp_path'). '/' .$archivename;
+		$check['dir'] = $config->get('tmp_path'). '/' .$archivename;
 		
 		return $check;
 	}
@@ -569,8 +570,8 @@ class MembersmanagerModelAjax extends JModelList
 	{
 		jimport('joomla.filesystem.file');
 		
-		$config		= JFactory::getConfig();
-		$package	= $config->get('tmp_path'). '/' .$package;
+		$config = JFactory::getConfig();
+		$package = $config->get('tmp_path'). '/' .$package;
 
 		// Is the package file a valid file?
 		if (is_file($package))
@@ -670,8 +671,8 @@ class MembersmanagerModelAjax extends JModelList
 			$string = '';
 			$header = '';
 		}
-		// get placeholders
-		if ($placeholders = MembersmanagerHelper::getAnyPlaceHolders($getType))
+		// get the core component helper class & get placeholders
+		if (($helperClass = MembersmanagerHelper::getHelperClass(MembersmanagerHelper::getCoreName())) !== false &&  ($placeholders = $helperClass::getAnyPlaceHolders($getType)) !== false)
 		{
 			return '<div>' . $header . '<code style="display: inline-block; padding: 2px; margin: 3px;">' .
 				implode('</code> <code style="display: inline-block; padding: 2px; margin: 3px;">', $placeholders) .
@@ -762,9 +763,9 @@ class MembersmanagerModelAjax extends JModelList
 			return (array) array_map( function ($member){
 				// build the details
 				$slug = (isset($member->token)) ? $member->id . ':' . $member->token : $member->id;
-				$profile_link = JRoute::_(membersmanagerHelperRoute::getProfileRoute($slug));
-				$name = (isset($member->user_name) && membersmanagerHelper::checkString($member->user_name)) ? $member->user_name : $member->name;
-				$email = (isset($member->user_email) && membersmanagerHelper::checkString($member->user_email)) ? $member->user_email : $member->email;
+				$profile_link = JRoute::_(MembersmanagerHelperRoute::getProfileRoute($slug));
+				$name = (isset($member->user_name) && MembersmanagerHelper::checkString($member->user_name)) ? $member->user_name : $member->name;
+				$email = (isset($member->user_email) && MembersmanagerHelper::checkString($member->user_email)) ? $member->user_email : $member->email;
 				// build the link to the member
 				return '<a href="' . $profile_link . '" title="' . JText::_('COM_MEMBERSMANAGER_OPEN') . ' ' . $name . '" >' . $name . ' ' . $email . ' (' . $member->token . ')</a>';
 			}, $members);
@@ -812,6 +813,8 @@ class MembersmanagerModelAjax extends JModelList
 				' OR g.username LIKE '.$search. // user username
 				' OR g.email LIKE '.$search. // user email
 
+				' OR a.name LIKE '.$search.
+				' OR a.surname LIKE '.$search.
 				' OR a.email LIKE '.$search.
 				' OR a.token LIKE '.$search.
 				')');
@@ -869,18 +872,45 @@ class MembersmanagerModelAjax extends JModelList
 	// Used in profile
 	public function getReport($key)
 	{
-		// unlock the request
-		if (($check = MembersmanagerHelper::unlock($key)) !== false &&
-			MembersmanagerHelper::checkArray($check) &&
-			isset($check['id']) && $check['id'] > 0 &&
-			isset($check['element']) && MembersmanagerHelper::checkString($check['element']) &&
-			isset($check['type']) && $check['type'] > 0 &&
-			isset($check['account']) && $check['account'] > 0)
+		// first we check if this is an allowed query
+		$view = $this->getViewID();
+		if (isset($view['a_view']) && 'profile' === $view['a_view'])
 		{
-			// now check if this component is active to this member
-			if (($html = MembersmanagerHelper::getReport($check['id'], $check['element'])) !== false && MembersmanagerHelper::checkString($html))
+			// unlock the request
+			if (($check = MembersmanagerHelper::unlock($key)) !== false &&
+				MembersmanagerHelper::checkArray($check) &&
+				isset($check['id']) && $check['id'] > 0 &&
+				isset($check['element']) && MembersmanagerHelper::checkString($check['element']) &&
+				isset($check['type']) && $check['type'] > 0 &&
+				isset($check['account']) && $check['account'] > 0)
 			{
-				return array('html' => $html);
+				// now check if this component is active to this member
+				if (($html = MembersmanagerHelper::getReport($check['id'], $check['element'])) !== false && MembersmanagerHelper::checkString($html))
+				{
+					return array('html' => $html);
+				}
+			}
+		}
+		return false;
+	}
+
+	public function getListMessages($key)
+	{
+		// first we check if this is an allowed query
+		$view = $this->getViewID();
+		if (isset($view['a_view']) && 'profile' === $view['a_view'])
+		{
+			// unlock the request
+			if (($check = MembersmanagerHelper::unlock($key)) !== false &&
+				MembersmanagerHelper::checkArray($check) &&
+				isset($check['id']) && $check['id'] > 0 &&
+				isset($check['return']) && MembersmanagerHelper::checkString($check['return']))
+			{
+				// now check if this component is active to this member
+				if (($html = MembersmanagerHelper::communicate('list_messages', $check['id'], $check['return'])) !== false && MembersmanagerHelper::checkString($html))
+				{
+					return array('html' => $html);
+				}
 			}
 		}
 		return false;

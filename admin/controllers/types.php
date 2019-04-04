@@ -103,4 +103,34 @@ class MembersmanagerControllerTypes extends JControllerAdmin
 		$this->setRedirect(JRoute::_('index.php?option=com_membersmanager&view=types', false), $message, 'error');
 		return;
 	}
+
+	public function updateTypes()
+	{
+		// Check for request forgeries
+		JSession::checkToken() or die(JText::_('JINVALID_TOKEN'));
+		// check if user has the right
+		$user = JFactory::getUser();
+		// set redirect
+		$redirect_url = JRoute::_('index.php?option=com_membersmanager&view=types', false);
+		if($user->authorise('core.create', 'com_membersmanager'))
+		{
+			// get the model
+			$model = $this->getModel('types');
+			if ($model->updateTypes())
+			{
+				// set success message
+				$message = '<h1>'.JText::_('COM_MEMBERSMANAGER_UPDATE_SUCCESS').'</h1>';
+				$message .= '<p>'.JText::_('COM_MEMBERSMANAGER_ALL_THE_MEMBERS_FOUND_WERE_SUCCESSFULLY_MAPPED_WITH_THE_TYPES_SELECTED').'</p>';
+				$this->setRedirect($redirect_url, $message);
+				return true;
+			}
+		}
+		else
+		{
+			JFactory::getApplication()->enqueueMessage(JText::_('COM_MEMBERSMANAGER_YOU_DO_NOT_HAVE_PERMISSION_TO_UPDATE_MEMBERS_TYPES'), 'error');
+		}
+		$this->setRedirect($redirect_url);
+		return false;
+	}
+
 }

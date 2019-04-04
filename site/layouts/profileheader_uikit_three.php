@@ -25,9 +25,41 @@ else
 // build Meta
 $meta = array();
 // check if the type is to be set
-if (MembersmanagerHelper::checkString($displayData->type_name) && $displayData->_USER->authorise('member.view.type', 'com_membersmanager.member.' . (int) $displayData->id))
+if (isset($displayData->type_name) && MembersmanagerHelper::checkString($displayData->type_name) && $displayData->_USER->authorise('member.view.type', 'com_membersmanager.member.' . (int) $displayData->id))
 {
 	$meta[] = $displayData->type_name;
+}
+// check if there is messages for this member
+if (($number_messages = MembersmanagerHelper::communicate('message_number', false, $displayData->id)) !== false && $displayData->_USER->authorise('message.access', 'com_communicate'))
+{
+	// check if we have any mages for this member
+	if ($number_messages > 0)
+	{
+		// set key
+		$messages_key = MembersmanagerHelper::lock(array('id' => $displayData->id, 'return' => $displayData->return_path));
+		// set the string
+		if ($number_messages == 1)
+		{
+			$message_name = JText::_('COM_MEMBERSMANAGER_MESSAGE');
+		}
+		else
+		{
+			$message_name = JText::_('COM_MEMBERSMANAGER_MESSAGES');
+		}
+		// load the link
+		if (2 == $displayData->_UIKIT)
+		{
+			$meta[] = '<a href="#getlistmessages" onclick="getListMessages(\'' . $messages_key . '\');" data-uk-offcanvas="{mode:\'reveal\'}">' . $message_name . '</a> (' . $number_messages . ')';
+		}
+		else
+		{
+			$meta[] = '<a href="#getlistmessages" onclick="getListMessages(\'' . $messages_key . '\');" uk-toggle>' . $message_name . '</a> (' . $number_messages . ')';
+		}
+	}
+	else
+	{
+		$meta[] = JText::_('COM_MEMBERSMANAGER_NO_MESSAGES');
+	}
 }
 // set add profile link switch
 $addProfileLink = false;
@@ -49,7 +81,7 @@ if ((3 == $displayData->account || 4 == $displayData->account) && $displayData->
 	$addProfileLink = true;
 }
 // check if the edit button is to be added
-$editButton = MembersmanagerHelper::getEditButton($displayData, 'member', 'members', '&ref=profile&refid=' . $displayData->_REFID, 'com_membersmanager', null);
+$editButton = MembersmanagerHelper::getEditButton($displayData, 'member', 'members', '&ref=profile&refid=' . $displayData->_REFID . '&return=' . $displayData->return_path, 'com_membersmanager', null);
 // set the header
 $header = array();
 $header[] = '<header class="uk-comment-header uk-grid-medium uk-flex-middle" uk-grid>';

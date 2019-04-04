@@ -103,4 +103,33 @@ class MembersmanagerControllerMembers extends JControllerAdmin
 		$this->setRedirect(JRoute::_('index.php?option=com_membersmanager&view=members', false), $message, 'error');
 		return;
 	}
+
+	public function importJoomlaUsers()
+	{
+		// Check for request forgeries
+		JSession::checkToken() or die(JText::_('JINVALID_TOKEN'));
+		// check if user has the right
+		$user = JFactory::getUser();
+		// set redirect
+		$redirect_url = JRoute::_('index.php?option=com_membersmanager&view=members', false);
+		if($user->authorise('core.create', 'com_membersmanager'))
+		{
+			// get the model
+			$model = $this->getModel('members');
+			if ($model->importJoomlaUsers())
+			{
+				// set success message
+				$message = '<h1>'.JText::_('COM_MEMBERSMANAGER_IMPORT_SUCCESS').'</h1>';
+				$message .= '<p>'.JText::_('COM_MEMBERSMANAGER_ALL_THE_USERS_FOUND_IN_JOOMLA_WERE_SUCCESSFULLY_IMPORTED_INTO_RELATED_MEMBER_TYPE_RELATIONSHIPS').'</p>';
+				$this->setRedirect($redirect_url, $message);
+				return true;
+			}
+		}
+		else
+		{
+			JFactory::getApplication()->enqueueMessage(JText::_('COM_MEMBERSMANAGER_YOU_DO_NOT_HAVE_PERMISSION_TO_CREATE_MEMBERS'), 'error');
+		}
+		$this->setRedirect($redirect_url);
+		return false;
+	}
 }
