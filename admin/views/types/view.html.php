@@ -193,7 +193,15 @@ class MembersmanagerViewTypes extends JViewLegacy
 
 		// Set Add Relationship Selection
 		$this->add_relationshipOptions = $this->getTheAdd_relationshipSelections();
-		if ($this->add_relationshipOptions)
+		// We do some sanitation for Add Relationship filter
+		if (MembersmanagerHelper::checkArray($this->add_relationshipOptions) &&
+			isset($this->add_relationshipOptions[0]->value) &&
+			!MembersmanagerHelper::checkString($this->add_relationshipOptions[0]->value))
+		{
+			unset($this->add_relationshipOptions[0]);
+		}
+		// Only load Add Relationship filter if it has values
+		if (MembersmanagerHelper::checkArray($this->add_relationshipOptions))
 		{
 			// Add Relationship Filter
 			JHtmlSidebar::addFilter(

@@ -193,7 +193,15 @@ class MembersmanagerViewMembers extends JViewLegacy
 
 		// Set Account Selection
 		$this->accountOptions = $this->getTheAccountSelections();
-		if ($this->accountOptions)
+		// We do some sanitation for Account filter
+		if (MembersmanagerHelper::checkArray($this->accountOptions) &&
+			isset($this->accountOptions[0]->value) &&
+			!MembersmanagerHelper::checkString($this->accountOptions[0]->value))
+		{
+			unset($this->accountOptions[0]);
+		}
+		// Only load Account filter if it has values
+		if (MembersmanagerHelper::checkArray($this->accountOptions))
 		{
 			// Account Filter
 			JHtmlSidebar::addFilter(

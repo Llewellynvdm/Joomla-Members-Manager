@@ -165,8 +165,7 @@
 			buttons="add,remove,move"
 			description="COM_MEMBERSMANAGER_CONFIG_MANY_COMPONENTS_DESCRIPTION"
 			icon="list"
-			max="10"
-			min="0"
+			max="100"
 			>
 			<form hidden="true" name="list_many_components_modal" repeat="true">
 				<!-- Component Field. Type: Onetomanycomponents. (custom) -->
@@ -177,7 +176,6 @@
 					description="COM_MEMBERSMANAGER_CONFIG_COMPONENT_DESCRIPTION"
 					class="list_class one_to_many_94829"
 					multiple="false"
-					required="false"
 					onchange="getOnlySelectedComponents();"
 					button="false"
 				/>
@@ -190,7 +188,7 @@
 					maxlength="50"
 					description="COM_MEMBERSMANAGER_CONFIG_PLACEHOLDER_DESCRIPTION"
 					class="text_area"
-					required="false"
+					required="true"
 					filter="WORD"
 					hint="COM_MEMBERSMANAGER_CONFIG_PLACEHOLDER_HINT"
 					autocomplete="off"
@@ -205,7 +203,6 @@
 					default="0"
 					description="COM_MEMBERSMANAGER_CONFIG_QTY_DESCRIPTION"
 					class="wmed wqty"
-					required="false"
 					filter="INT"
 					hint="COM_MEMBERSMANAGER_CONFIG_QTY_HINT"
 					onchange="if(!jQuery(this).val().match(/^\d+$/)){jQuery(this).val('')};"
@@ -223,7 +220,6 @@
 					class="text_area span12"
 					filter="RAW"
 					hint="COM_MEMBERSMANAGER_CONFIG_MAIN_TEMPLATE_HINT"
-					required="false"
 				/>
 				<!-- Item_template Field. Type: Textarea. (joomla) -->
 				<field
@@ -236,7 +232,6 @@
 					class="text_area span12"
 					filter="RAW"
 					hint="COM_MEMBERSMANAGER_CONFIG_ITEM_TEMPLATE_HINT"
-					required="false"
 				/>
 			</form>
 		</field>			

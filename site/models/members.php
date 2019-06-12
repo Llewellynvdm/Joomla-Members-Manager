@@ -54,6 +54,12 @@ class MembersmanagerModelMembers extends JModelList
 		// Create a new query object.
 		$query = $db->getQuery(true);
 
+		// Get from #__membersmanager_member as a
+		$query->select($db->quoteName(
+			array('a.id'),
+			array('id')));
+		$query->from($db->quoteName('#__membersmanager_member', 'a'));
+
 		// Filtering.
 
 		$params = $this->app->getParams();
@@ -62,12 +68,6 @@ class MembersmanagerModelMembers extends JModelList
 		{
 			return false;
 		}
-
-		// Get from #__membersmanager_member as a
-		$query->select($db->quoteName(
-			array('a.id'),
-			array('id')));
-		$query->from($db->quoteName('#__membersmanager_member', 'a'));
 		// Check if $params->get('target_account', false) is an array with values.
 		$array = $params->get('target_account', false);
 		if (isset($array) && MembersmanagerHelper::checkArray($array))
