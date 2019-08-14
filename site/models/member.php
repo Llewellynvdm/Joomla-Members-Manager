@@ -9,6 +9,7 @@
  * @license    GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  */
 
+
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
@@ -18,13 +19,44 @@ use Joomla\Registry\Registry;
  * Membersmanager Member Model
  */
 class MembersmanagerModelMember extends JModelAdmin
-{    
+{
+	/**
+	 * The tab layout fields array.
+	 *
+	 * @var      array
+	 */
+	protected $tabLayoutFields = array(
+		'membership' => array(
+			'left' => array(
+				'type',
+				'name',
+				'surname',
+				'username',
+				'email',
+				'useremail',
+				'password',
+				'password_check',
+				'main_member',
+				'not_required',
+				'profile_image'
+			),
+			'right' => array(
+				'profile_image_uploader'
+			),
+			'above' => array(
+				'token',
+				'account',
+				'user'
+			)
+		)
+	);
+
 	/**
 	 * @var        string    The prefix to use with controller messages.
 	 * @since   1.6
 	 */
 	protected $text_prefix = 'COM_MEMBERSMANAGER';
-    
+
 	/**
 	 * The type alias for this content type.
 	 *
@@ -1688,19 +1720,39 @@ class MembersmanagerModelMember extends JModelAdmin
 		// check if token is set
 		if (empty($data['token']))
 		{
-			// get a token
-			$token = call_user_func(function($data) {
-				// get the name of this member
-				if (isset($data['account']) && (1 == $data['account'] || 4 == $data['account']) && isset($data['user']) && $data['user'] > 0)
-				{
-					return JFactory::getUser($data['user'])->name;
-				}
-				elseif (isset($data['name']) && MembersmanagerHelper::checkString($data['name']))
-				{
-					return $data['name'];
-				}
-				return MembersmanagerHelper::randomkey(8);
-			}, $data);
+			if (!isset($data['surname']))
+			{
+				// get a token
+				$token = call_user_func(function($data) {
+					// get the name of this member
+					if (isset($data['account']) && (1 == $data['account'] || 4 == $data['account']) && isset($data['user']) && $data['user'] > 0)
+					{
+						return JFactory::getUser($data['user'])->name;
+					}
+					elseif (isset($data['name']) && MembersmanagerHelper::checkString($data['name']))
+					{
+						return $data['name'];
+					}
+					return MembersmanagerHelper::randomkey(8);
+				}, $data);
+
+			}
+			else
+			{
+				// get a token
+				$token = call_user_func(function($data) {
+					// get the name of this member
+					if (isset($data['account']) && (1 == $data['account'] || 4 == $data['account']) && isset($data['user']) && $data['user'] > 0)
+					{
+						return JFactory::getUser($data['user'])->name . ' ' . $data['surname'];
+					}
+					elseif (isset($data['name']) && MembersmanagerHelper::checkString($data['name']))
+					{
+						return $data['name'] . ' ' . $data['surname'];
+					}
+					return MembersmanagerHelper::randomkey(8);
+				}, $data);
+			}
 			// split at upper case
 			$tokenArray = (array) preg_split('/(?=[A-Z])/', trim($token), -1, PREG_SPLIT_NO_EMPTY);
 			// make string safe

@@ -9,6 +9,7 @@
  * @license    GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  */
 
+
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 jimport('joomla.application.module.helper');
@@ -31,6 +32,8 @@ class MembersmanagerViewCpanel extends JViewLegacy
 		$dispatcher = JEventDispatcher::getInstance();
 		// Initialise variables.
 		$this->item = $this->get('Item');
+		// Check if the user has access to any types of members
+		$this->access_types = MembersmanagerHelper::getAccess($this->user, 1);
 		// get the search form
 		$this->searchForm = $this->setSearchForm();
 
@@ -46,27 +49,30 @@ class MembersmanagerViewCpanel extends JViewLegacy
 			throw new Exception(implode("\n", $errors), 500);
 		}
 		// Process the content plugins.
-		JPluginHelper::importPlugin('content');
-		// Setup Event Object.
-		$this->item->event = new stdClass;
-		// Check if item has params, or pass global params
-		$params = (isset($this->item->params) && MembersmanagerHelper::checkJson($this->item->params)) ? json_decode($this->item->params) : $this->params;
-		// onContentAfterTitle Event Trigger.
-		$results = $dispatcher->trigger('onContentAfterTitle', array('com_membersmanager.member', &$this->item, &$params, 0));
-		$this->item->event->onContentAfterTitle = trim(implode("\n", $results));
-		// onContentBeforeDisplay Event Trigger.
-		$results = $dispatcher->trigger('onContentBeforeDisplay', array('com_membersmanager.member', &$this->item, &$params, 0));
-		$this->item->event->onContentBeforeDisplay = trim(implode("\n", $results));
-		// onContentAfterDisplay Event Trigger.
-		$results = $dispatcher->trigger('onContentAfterDisplay', array('com_membersmanager.member', &$this->item, &$params, 0));
-		$this->item->event->onContentAfterDisplay = trim(implode("\n", $results));
+		if (MembersmanagerHelper::checkObject($this->item))
+		{
+			JPluginHelper::importPlugin('content');
+			// Setup Event Object.
+			$this->item->event = new stdClass;
+			// Check if item has params, or pass global params
+			$params = (isset($this->item->params) && MembersmanagerHelper::checkJson($this->item->params)) ? json_decode($this->item->params) : $this->params;
+			// onContentAfterTitle Event Trigger.
+			$results = $dispatcher->trigger('onContentAfterTitle', array('com_membersmanager.member', &$this->item, &$params, 0));
+			$this->item->event->onContentAfterTitle = trim(implode("\n", $results));
+			// onContentBeforeDisplay Event Trigger.
+			$results = $dispatcher->trigger('onContentBeforeDisplay', array('com_membersmanager.member', &$this->item, &$params, 0));
+			$this->item->event->onContentBeforeDisplay = trim(implode("\n", $results));
+			// onContentAfterDisplay Event Trigger.
+			$results = $dispatcher->trigger('onContentAfterDisplay', array('com_membersmanager.member', &$this->item, &$params, 0));
+			$this->item->event->onContentAfterDisplay = trim(implode("\n", $results));
+		}
 
 		parent::display($tpl);
 	}
 
 	public function setSearchForm()
 	{		
-		if(MembersmanagerHelper::checkObject($this->item))
+		if(MembersmanagerHelper::checkObject($this->item) && MembersmanagerHelper::checkArray($this->access_types))
 		{
 			// sales attributes
 			$attributes = array(
@@ -137,12 +143,15 @@ class MembersmanagerViewCpanel extends JViewLegacy
 				$this->document->addScript(JURI::root(true) .'/media/com_membersmanager/uikit-v3/js/uikit'.$size.'.js', (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/javascript');
 			}
 		}
-		// add var key
-		$this->document->addScriptDeclaration("var vastDevMod = '".$this->get('VDM')."';");
-		// Add Ajax Token
-		$this->document->addScriptDeclaration("var token = '".JSession::getFormToken()."';");
-		// set the query path
-		$this->document->addScriptDeclaration("var path = '" . JURI::root() . "index.php?option=com_membersmanager&task=ajax.searchMembers&format=json&raw=true&token='+token+'&vdm='+vastDevMod+'&search=';"); 
+		if (MembersmanagerHelper::checkArray($this->access_types))
+		{
+			// add var key
+			$this->document->addScriptDeclaration("var vastDevMod = '" .  $this->get('VDM') . "';");
+			// Add Ajax Token
+			$this->document->addScriptDeclaration("var token = '". JSession::getFormToken() . "';");
+			// set the query path
+			$this->document->addScriptDeclaration("var path = '" . JURI::root() . "index.php?option=com_membersmanager&task=ajax.searchMembers&format=json&raw=true&token='+token+'&vdm='+vastDevMod+'&search=';");
+		} 
 		// add the document default css file
 		$this->document->addStyleSheet(JURI::root(true) .'/components/com_membersmanager/assets/css/cpanel.css', (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/css');
 	}

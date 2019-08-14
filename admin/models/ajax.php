@@ -9,6 +9,7 @@
  * @license    GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  */
 
+
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
@@ -670,7 +671,7 @@ class MembersmanagerModelAjax extends JModelList
 			$header = '';
 		}
 		// get the core component helper class & get placeholders
-		if (($helperClass = MembersmanagerHelper::getHelperClass(MembersmanagerHelper::getCoreName())) !== false &&  ($placeholders = $helperClass::getAnyPlaceHolders($getType)) !== false)
+		if (($helperClass = MembersmanagerHelper::getHelperClass('membersmanager')) !== false &&  ($placeholders = $helperClass::getAnyPlaceHolders($getType)) !== false)
 		{
 			return '<div>' . $header . '<code style="display: inline-block; padding: 2px; margin: 3px;">' .
 				implode('</code> <code style="display: inline-block; padding: 2px; margin: 3px;">', $placeholders) .

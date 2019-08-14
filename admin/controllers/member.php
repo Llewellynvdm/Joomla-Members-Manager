@@ -9,6 +9,7 @@
  * @license    GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  */
 
+
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
@@ -38,6 +39,93 @@ class MembersmanagerControllerMember extends JControllerForm
 		$this->view_list = 'Members'; // safeguard for setting the return view listing to the main view.
 		parent::__construct($config);
 	}
+
+	/**
+	 * Method to save a record and redirect to the profile
+	 *
+	 * @param   string  $key     The name of the primary key of the URL variable.
+	 * @param   string  $urlVar  The name of the URL variable if different from the primary key (sometimes required to avoid router collisions).
+	 *
+	 * @return  boolean  True if successful, false otherwise.
+	 */
+	public function saveprofile($key = null, $urlVar = null)
+	{
+		// Check id from post
+		$id = $this->input->get('id', 0, 'INT');
+		// to make sure the item is checkedin on redirect
+		if ($id > 0)
+		{
+			$this->task = 'save';
+		}
+		// since this is a new record, we just create and remain in it
+		else
+		{
+			$this->task = 'apply';
+		}
+		// safe the item
+		$saved = parent::save($key, $urlVar);
+		if (class_exists('MembersmanagerHelperRoute'))
+		{
+			if ($id > 0)
+			{
+				// get post
+				$post = $this->input->post->get('jform', array(), 'array');
+				// get the slug
+				$slug = (isset($post['token'])) ? $id . ':' . $post['token'] : $id;
+				// Redirect to the profile
+				$this->setRedirect(JRoute::_(MembersmanagerHelperRoute::getProfileRoute($slug), true));
+			}
+		}
+		else
+		{
+			// get the referral options
+			$this->ref = $this->input->get('ref', 0, 'word');
+			$this->refid = $this->input->get('refid', 0, 'int');
+
+			// Check if there is a return value
+			$return = $this->input->get('return', null, 'base64');
+			$canReturn = (!is_null($return) && JUri::isInternal(base64_decode($return)));
+
+			// This is not needed since parent save already does this
+			// Due to the ref and refid implementation we need to add this
+			if ($canReturn)
+			{
+				$redirect = base64_decode($return);
+
+				// Redirect to the return value.
+				$this->setRedirect(
+					JRoute::_(
+						$redirect, false
+					)
+				);
+			}
+			elseif ($this->refid && $this->ref)
+			{
+				$redirect = '&view=' . (string)$this->ref . '&layout=edit&id=' . (int)$this->refid;
+
+				// Redirect to the item screen.
+				$this->setRedirect(
+					JRoute::_(
+						'index.php?option=' . $this->option . $redirect, false
+					)
+				);
+			}
+			elseif ($this->ref)
+			{
+				$redirect = '&view=' . (string)$this->ref;
+
+				// Redirect to the list screen.
+				$this->setRedirect(
+					JRoute::_(
+						'index.php?option=' . $this->option . $redirect, false
+					)
+				);
+			}
+		}
+
+		return $saved;
+	}
+
 
         /**
 	 * Method override to check if you can add a new record.
@@ -79,7 +167,11 @@ class MembersmanagerControllerMember extends JControllerForm
 		$user = JFactory::getUser();
 		// get record id.
 		$recordId = (int) isset($data[$key]) ? $data[$key] : 0;
-
+		// make sure user can access member (it is always true for self)
+		if (!MembersmanagerHelper::canAccessMember($recordId, null, $user))
+		{
+			return false;
+		}
 
 		// Access check.
 		$access = ($user->authorise('member.access', 'com_membersmanager.member.' . (int) $recordId) &&  $user->authorise('member.access', 'com_membersmanager'));

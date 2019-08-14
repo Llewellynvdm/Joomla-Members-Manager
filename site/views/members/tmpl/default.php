@@ -9,6 +9,7 @@
  * @license    GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  */
 
+
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
@@ -17,7 +18,6 @@ $this->classes = array();
 
 ?>
 <form action="<?php echo JRoute::_('index.php?option=com_membersmanager'); ?>" method="post" name="adminForm" id="adminForm">
-<!-- Vast Development Method... you like? http://vdm.bz/jcb-irc --->
 <?php if ($this->params->get('members_display_type', false) == 3) : // List ?>
 	<?php echo $this->loadTemplate('member_list'); ?>
 <?php elseif ($this->params->get('members_display_type', false) == 2) :  // Table ?>

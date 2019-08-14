@@ -9,6 +9,7 @@
  * @license    GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  */
 
+
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
@@ -243,7 +244,27 @@ class MembersmanagerViewMember extends JViewLegacy
 			$this->document->addScript( JURI::root(true) .'/media/com_membersmanager/uikit-v3/js/uikit-icons'.$size.'.js', (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/javascript');
 		}
 		// add var key
-		$this->document->addScriptDeclaration("var vastDevMod = '".$this->get('VDM')."';");
+		$this->document->addScriptDeclaration("var vastDevMod = '" . $this->get('VDM') . "';");
+		// when this is a create view
+		if ((empty($this->item->id) || $this->item->id == 0) && !$isAdmin)
+		{
+			// update button
+			$update_button = 'jQuery(document).ready(function($){';
+			$update_button .= '$(\'#toolbar-save button\').attr("onClick", "Joomla.submitbutton(\'member.saveprofile\');");';
+			$update_button .= '$(\'#toolbar-save button\').removeClass("btn btn-small button-new btn-success");';
+			$update_button .= '$(\'#toolbar-save button\').addClass("btn btn-small button-new btn-success");';
+			$update_button .= '$(\'#toolbar-save button\').html(\'<span class="icon-new icon-white" aria-hidden="true"></span> Create\');';
+			$update_button .= '});';
+			$this->document->addScriptDeclaration($update_button);
+		}
+		elseif (!$isAdmin && isset($this->item->id) && $this->item->id > 0)
+		{
+			// update button
+			$update_button = 'jQuery(document).ready(function($){';
+			$update_button .= '$(\'#toolbar-save button\').attr("onClick", "Joomla.submitbutton(\'member.saveprofile\');");';
+			$update_button .= '});';
+			$this->document->addScriptDeclaration($update_button);
+		}
 		// need to add some language strings
 		JText::script('COM_MEMBERSMANAGER_VALUE_ALREADY_TAKEN_PLEASE_TRY_AGAIN');
 		JText::script('view not acceptable. Error');

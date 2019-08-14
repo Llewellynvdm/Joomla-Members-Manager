@@ -9,6 +9,7 @@
  * @license    GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  */
 
+
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
@@ -18,13 +19,48 @@ use Joomla\Registry\Registry;
  * Membersmanager Type Model
  */
 class MembersmanagerModelType extends JModelAdmin
-{    
+{
+	/**
+	 * The tab layout fields array.
+	 *
+	 * @var      array
+	 */
+	protected $tabLayoutFields = array(
+		'details' => array(
+			'left' => array(
+				'groups_target'
+			),
+			'right' => array(
+				'groups_access'
+			),
+			'fullwidth' => array(
+				'description'
+			),
+			'above' => array(
+				'name',
+				'alias'
+			)
+		),
+		'advance' => array(
+			'left' => array(
+				'add_relationship',
+				'type',
+				'edit_relationship',
+				'view_relationship'
+			),
+			'right' => array(
+				'communicate',
+				'field_type'
+			)
+		)
+	);
+
 	/**
 	 * @var        string    The prefix to use with controller messages.
 	 * @since   1.6
 	 */
 	protected $text_prefix = 'COM_MEMBERSMANAGER';
-    
+
 	/**
 	 * The type alias for this content type.
 	 *

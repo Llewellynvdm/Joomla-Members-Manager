@@ -8,6 +8,7 @@
  * @license    GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  */
 
+
 /* JS Document */
 // Get report based on id & element from Server
 function getReport_server(report_key){

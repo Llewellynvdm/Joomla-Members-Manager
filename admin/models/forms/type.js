@@ -8,6 +8,7 @@
  * @license    GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  */
 
+
 // Some Global Values
 jform_vvvvvvyvvz_required = false;
 jform_vvvvvvyvwa_required = false;

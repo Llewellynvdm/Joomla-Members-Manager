@@ -9,6 +9,7 @@
  * @license    GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  */
 
+
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
@@ -210,7 +211,7 @@ abstract class MembersmanagerHelper
 	**/
 	protected static function setMemberEditURL($item)
 	{
-		if (($url = self::getEditURL($item, 'member', 'members', '&return=' . self::$return_here)) !== false)
+		if (self::canAccessMember($item->get('id', 0)) && ($url = self::getEditURL($item, 'member', 'members', '&return=' . self::$return_here)) !== false)
 		{
 			return $url;
 		}
@@ -227,8 +228,8 @@ abstract class MembersmanagerHelper
 		{
 			self::$params = JComponentHelper::getParams('com_membersmanager');
 		}
-		// only load link if open to public or is logged in
-		if (2 == self::$params->get('login_required', 1) || JFactory::getUser()->id > 0)
+		// only load link if open to public or has access
+		if (2 == self::$params->get('login_required', 1) || self::canAccessMember($object->get('id', 0)))
 		{
 			return JRoute::_('index.php?option=com_membersmanager&view=profile&id='. $object->get('id') . ':' . $object->get('token') . '&return=' . self::$return_here);
 		}
@@ -727,13 +728,6 @@ abstract class MembersmanagerHelper
 
 
 	/**
-	 * The Access Memory
-	 *
-	 * @var   array
-	 */
-	protected static $accessMemory = array();
-
-	/**
 	 * The Key to Access Memory
 	 *
 	 * @var   string
@@ -765,13 +759,12 @@ abstract class MembersmanagerHelper
 			}
 		}
 		// check memory first
-		self::$acK3y = md5($user->get('id', 'not_set') . '_' . $type);
-		if (isset(self::$accessMemory[self::$acK3y]))
+		self::$acK3y = 'membersmanager_user_access_' . $user->get('id', 'not_set') . '_' . $type;
+		// check if we have it globally stored
+		if (($access = self::get(self::$acK3y, false)) !== false)
 		{
-			return self::$accessMemory[self::$acK3y];
+			return $access;
 		}
-		// fallback to false
-		self::$accessMemory[self::$acK3y] = false;
 		// get DB
 		if (!$db)
 		{
@@ -780,14 +773,14 @@ abstract class MembersmanagerHelper
 		// get user Access groups
 		if (2 == $type)
 		{
-			self::$accessMemory[self::$acK3y] = self::getAccessGroups($user, $db);
+			self::set(self::$acK3y, self::getAccessGroups($user, $db));
 		}
 		elseif (1 == $type)
 		{
 			// return access types
-			self::$accessMemory[self::$acK3y] = self::getAccessTypes($user, $db);
+			self::set(self::$acK3y, self::getAccessTypes($user, $db));
 		}
-		return self::$accessMemory[self::$acK3y];
+		return self::get(self::$acK3y, false);
 	}
 
 	/**
@@ -820,7 +813,10 @@ abstract class MembersmanagerHelper
 			if (self::checkArray($types) && ($userID = $user->get('id', false)) !== false && $userID > 0 && ($member_type = self::getVar('member', $userID, 'user', 'type')) !== false)
 			{
 				// get the groups this member belong to
-				$member_access = self::getMemberGroupsByType($member_type);
+				if (($member_access = self::getMemberGroupsByType($member_type)) == false)
+				{
+					return false;
+				}
 				// function to setup the group array
 				$setGroups = function ($groups) {
 					// convert to array
@@ -841,7 +837,7 @@ abstract class MembersmanagerHelper
 				foreach ($types as $groups)
 				{
 					$groups_access = $setGroups($groups['groups_access']);
-					if (self::checkArray($groups_target) && $intersect($groups_access, $member_access))
+					if (self::checkArray($groups_access) && $intersect($groups_access, $member_access))
 					{
 						$groups_target = $setGroups($groups['groups_target']);
 						foreach ($groups_target as $group_target)
@@ -897,7 +893,10 @@ abstract class MembersmanagerHelper
 			if (self::checkArray($types) && ($userID = $user->get('id', false)) !== false && $userID > 0 && ($member_type = self::getVar('member', $userID, 'user', 'type')) !== false)
 			{
 				// get the access groups
-				$groups_access = self::getMemberGroupsByType($member_type);
+				if (($groups_access = self::getMemberGroupsByType($member_type)) === false)
+				{
+					return false;
+				}
 				// function to setup the group array
 				$setGroups = function ($groups) {
 					// convert to array
@@ -5276,12 +5275,12 @@ abstract class MembersmanagerHelper
 			$app->enqueueMessage(JText::_('COM_MEMBERSMANAGER_YOU_DO_NOT_HAVE_PERMISSION_TO_EDIT_THIS_MEMBER_RELATIONSHIPS_PLEASE_CONTACT_YOUR_SYSTEM_ADMINISTRATOR'), 'warning');
 			return;
 		}
+		// get database object
+		$db = JFactory::getDbo();
 		// check if there is relationships and members in those relationships
 		if (self::checkArray($data) && isset($data['id']) && is_numeric($data['id']) && $data['id'] > 0 && isset($data['type'])
 			&& ($relation_types = self::getRelationshipsByTypes($data['type'], $db, true)) !== false)
 		{
-			// get database object
-			$db = JFactory::getDbo();
 			// get the post object
 			$post = JFactory::getApplication()->input->post;
 			// Create a new query object.
@@ -5587,6 +5586,24 @@ abstract class MembersmanagerHelper
 	{
 		return 'membersmanager';
 	}
+	/**
+	 * Can a member access another member's data
+	 *
+	 * @param   mix      $member    The the member being accessed
+	 *                                 To do a dynamic get of member ID use the following array
+	 *                                 array( table, where, whereString, what)
+	 * @param   array    $types     The type of member being accessed
+	 * @param   mix      $user      The active user
+	 * @param   object   $db        The database object
+	 *
+	 * @return  bool true of can access
+	 *
+	 */
+	public static function canAccessMember($member = null, $types = null, $user = null, $db = null)
+	{
+		// here you can do your own custom validation
+		return true;
+	}
 	
 	public static function jsonToString($value, $sperator = ", ", $table = null, $id = 'id', $name = 'name')
 	{
@@ -5712,38 +5729,42 @@ abstract class MembersmanagerHelper
 	/**
 	* Get any component's model
 	**/
-	public static function getModel($name, $path = JPATH_COMPONENT_SITE, $component = 'Membersmanager', $config = array())
+	public static function getModel($name, $path = JPATH_COMPONENT_SITE, $Component = 'Membersmanager', $config = array())
 	{
 		// fix the name
 		$name = self::safeString($name);
-		// full path
-		$fullPath = $path . '/models';
-		// set prefix
-		$prefix = $component.'Model';
+		// full path to models
+		$fullPathModels = $path . '/models';
 		// load the model file
-		JModelLegacy::addIncludePath($fullPath, $prefix);
+		JModelLegacy::addIncludePath($fullPathModels, $Component . 'Model');
+		// make sure the table path is loaded
+		if (!isset($config['table_path']) || !self::checkString($config['table_path']))
+		{
+			// This is the JCB default path to tables in Joomla 3.x
+			$config['table_path'] = JPATH_ADMINISTRATOR . '/components/com_' . strtolower($Component) . '/tables';
+		}
 		// get instance
-		$model = JModelLegacy::getInstance($name, $prefix, $config);
+		$model = JModelLegacy::getInstance($name, $Component . 'Model', $config);
 		// if model not found (strange)
 		if ($model == false)
 		{
 			jimport('joomla.filesystem.file');
 			// get file path
-			$filePath = $path.'/'.$name.'.php';
-			$fullPath = $fullPath.'/'.$name.'.php';
+			$filePath = $path . '/' . $name . '.php';
+			$fullPathModel = $fullPathModels . '/' . $name . '.php';
 			// check if it exists
 			if (JFile::exists($filePath))
 			{
 				// get the file
 				require_once $filePath;
 			}
-			elseif (JFile::exists($fullPath))
+			elseif (JFile::exists($fullPathModel))
 			{
 				// get the file
-				require_once $fullPath;
+				require_once $fullPathModel;
 			}
 			// build class names
-			$modelClass = $prefix.$name;
+			$modelClass = $Component . 'Model' . $name;
 			if (class_exists($modelClass))
 			{
 				// initialize the model

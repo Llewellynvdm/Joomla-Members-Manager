@@ -9,6 +9,7 @@
  * @license    GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  */
 
+
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 jimport('joomla.application.module.helper');
@@ -44,20 +45,23 @@ class MembersmanagerViewProfile extends JViewLegacy
 			throw new Exception(implode("\n", $errors), 500);
 		}
 		// Process the content plugins.
-		JPluginHelper::importPlugin('content');
-		// Setup Event Object.
-		$this->item->event = new stdClass;
-		// Check if item has params, or pass global params
-		$params = (isset($this->item->params) && MembersmanagerHelper::checkJson($this->item->params)) ? json_decode($this->item->params) : $this->params;
-		// onContentAfterTitle Event Trigger.
-		$results = $dispatcher->trigger('onContentAfterTitle', array('com_membersmanager.member', &$this->item, &$params, 0));
-		$this->item->event->onContentAfterTitle = trim(implode("\n", $results));
-		// onContentBeforeDisplay Event Trigger.
-		$results = $dispatcher->trigger('onContentBeforeDisplay', array('com_membersmanager.member', &$this->item, &$params, 0));
-		$this->item->event->onContentBeforeDisplay = trim(implode("\n", $results));
-		// onContentAfterDisplay Event Trigger.
-		$results = $dispatcher->trigger('onContentAfterDisplay', array('com_membersmanager.member', &$this->item, &$params, 0));
-		$this->item->event->onContentAfterDisplay = trim(implode("\n", $results));
+		if (MembersmanagerHelper::checkObject($this->item))
+		{
+			JPluginHelper::importPlugin('content');
+			// Setup Event Object.
+			$this->item->event = new stdClass;
+			// Check if item has params, or pass global params
+			$params = (isset($this->item->params) && MembersmanagerHelper::checkJson($this->item->params)) ? json_decode($this->item->params) : $this->params;
+			// onContentAfterTitle Event Trigger.
+			$results = $dispatcher->trigger('onContentAfterTitle', array('com_membersmanager.member', &$this->item, &$params, 0));
+			$this->item->event->onContentAfterTitle = trim(implode("\n", $results));
+			// onContentBeforeDisplay Event Trigger.
+			$results = $dispatcher->trigger('onContentBeforeDisplay', array('com_membersmanager.member', &$this->item, &$params, 0));
+			$this->item->event->onContentBeforeDisplay = trim(implode("\n", $results));
+			// onContentAfterDisplay Event Trigger.
+			$results = $dispatcher->trigger('onContentAfterDisplay', array('com_membersmanager.member', &$this->item, &$params, 0));
+			$this->item->event->onContentAfterDisplay = trim(implode("\n", $results));
+		}
 
 		parent::display($tpl);
 	}

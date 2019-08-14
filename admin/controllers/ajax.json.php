@@ -9,6 +9,7 @@
  * @license    GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  */
 
+
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
@@ -41,7 +42,7 @@ class MembersmanagerControllerAjax extends JControllerLegacy
 		// Check Token!
 		$token 		= JSession::getFormToken();
 		$call_token	= $jinput->get('token', 0, 'ALNUM');
-		if($token == $call_token)
+		if($jinput->get($token, 0, 'ALNUM') || $token === $call_token)
 		{
 			$task = $this->getTask();
 			switch($task)

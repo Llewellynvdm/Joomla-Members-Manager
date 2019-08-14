@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension type="component" version="3.2" method="upgrade">
 	<name>COM_MEMBERSMANAGER</name>
-	<creationDate>12th June, 2019</creationDate>
+	<creationDate>14th August, 2019</creationDate>
 	<author>Llewellyn van der Merwe</author>
 	<authorEmail>llewellyn@joomlacomponentbuilder.com</authorEmail>
 	<authorUrl>https://www.joomlacomponentbuilder.com/</authorUrl>
@@ -56,9 +56,7 @@ Watch this [tutorial](https://youtu.be/lkE0ZiSWufg) to see how.</p>
 		<filename>index.html</filename>
 		<filename>router.php</filename>
 		<filename>membersmanager.php</filename>
-		<filename>membersmanager.php</filename>
 		<filename>router.php</filename>
-		<filename>controller.php</filename>
 		<folder>assets</folder>
 		<folder>helpers</folder>
 		<folder>controllers</folder>
@@ -83,11 +81,6 @@ Watch this [tutorial](https://youtu.be/lkE0ZiSWufg) to see how.</p>
 			<filename>controller.php</filename>
 			<filename>index.html</filename>
 			<filename>membersmanager.php</filename>
-			<filename>access.xml</filename>
-			<filename>config.xml</filename>
-			<filename>controller.php</filename>
-			<filename>membersmanager.php</filename>
-			<filename>README.txt</filename>
 			<filename>README.txt</filename>
 			<folder>assets</folder>
 			<folder>controllers</folder>

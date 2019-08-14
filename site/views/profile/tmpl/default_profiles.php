@@ -9,6 +9,7 @@
  * @license    GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  */
 
+
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
@@ -32,17 +33,19 @@ defined('_JEXEC') or die('Restricted access');
 			<?php if ($this->user->id > 0 && isset($this->item->idMain_memberMemberB) && MembersmanagerHelper::checkArray($this->item->idMain_memberMemberB)): ?>
 			<ul>
 				<?php foreach ($this->item->idMain_memberMemberB as $item): ?>
-					<?php $item->_USER = &$this->user; ?>
-					<?php $item->_REFID = $this->item->id; ?>
-					<?php $item->_UIKIT = $this->uikitVersion; ?>
-					<?php $item->_IMAGELINK = $this->item->_IMAGELINK; ?>
-					<li>
-						<?php if ($this->uikitVersion == 3) : ?>
-							<?php echo JLayoutHelper::render('profile_uikit_three', $item); ?>
-						<?php else: ?>
-							<?php echo JLayoutHelper::render('profile_uikit_two', $item); ?>
-						<?php endif; ?>
-					</li>
+					<?php if (2 == $this->params->get('login_required', 1) || MembersmanagerHelper::canAccessMember($item->id, $item->type, $this->user)) : ?>
+						<?php $item->_USER = &$this->user; ?>
+						<?php $item->_REFID = $this->item->id; ?>
+						<?php $item->_UIKIT = $this->uikitVersion; ?>
+						<?php $item->_IMAGELINK = $this->item->_IMAGELINK; ?>
+						<li>
+							<?php if ($this->uikitVersion == 3) : ?>
+								<?php echo JLayoutHelper::render('profile_uikit_three', $item); ?>
+							<?php else: ?>
+								<?php echo JLayoutHelper::render('profile_uikit_two', $item); ?>
+							<?php endif; ?>
+						</li>
+					<?php endif; ?>
 				<?php endforeach; ?>
 			</ul>
 			<?php endif; ?>
