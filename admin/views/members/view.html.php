@@ -35,9 +35,10 @@ class MembersmanagerViewMembers extends JViewLegacy
 		$this->pagination = $this->get('Pagination');
 		$this->state = $this->get('State');
 		$this->user = JFactory::getUser();
-		$this->listOrder = $this->escape($this->state->get('list.ordering'));
-		$this->listDirn = $this->escape($this->state->get('list.direction'));
-		$this->saveOrder = $this->listOrder == 'ordering';
+		// Add the list ordering clause.
+		$this->listOrder = $this->escape($this->state->get('list.ordering', 'a.id'));
+		$this->listDirn = $this->escape($this->state->get('list.direction', 'DESC'));
+		$this->saveOrder = $this->listOrder == 'a.ordering';
 		// set the return here value
 		$this->return_here = urlencode(base64_encode((string) JUri::getInstance()));
 		// get global action permissions
@@ -138,7 +139,7 @@ class MembersmanagerViewMembers extends JViewLegacy
 		if ($this->user->authorise('member.import_joomla_users', 'com_membersmanager'))
 		{
 			// add Import Joomla Users button.
-			JToolBarHelper::custom('members.importJoomlaUsers', 'joomla', '', 'COM_MEMBERSMANAGER_IMPORT_JOOMLA_USERS', false);
+			JToolBarHelper::custom('members.importJoomlaUsers', 'joomla custom-button-importjoomlausers', '', 'COM_MEMBERSMANAGER_IMPORT_JOOMLA_USERS', false);
 		}
 
 		if ($this->canDo->get('core.import') && $this->canDo->get('member.import'))
@@ -159,6 +160,7 @@ class MembersmanagerViewMembers extends JViewLegacy
 			JToolBarHelper::preferences('com_membersmanager');
 		}
 
+		// Only load publish filter if state change is allowed
 		if ($this->canState)
 		{
 			JHtmlSidebar::addFilter(
@@ -166,15 +168,6 @@ class MembersmanagerViewMembers extends JViewLegacy
 				'filter_published',
 				JHtml::_('select.options', JHtml::_('jgrid.publishedOptions'), 'value', 'text', $this->state->get('filter.published'), true)
 			);
-			// only load if batch allowed
-			if ($this->canBatch)
-			{
-				JHtmlBatch_::addListSelection(
-					JText::_('COM_MEMBERSMANAGER_KEEP_ORIGINAL_STATE'),
-					'batch[published]',
-					JHtml::_('select.options', JHtml::_('jgrid.publishedOptions', array('all' => false)), 'value', 'text', '', true)
-				);
-			}
 		}
 
 		JHtmlSidebar::addFilter(
@@ -182,15 +175,6 @@ class MembersmanagerViewMembers extends JViewLegacy
 			'filter_access',
 			JHtml::_('select.options', JHtml::_('access.assetgroups'), 'value', 'text', $this->state->get('filter.access'))
 		);
-
-		if ($this->canBatch && $this->canCreate && $this->canEdit)
-		{
-			JHtmlBatch_::addListSelection(
-				JText::_('COM_MEMBERSMANAGER_KEEP_ORIGINAL_ACCESS'),
-				'batch[access]',
-				JHtml::_('select.options', JHtml::_('access.assetgroups'), 'value', 'text')
-			);
-		}
 
 		// Set Account Selection
 		$this->accountOptions = $this->getTheAccountSelections();
@@ -210,16 +194,37 @@ class MembersmanagerViewMembers extends JViewLegacy
 				'filter_account',
 				JHtml::_('select.options', $this->accountOptions, 'value', 'text', $this->state->get('filter.account'))
 			);
+		}
 
-			if ($this->canBatch && $this->canCreate && $this->canEdit)
-			{
-				// Account Batch Selection
-				JHtmlBatch_::addListSelection(
-					'- Keep Original '.JText::_('COM_MEMBERSMANAGER_MEMBER_ACCOUNT_LABEL').' -',
-					'batch[account]',
-					JHtml::_('select.options', $this->accountOptions, 'value', 'text')
-				);
-			}
+		// Only load published batch if state and batch is allowed
+		if ($this->canState && $this->canBatch)
+		{
+			JHtmlBatch_::addListSelection(
+				JText::_('COM_MEMBERSMANAGER_KEEP_ORIGINAL_STATE'),
+				'batch[published]',
+				JHtml::_('select.options', JHtml::_('jgrid.publishedOptions', array('all' => false)), 'value', 'text', '', true)
+			);
+		}
+
+		// Only load access batch if create, edit and batch is allowed
+		if ($this->canBatch && $this->canCreate && $this->canEdit)
+		{
+			JHtmlBatch_::addListSelection(
+				JText::_('COM_MEMBERSMANAGER_KEEP_ORIGINAL_ACCESS'),
+				'batch[access]',
+				JHtml::_('select.options', JHtml::_('access.assetgroups'), 'value', 'text')
+			);
+		}
+
+		// Only load Account batch if create, edit, and batch is allowed
+		if ($this->canBatch && $this->canCreate && $this->canEdit)
+		{
+			// Account Batch Selection
+			JHtmlBatch_::addListSelection(
+				'- Keep Original '.JText::_('COM_MEMBERSMANAGER_MEMBER_ACCOUNT_LABEL').' -',
+				'batch[account]',
+				JHtml::_('select.options', $this->accountOptions, 'value', 'text')
+			);
 		}
 	}
 
@@ -264,7 +269,7 @@ class MembersmanagerViewMembers extends JViewLegacy
 	protected function getSortFields()
 	{
 		return array(
-			'a.sorting' => JText::_('JGRID_HEADING_ORDERING'),
+			'a.ordering' => JText::_('JGRID_HEADING_ORDERING'),
 			'a.published' => JText::_('JSTATUS'),
 			'a.account' => JText::_('COM_MEMBERSMANAGER_MEMBER_ACCOUNT_LABEL'),
 			'a.id' => JText::_('JGRID_HEADING_ID')
@@ -288,13 +293,13 @@ class MembersmanagerViewMembers extends JViewLegacy
 		$db->setQuery($query);
 
 		$results = $db->loadColumn();
+		$_filter = array();
 
 		if ($results)
 		{
 			// get model
 			$model = $this->getModel();
 			$results = array_unique($results);
-			$_filter = array();
 			foreach ($results as $account)
 			{
 				// Translate the account selection
@@ -302,8 +307,7 @@ class MembersmanagerViewMembers extends JViewLegacy
 				// Now add the account and its text to the options array
 				$_filter[] = JHtml::_('select.option', $account, JText::_($text));
 			}
-			return $_filter;
 		}
-		return false;
+		return $_filter;
 	}
 }

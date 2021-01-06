@@ -14,6 +14,8 @@
 defined('_JEXEC') or die('Restricted access');
 
 use Joomla\Registry\Registry;
+use Joomla\String\StringHelper;
+use Joomla\Utilities\ArrayHelper;
 
 /**
  * Membersmanager Member Model
@@ -161,6 +163,13 @@ class MembersmanagerModelMember extends JModelAdmin
 				$jinput = JFactory::getApplication()->input;
 				$return = $jinput->get('return', null, 'base64');
 				MembersmanagerHelper::set($this->vastDevMod . '__return', $return);
+				// set a GUID value if found
+				if (isset($item) && MembersmanagerHelper::checkObject($item) && isset($item->guid)
+					&& method_exists('MembersmanagerHelper', 'validGUID')
+					&& MembersmanagerHelper::validGUID($item->guid))
+				{
+					MembersmanagerHelper::set($this->vastDevMod . '__guid', $item->guid);
+				}
 			}
 			// load values from user table
 			if (isset($item->user) && $item->user > 0 && isset($item->account) && (1 == $item->account || 4 == $item->account))
@@ -200,8 +209,23 @@ class MembersmanagerModelMember extends JModelAdmin
 	{
 		// set load data option
 		$options['load_data'] = $loadData;
+		// check if xpath was set in options
+		$xpath = false;
+		if (isset($options['xpath']))
+		{
+			$xpath = $options['xpath'];
+			unset($options['xpath']);
+		}
+		// check if clear form was set in options
+		$clear = false;
+		if (isset($options['clear']))
+		{
+			$clear = $options['clear'];
+			unset($options['clear']);
+		}
+
 		// Get the form.
-		$form = $this->loadForm('com_membersmanager.member', 'member', $options);
+		$form = $this->loadForm('com_membersmanager.member', 'member', $options, $clear, $xpath);
 
 		if (empty($form))
 		{
@@ -298,7 +322,7 @@ class MembersmanagerModelMember extends JModelAdmin
 			{
 				// We have to unset then (TODO)
 				// Hiddend field can not handel array value
-				// Even if we conver to json we get an error
+				// Even if we convert to json we get an error
 				$form->removeField('name');
 			}
 		}
@@ -346,7 +370,7 @@ class MembersmanagerModelMember extends JModelAdmin
 			{
 				// We have to unset then (TODO)
 				// Hiddend field can not handel array value
-				// Even if we conver to json we get an error
+				// Even if we convert to json we get an error
 				$form->removeField('email');
 			}
 		}
@@ -387,7 +411,7 @@ class MembersmanagerModelMember extends JModelAdmin
 			{
 				// We have to unset then (TODO)
 				// Hiddend field can not handel array value
-				// Even if we conver to json we get an error
+				// Even if we convert to json we get an error
 				$form->removeField('account');
 			}
 		}
@@ -428,7 +452,7 @@ class MembersmanagerModelMember extends JModelAdmin
 			{
 				// We have to unset then (TODO)
 				// Hiddend field can not handel array value
-				// Even if we conver to json we get an error
+				// Even if we convert to json we get an error
 				$form->removeField('user');
 			}
 		}
@@ -469,7 +493,7 @@ class MembersmanagerModelMember extends JModelAdmin
 			{
 				// We have to unset then (TODO)
 				// Hiddend field can not handel array value
-				// Even if we conver to json we get an error
+				// Even if we convert to json we get an error
 				$form->removeField('token');
 			}
 		}
@@ -517,7 +541,7 @@ class MembersmanagerModelMember extends JModelAdmin
 			{
 				// We have to unset then (TODO)
 				// Hiddend field can not handel array value
-				// Even if we conver to json we get an error
+				// Even if we convert to json we get an error
 				$form->removeField('profile_image');
 			}
 		}
@@ -558,7 +582,7 @@ class MembersmanagerModelMember extends JModelAdmin
 			{
 				// We have to unset then (TODO)
 				// Hiddend field can not handel array value
-				// Even if we conver to json we get an error
+				// Even if we convert to json we get an error
 				$form->removeField('main_member');
 			}
 		}
@@ -606,7 +630,7 @@ class MembersmanagerModelMember extends JModelAdmin
 			{
 				// We have to unset then (TODO)
 				// Hiddend field can not handel array value
-				// Even if we conver to json we get an error
+				// Even if we convert to json we get an error
 				$form->removeField('password_check');
 			}
 		}
@@ -654,7 +678,7 @@ class MembersmanagerModelMember extends JModelAdmin
 			{
 				// We have to unset then (TODO)
 				// Hiddend field can not handel array value
-				// Even if we conver to json we get an error
+				// Even if we convert to json we get an error
 				$form->removeField('password');
 			}
 		}
@@ -702,7 +726,7 @@ class MembersmanagerModelMember extends JModelAdmin
 			{
 				// We have to unset then (TODO)
 				// Hiddend field can not handel array value
-				// Even if we conver to json we get an error
+				// Even if we convert to json we get an error
 				$form->removeField('useremail');
 			}
 		}
@@ -750,7 +774,7 @@ class MembersmanagerModelMember extends JModelAdmin
 			{
 				// We have to unset then (TODO)
 				// Hiddend field can not handel array value
-				// Even if we conver to json we get an error
+				// Even if we convert to json we get an error
 				$form->removeField('username');
 			}
 		}
@@ -791,7 +815,7 @@ class MembersmanagerModelMember extends JModelAdmin
 			{
 				// We have to unset then (TODO)
 				// Hiddend field can not handel array value
-				// Even if we conver to json we get an error
+				// Even if we convert to json we get an error
 				$form->removeField('surname');
 			}
 		}
@@ -832,7 +856,7 @@ class MembersmanagerModelMember extends JModelAdmin
 			{
 				// We have to unset then (TODO)
 				// Hiddend field can not handel array value
-				// Even if we conver to json we get an error
+				// Even if we convert to json we get an error
 				$form->removeField('type');
 			}
 		}
@@ -854,7 +878,7 @@ class MembersmanagerModelMember extends JModelAdmin
 			}
 		}
 		// if this is a site area hide the user field
-		if (JFactory::getApplication()->isSite() || $form->getValue('user'))
+		if (JFactory::getApplication()->isClient('site') || $form->getValue('user'))
 		{
 			// Disable fields for being edited directly
 			$form->setFieldAttribute('user', 'readonly', 'true');
@@ -1019,6 +1043,8 @@ class MembersmanagerModelMember extends JModelAdmin
 		if (empty($data))
 		{
 			$data = $this->getItem();
+			// run the perprocess of the data
+			$this->preprocessData('com_membersmanager.member', $data);
 		}
 
 		return $data;
@@ -1040,7 +1066,7 @@ class MembersmanagerModelMember extends JModelAdmin
 	public function validate($form, $data, $group = null)
 	{
 		// check if the not_required field is set
-		if (MembersmanagerHelper::checkString($data['not_required']))
+		if (isset($data['not_required']) && MembersmanagerHelper::checkString($data['not_required']))
 		{
 			$requiredFields = (array) explode(',',(string) $data['not_required']);
 			$requiredFields = array_unique($requiredFields);
@@ -1067,7 +1093,7 @@ class MembersmanagerModelMember extends JModelAdmin
 	 *
 	 * @since   3.0
 	 */
-	protected function getUniqeFields()
+	protected function getUniqueFields()
 	{
 		return false;
 	}
@@ -1083,6 +1109,8 @@ class MembersmanagerModelMember extends JModelAdmin
 	 */
 	public function delete(&$pks)
 	{
+		// users to remove
+		$users = array();
 		// check if member is still linked to other sub members as a main member
 		if (MembersmanagerHelper::checkArray($pks))
 		{
@@ -1091,15 +1119,24 @@ class MembersmanagerModelMember extends JModelAdmin
 			// now loop the ids
 			foreach ($pks as $key => $pk)
 			{
+				// get the account type value
+				$account = MembersmanagerHelper::getVar('member', $pk, 'id', 'account');
 				// check if member still have sub accounts linked to it
-				if (($found = MembersmanagerHelper::getVar('member', $pk, 'main_member', 'id')) !== false)
+				if (($account == 3 || $account == 4) && ($found = MembersmanagerHelper::getVar('member', $pk, 'main_member', 'id')) !== false)
 				{
 					// set the name
 					$name = MembersmanagerHelper::getMemberName($pk);
 					// set a message
-					$app->enqueueMessage(JText::sprintf('COM_MEMBERSMANAGER_YOU_CAN_NOT_DELETE_BSB_FIRST_MOVE_ALL_SUB_ACCOUNTS_TO_NEW_MAIN_MEMBER', $name), 'Error');
+					$app->enqueueMessage(JText::sprintf('COM_MEMBERSMANAGER_YOU_CAN_NOT_DELETE_BSB_FIRST_MOVE_ALL_SUB_ACCOUNTS_TO_ANOTHER_MAIN_MEMBER_OR_CONVERT_EACH_TO_ITS_OWN_MAIN_MEMBER_ACCOUNT', $name), 'Error');
 					// remove for the list
 					unset($pks[$key]);
+				}
+				// get the user IDs if linked to user
+				if (($account == 1 || $account == 4) // make sure we get only account who are set as login accounts
+					&& ($user = MembersmanagerHelper::getVar('member', $pk, 'id', 'user')) !== false
+					&& $user > 0)
+				{
+					$users[$pk] = $user;
 				}
 			}
 		}
@@ -1140,6 +1177,15 @@ class MembersmanagerModelMember extends JModelAdmin
 			{
 				// make sure to remove the type_map
 				MembersmanagerHelper::updateTypes($pk);
+				// remove users that are linked
+				if (isset($users[$pk]))
+				{
+					if (!JFactory::getUser($users[$pk])->delete())
+					{
+						// set a message
+						$app->enqueueMessage(JText::sprintf('COM_MEMBERSMANAGER_THE_JOOMLA_USER_ACCOUNT_OF_BSB_COULD_NOT_BE_DELETED_AND_SO_YOU_WILL_HAVE_TO_MANUALLY_DELETE_THE_USER_IN_THE_BJOOMLA_USERSB_AREA', JFactory::getUser($users[$pk])->name), 'Error');
+					}
+				}
 				// must still do the relationship clearing (TODO)
 			}
 		}
@@ -1191,6 +1237,50 @@ class MembersmanagerModelMember extends JModelAdmin
 					}
 				}
 			}
+			// get the application object
+			$app = JFactory::getApplication();
+			// now loop the ids
+			foreach ($pks as $key => $pk)
+			{
+				// first get the account type
+				$account = MembersmanagerHelper::getVar('member', $pk, 'id', 'account');
+				// only take action if this is a member linked to a user
+				if (($account == 1 || $account == 4) // make sure we get only account who are set as login accounts
+					&& ($user = MembersmanagerHelper::getVar('member', $pk, 'id', 'user')) !== false
+					&& $user > 0)
+				{
+					// get the user
+					$_user = JFactory::getUser($user);
+					// block the user if unpublished or trashed
+					if (0 == $value || -2 == $value)
+					{
+						// block user
+						$block = array('block' => 1);
+						// bind the data to the user object
+						$_user->bind($block);
+						// now save the change
+						if (!$_user->save(true))
+						{
+							// set a message
+							$app->enqueueMessage(JText::sprintf('COM_MEMBERSMANAGER_THE_JOOMLA_USER_ACCOUNT_OF_BSB_COULD_NOT_BE_BBLOCKEDB_AND_SO_YOU_WILL_HAVE_TO_BMANUALLY_BLOCKB_THE_USER_IN_THE_BJOOMLA_USERSB_AREA', $_user->name), 'Error');
+						}
+					}
+					// unblock the user if published or archived
+					elseif (1 == $value || 2 == $value)
+					{
+						// un-block user
+						$block = array('block' => 0);
+						// bind the data to the user object
+						$_user->bind($block);
+						// now save the change
+						if (!$_user->save(true))
+						{
+							// set a message
+							$app->enqueueMessage(JText::sprintf('COM_MEMBERSMANAGER_THE_JOOMLA_USER_ACCOUNT_OF_BSB_COULD_NOT_BE_BUNBLOCKEDB_AND_SO_YOU_WILL_HAVE_TO_BMANUALLY_UNBLOCKB_THE_USER_IN_THE_BJOOMLA_USERSB_AREA', $_user->name), 'Error');
+						}
+					}
+				}
+			}
 		}
 		
 		return true;
@@ -1211,7 +1301,7 @@ class MembersmanagerModelMember extends JModelAdmin
 	{
 		// Sanitize ids.
 		$pks = array_unique($pks);
-		JArrayHelper::toInteger($pks);
+		ArrayHelper::toInteger($pks);
 
 		// Remove any values of zero.
 		if (array_search(0, $pks, true))
@@ -1252,7 +1342,7 @@ class MembersmanagerModelMember extends JModelAdmin
 
 		if (!empty($commands['move_copy']))
 		{
-			$cmd = JArrayHelper::getValue($commands, 'move_copy', 'c');
+			$cmd = ArrayHelper::getValue($commands, 'move_copy', 'c');
 
 			if ($cmd == 'c')
 			{
@@ -1319,8 +1409,8 @@ class MembersmanagerModelMember extends JModelAdmin
 			return false;
 		}
 
-		// get list of uniqe fields
-		$uniqeFields = $this->getUniqeFields();
+		// get list of unique fields
+		$uniqueFields = $this->getUniqueFields();
 		// remove move_copy from array
 		unset($values['move_copy']);
 
@@ -1371,7 +1461,7 @@ class MembersmanagerModelMember extends JModelAdmin
 			// Only for strings
 			if (MembersmanagerHelper::checkString($this->table->name) && !is_numeric($this->table->name))
 			{
-				$this->table->name = $this->generateUniqe('name',$this->table->name);
+				$this->table->name = $this->generateUnique('name',$this->table->name);
 			}
 
 			// insert all set values
@@ -1386,12 +1476,12 @@ class MembersmanagerModelMember extends JModelAdmin
 				}
 			}
 
-			// update all uniqe fields
-			if (MembersmanagerHelper::checkArray($uniqeFields))
+			// update all unique fields
+			if (MembersmanagerHelper::checkArray($uniqueFields))
 			{
-				foreach ($uniqeFields as $uniqeField)
+				foreach ($uniqueFields as $uniqueField)
 				{
-					$this->table->$uniqeField = $this->generateUniqe($uniqeField,$this->table->$uniqeField);
+					$this->table->$uniqueField = $this->generateUnique($uniqueField,$this->table->$uniqueField);
 				}
 			}
 
@@ -1576,12 +1666,12 @@ class MembersmanagerModelMember extends JModelAdmin
 			return (($id && $user->authorise('member.' . $permission, 'com_membersmanager.member.' . (int) $id)) || (!$id && $user->authorise('member.' . $permission, 'com_membersmanager')));
 		};
 		// make sure these type is set
-		if ($id && !$checkUserAccess('edit.type'))
+		if ($id && (!$checkUserAccess('edit.type') || !$checkUserAccess('view.type')))
 		{
 			$data['type'] = MembersmanagerHelper::getVar('member', $id, 'id', 'type');
 		}
 		// make sure these account is set
-		if ($id && !$checkUserAccess('edit.account'))
+		if ($id && (!$checkUserAccess('edit.account') || !$checkUserAccess('view.account')))
 		{
 			$data['account'] = MembersmanagerHelper::getVar('member', $id, 'id', 'account');
 		}
@@ -1591,7 +1681,7 @@ class MembersmanagerModelMember extends JModelAdmin
 			$data['user'] = MembersmanagerHelper::getVar('member', $id, 'id', 'user');
 		}
 		// check if this is a linked user (MUST STILL DO PERMISSIONS)
-		if (isset($data['account']) && (1 == $data['account'] || 4 == $data['account']) && $checkUserAccess('edit.user'))
+		if (isset($data['account']) && (1 == $data['account'] || 4 == $data['account']) && ($checkUserAccess('edit.name') || $checkUserAccess('edit.username') || $checkUserAccess('edit.useremail')))
 		{
 			// get the application object
 			$app = JFactory::getApplication();
@@ -1608,11 +1698,20 @@ class MembersmanagerModelMember extends JModelAdmin
 			// set bucket to update/create user
 			$bucket = array();
 			// set name
-			$bucket['name'] = $data['name'];
+			if ($checkUserAccess('edit.name'))
+			{
+				$bucket['name'] = $data['name'];
+			}
 			// set username
-			$bucket['username'] = $data['username'];
+			if ($checkUserAccess('edit.username'))
+			{
+				$bucket['username'] = $data['username'];
+			}
 			// set useremail
-			$bucket['email'] = $data['useremail'];
+			if ($checkUserAccess('edit.useremail'))
+			{
+				$bucket['email'] = $data['useremail'];
+			}
 			// start message bucket
 			$message = array();
 			// check if user already linked
@@ -1695,9 +1794,9 @@ class MembersmanagerModelMember extends JModelAdmin
 						$app->enqueueMessage(JText::_('COM_MEMBERSMANAGER_MEMBER_WAS_NOT_ADDED_TO_ANY_GROUPS_PLEASE_INFORM_YOUR_SYSTEM_ADMINISTRATOR'), 'Error');
 					}
 				}
-				// the login member must always own it self for edit permissions
-				$data['created_by'] = $data['user'];
 			}
+			// the login member must always own it self for edit permissions
+			$data['created_by'] = $data['user'];
 		}
 		// if a sub account and not login access
 		if (isset($data['account']) && 3 == $data['account'] && isset($data['main_member']) && $data['main_member'] > 0
@@ -1760,7 +1859,7 @@ class MembersmanagerModelMember extends JModelAdmin
 			// get unique token
 			while (!MembersmanagerHelper::checkUnique($id, 'token', $data['token'], 'member'))
 			{
-				$data['token'] = JString::increment($data['token'], 'dash');
+				$data['token'] = StringHelper::increment($data['token'], 'dash');
 			}
 		}
 
@@ -1800,16 +1899,16 @@ class MembersmanagerModelMember extends JModelAdmin
 			$data['params'] = (string) $params;
 		}
 
-		// Alter the uniqe field for save as copy
+		// Alter the unique field for save as copy
 		if ($input->get('task') === 'save2copy')
 		{
-			// Automatic handling of other uniqe fields
-			$uniqeFields = $this->getUniqeFields();
-			if (MembersmanagerHelper::checkArray($uniqeFields))
+			// Automatic handling of other unique fields
+			$uniqueFields = $this->getUniqueFields();
+			if (MembersmanagerHelper::checkArray($uniqueFields))
 			{
-				foreach ($uniqeFields as $uniqeField)
+				foreach ($uniqueFields as $uniqueField)
 				{
-					$data[$uniqeField] = $this->generateUniqe($uniqeField,$data[$uniqeField]);
+					$data[$uniqueField] = $this->generateUnique($uniqueField,$data[$uniqueField]);
 				}
 			}
 		}
@@ -1822,7 +1921,7 @@ class MembersmanagerModelMember extends JModelAdmin
 	}
 	
 	/**
-	 * Method to generate a uniqe value.
+	 * Method to generate a unique value.
 	 *
 	 * @param   string  $field name.
 	 * @param   string  $value data.
@@ -1831,15 +1930,15 @@ class MembersmanagerModelMember extends JModelAdmin
 	 *
 	 * @since   3.0
 	 */
-	protected function generateUniqe($field,$value)
+	protected function generateUnique($field,$value)
 	{
 
-		// set field value uniqe 
+		// set field value unique
 		$table = $this->getTable();
 
 		while ($table->load(array($field => $value)))
 		{
-			$value = JString::increment($value);
+			$value = StringHelper::increment($value);
 		}
 
 		return $value;
@@ -1861,7 +1960,7 @@ class MembersmanagerModelMember extends JModelAdmin
 
 		while ($table->load(array('title' => $title)))
 		{
-			$title = JString::increment($title);
+			$title = StringHelper::increment($title);
 		}
 
 		return $title;

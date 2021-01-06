@@ -42,7 +42,7 @@ class MembersmanagerViewProfile extends JViewLegacy
 		// Check for errors.
 		if (count($errors = $this->get('Errors')))
 		{
-			throw new Exception(implode("\n", $errors), 500);
+			throw new Exception(implode(PHP_EOL, $errors), 500);
 		}
 		// Process the content plugins.
 		if (MembersmanagerHelper::checkObject($this->item))
@@ -119,6 +119,7 @@ class MembersmanagerViewProfile extends JViewLegacy
 			if ((!$HeaderCheck->js_loaded('uikit.min') || $uikit == 1) && $uikit != 2 && $uikit != 3)
 			{
 				$this->document->addScript(JURI::root(true) .'/media/com_membersmanager/uikit-v3/js/uikit'.$size.'.js', (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/javascript');
+				$this->document->addScript(JURI::root(true) .'/media/com_membersmanager/uikit-v3/js/uikit-icons'.$size.'.js', (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/javascript');
 			}
 		}
 		
@@ -184,8 +185,6 @@ class MembersmanagerViewProfile extends JViewLegacy
 	 */
 	protected function addToolBar()
 	{
-		// adding the joomla toolbar to the front
-		JLoader::register('JToolbarHelper', JPATH_ADMINISTRATOR.'/includes/toolbar.php');
 
 		// set help url for this view if found
 		$help_url = MembersmanagerHelper::getHelpUrl('profile');
@@ -213,7 +212,7 @@ class MembersmanagerViewProfile extends JViewLegacy
 		{
 			// this is where you want to load your module position
 			$modules = JModuleHelper::getModules($position);
-			if ($modules)
+			if (MembersmanagerHelper::checkArray($modules, true))
 			{
 				// set the place holder
 				$this->setModules[$position] = array();

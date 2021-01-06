@@ -27,15 +27,15 @@ CREATE TABLE IF NOT EXISTS `#__membersmanager_member` (
 	`access` INT(10) unsigned NOT NULL DEFAULT 0,
 	`ordering` INT(11) NOT NULL DEFAULT 0,
 	PRIMARY KEY  (`id`),
+	KEY `idx_name` (`name`),
+	KEY `idx_account` (`account`),
+	KEY `idx_user` (`user`),
+	KEY `idx_token` (`token`),
 	KEY `idx_access` (`access`),
 	KEY `idx_checkout` (`checked_out`),
 	KEY `idx_createdby` (`created_by`),
 	KEY `idx_modifiedby` (`modified_by`),
-	KEY `idx_state` (`published`),
-	KEY `idx_name` (`name`),
-	KEY `idx_account` (`account`),
-	KEY `idx_user` (`user`),
-	KEY `idx_token` (`token`)
+	KEY `idx_state` (`published`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `#__membersmanager_type` (
@@ -65,16 +65,16 @@ CREATE TABLE IF NOT EXISTS `#__membersmanager_type` (
 	`access` INT(10) unsigned NOT NULL DEFAULT 0,
 	`ordering` INT(11) NOT NULL DEFAULT 0,
 	PRIMARY KEY  (`id`),
-	KEY `idx_access` (`access`),
-	KEY `idx_checkout` (`checked_out`),
-	KEY `idx_createdby` (`created_by`),
-	KEY `idx_modifiedby` (`modified_by`),
-	KEY `idx_state` (`published`),
 	KEY `idx_name` (`name`),
 	KEY `idx_add_relationship` (`add_relationship`),
 	KEY `idx_field_type` (`field_type`),
 	KEY `idx_communicate` (`communicate`),
-	KEY `idx_alias` (`alias`)
+	KEY `idx_alias` (`alias`),
+	KEY `idx_access` (`access`),
+	KEY `idx_checkout` (`checked_out`),
+	KEY `idx_createdby` (`created_by`),
+	KEY `idx_modifiedby` (`modified_by`),
+	KEY `idx_state` (`published`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `#__membersmanager_type_map` (
@@ -89,13 +89,3 @@ CREATE TABLE IF NOT EXISTS `#__membersmanager_relation_map` (
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 
 
-
---
--- Always insure this column rules is large enough for all the access control values.
---
-ALTER TABLE `#__assets` CHANGE `rules` `rules` MEDIUMTEXT NOT NULL COMMENT 'JSON encoded access control.';
-
---
--- Always insure this column name is large enough for long component and view names.
---
-ALTER TABLE `#__assets` CHANGE `name` `name` VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The unique name for the asset.';

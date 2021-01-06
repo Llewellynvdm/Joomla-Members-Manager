@@ -160,7 +160,7 @@
 			type="subform"
 			name="many_components"
 			label="COM_MEMBERSMANAGER_CONFIG_MANY_COMPONENTS_LABEL"
-			layout="joomla.form.field.subform.repeatable-table"
+			layout="joomla.form.field.subform.repeatable"
 			multiple="true"
 			buttons="add,remove,move"
 			description="COM_MEMBERSMANAGER_CONFIG_MANY_COMPONENTS_DESCRIPTION"

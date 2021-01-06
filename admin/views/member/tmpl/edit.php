@@ -67,7 +67,7 @@ $componentParams = $this->params; // will be removed just use $this->params inst
 	<?php $this->tab_name = 'memberTab'; ?>
 	<?php echo JLayoutHelper::render('joomla.edit.params', $this); ?>
 
-	<?php if ($this->canDo->get('member.delete') || $this->canDo->get('member.edit.created_by') || $this->canDo->get('member.edit.state') || $this->canDo->get('member.edit.created')) : ?>
+	<?php if ($this->canDo->get('member.edit.created_by') || $this->canDo->get('member.edit.created') || $this->canDo->get('member.edit.state') || ($this->canDo->get('member.delete') && $this->canDo->get('member.edit.state'))) : ?>
 	<?php echo JHtml::_('bootstrap.addTab', 'memberTab', 'publishing', JText::_('COM_MEMBERSMANAGER_MEMBER_PUBLISHING', true)); ?>
 		<div class="row-fluid form-horizontal-desktop">
 			<div class="span6">
@@ -324,7 +324,7 @@ jQuery('#adminForm').on('change', '#jform_user',function (e) {
 ?>
 function JRouter(link) {
 <?php
-	if ($app->isSite())
+	if ($app->isClient('site'))
 	{
 		echo 'var url = "'.JURI::root().'";';
 	}
@@ -342,7 +342,7 @@ function JURI(link) {
 
 function getFile(filename, fileFormat, target, type){
 	// set uikit version
-	var uiVer = <?php echo (int) $this->params->get('uikit_version', 2); ?>;
+	var uiVer = <?php echo (int) $this->params->get('uikit_version', 3); ?>;
 	// set the link
 	var link = '<?php echo MembersmanagerHelper::getFolderPath('url'); ?>';
 	// build the return
@@ -406,7 +406,7 @@ function getFile(filename, fileFormat, target, type){
 			var theplaceholder = '<div class="uk-width-1-1"><div class="uk-panel uk-panel-box"><center><code>[DOCLINK='+fileName+']</code> <?php echo JText::_('COM_MEMBERSMANAGER_OR'); ?> <code>[DOCBUTTON='+fileName+']</code><br /><?php echo JText::_('COM_MEMBERSMANAGER_ADD_ONE_OF_THESE_PLACEHOLDERS_IN_TEXT_FOR_CUSTOM_DOWNLOAD_PLACEMENT'); ?>.</center></div></div>';
 			// get the download link if set
 			var thedownload = '';
-			if (documentsLinks.hasOwnProperty(item)) {
+			if (typeof documentsLinks !== 'undefined' && documentsLinks.hasOwnProperty(item)) {
 				thedownload = '<a href="'+JRouter(documentsLinks[item])+'" class="uk-button uk-width-1-1 uk-button-small uk-margin-small-bottom uk-button-success"><i class="uk-icon-download"></i> <?php echo JText::_('COM_MEMBERSMANAGER_DOWNLOAD'); ?> '+fileName+'</a>';
 			}
 			var thedelete = '<button onclick="removeFileCheck(\''+item+'\', \''+target+'\', \''+type+'\', \''+uiVer+'\')" type="button" class="uk-button uk-width-1-1 uk-button-small uk-margin-small-bottom uk-button-danger"><i class="uk-icon-trash"></i> <?php echo JText::_('COM_MEMBERSMANAGER_REMOVE'); ?> '+fileName+'</button>';
@@ -424,16 +424,23 @@ function getFile(filename, fileFormat, target, type){
 			counter++;
 		});
 		return fileBox + '</div></div></div>';
-	} else if (type === 'document') {
+	} else if (type === 'document' || type === 'file') {
 		var fileFormat = filename.split('_')[2];
 		// set the file name
 		var fileName = filename.split('VDM')[1]+'.'+fileFormat;
 		// set the placeholder
-		var theplaceholder = '<div class="uk-width-1-1"><div class="uk-panel uk-panel-box"><center><code>[DOCLINK='+fileName+']</code> <?php echo JText::_('COM_MEMBERSMANAGER_OR'); ?> <code>[DOCBUTTON='+fileName+']</code><br /><?php echo JText::_('COM_MEMBERSMANAGER_ADD_ONE_OF_THESE_PLACEHOLDERS_IN_TEXT_FOR_CUSTOM_DOWNLOAD_PLACEMENT'); ?>.</center></div></div>';
+		var theplaceholder = '';
+		if (type === 'document') {
+			var theplaceholder = '<div class="uk-width-1-1"><div class="uk-panel uk-panel-box"><center><code>[DOCLINK='+fileName+']</code> <?php echo JText::_('COM_MEMBERSMANAGER_OR'); ?> <code>[DOCBUTTON='+fileName+']</code><br /><?php echo JText::_('COM_MEMBERSMANAGER_ADD_ONE_OF_THESE_PLACEHOLDERS_IN_TEXT_FOR_CUSTOM_DOWNLOAD_PLACEMENT'); ?></center></div></div>';
+		} else if (type === 'file' && typeof fileKey !== 'undefined') {
+			var theplaceholder = '<div class="uk-width-1-1"><div class="uk-panel uk-panel-box"><center><code>[[[[SECUREFILE]]]=icon_'+fileKey+']</code> <?php echo JText::_('COM_MEMBERSMANAGER_OR'); ?> <code>[[[[SECUREFILE]]]=url_'+fileKey+']</code> <?php echo JText::_('COM_MEMBERSMANAGER_OR'); ?> <code>[[[[SECUREFILE]]]=link_'+fileKey+']</code><br /><?php echo JText::_('COM_MEMBERSMANAGER_ADD_ONE_OF_THESE_PLACEHOLDERS_IN_ARTICLES_FOR_CUSTOM_DOWNLOAD_PLACEMENT'); ?></center></div></div>';
+		}
 		// get the download link if set
 		var thedownload = '';
-		if (documentsLinks.hasOwnProperty(filename)) {
+		if (type === 'document' && typeof documentsLinks !== 'undefined' && documentsLinks.hasOwnProperty(filename)) {
 			thedownload = '<a href="'+JRouter(documentsLinks[filename])+'" class="uk-button uk-width-1-1 uk-button-small uk-margin-small-bottom uk-button-success"><i class="uk-icon-download"></i> <?php echo JText::_('COM_MEMBERSMANAGER_DOWNLOAD'); ?> '+fileName+'</a>';
+		} else if (type === 'file' && typeof fileLink !== 'undefined' && fileLink.length > 20) {
+			thedownload = '<a href="'+JRouter(fileLink)+'" class="uk-button uk-width-1-1 uk-button-small uk-margin-small-bottom uk-button-success"><i class="uk-icon-download"></i> <?php echo JText::_('COM_MEMBERSMANAGER_DOWNLOAD'); ?> '+fileName+'</a>';
 		}
 		var thedelete = '<button onclick="removeFileCheck(\''+filename+'\', \''+target+'\', \''+type+'\', \''+uiVer+'\')" type="button" class="uk-button uk-width-1-1 uk-button-small uk-margin-small-bottom uk-button-danger"><i class="uk-icon-trash"></i> <?php echo JText::_('COM_MEMBERSMANAGER_REMOVE'); ?> '+fileName+'</button>';
 		return theplaceholder+thedownload+thedelete + '</div>';

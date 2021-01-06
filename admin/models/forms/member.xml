@@ -84,6 +84,14 @@
 			readonly="true"
 			filter="unset"
 		/>
+		<!-- Was added due to Permissions JS needing a Title field -->
+		<!-- Let us know at gh-629 should this change -->
+		<!-- https://github.com/vdm-io/Joomla-Component-Builder/issues/629#issuecomment-750117235 -->
+		<field
+			name="title"
+			type="hidden"
+			default="membersmanager member"
+		/>
 		<!-- Dynamic Fields. -->
 		<!-- Name Field. Type: Text. (joomla) -->
 		<field
@@ -112,7 +120,6 @@
 			class="text_area"
 			required="false"
 			filter="STRING"
-			validate="email"
 			message="COM_MEMBERSMANAGER_MEMBER_EMAIL_MESSAGE"
 			hint="COM_MEMBERSMANAGER_MEMBER_EMAIL_HINT"
 		/>
@@ -161,7 +168,7 @@
 			disabled="false"
 			required="false"
 			filter="STRING"
-			validate="uniquefield"
+			validate="uniquetoken"
 			message="COM_MEMBERSMANAGER_MEMBER_TOKEN_MESSAGE"
 			hint="COM_MEMBERSMANAGER_MEMBER_TOKEN_HINT"
 			autocomplete="off"
@@ -178,7 +185,7 @@
 		<field
 			type="hidden"
 			name="not_required"
-			default="[]"
+			default="一_一"
 		/>
 		<!-- Main_member Field. Type: Mainmembers. (custom) -->
 		<field
@@ -223,10 +230,9 @@
 			type="email"
 			name="useremail"
 			label="COM_MEMBERSMANAGER_MEMBER_USEREMAIL_LABEL"
-			size="30"
+			size="50"
 			maxlength="150"
 			description="COM_MEMBERSMANAGER_MEMBER_USEREMAIL_DESCRIPTION"
-			class="inputbox"
 			required="true"
 			filter="STRING"
 			validate="memberuseremail"

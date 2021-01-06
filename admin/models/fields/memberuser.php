@@ -109,8 +109,8 @@ class JFormFieldMemberuser extends JFormFieldList
 		$options = array();
 		if ($items)
 		{
-			// only add if more then one value found
-			if (count( (array) $items) > 1)
+			// only add if more then one value found or if this is the back end
+			if (count( (array) $items) > 1 || JFactory::getApplication()->isClient('administrator'))
 			{
 				$options[] = JHtml::_('select.option', '', 'Select a user');
 			}

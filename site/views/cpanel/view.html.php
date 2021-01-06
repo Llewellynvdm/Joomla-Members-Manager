@@ -36,6 +36,18 @@ class MembersmanagerViewCpanel extends JViewLegacy
 		$this->access_types = MembersmanagerHelper::getAccess($this->user, 1);
 		// get the search form
 		$this->searchForm = $this->setSearchForm();
+		// get the cpanel header module
+		$this->cpanelHeaderModules = $this->getModules('membersmanager-cpanel-header', 'array');
+		// get the cpanel above search module
+		$this->cpanelAboveSearchModules = $this->getModules('membersmanager-cpanel-above-search', 'array');
+		// get the cpanel below search module
+		$this->cpanelBelowSearchModules = $this->getModules('membersmanager-cpanel-below-search', 'array');
+		// get the cpanel above create button module
+		$this->cpanelAboveCreateButtonModules = $this->getModules('membersmanager-cpanel-above-create-button', 'array');
+		// get the cpanel below create button module
+		$this->cpanelBelowCreateButtonModules = $this->getModules('membersmanager-cpanel-below-create-button', 'array');
+		// set the header
+		$this->cpanelHeader = $this->params->get('cpanelheader', JText::_('COM_MEMBERSMANAGER_CPANEL'));
 
 		// Set the toolbar
 		$this->addToolBar();
@@ -46,7 +58,7 @@ class MembersmanagerViewCpanel extends JViewLegacy
 		// Check for errors.
 		if (count($errors = $this->get('Errors')))
 		{
-			throw new Exception(implode("\n", $errors), 500);
+			throw new Exception(implode(PHP_EOL, $errors), 500);
 		}
 		// Process the content plugins.
 		if (MembersmanagerHelper::checkObject($this->item))
@@ -141,6 +153,7 @@ class MembersmanagerViewCpanel extends JViewLegacy
 			if ((!$HeaderCheck->js_loaded('uikit.min') || $uikit == 1) && $uikit != 2 && $uikit != 3)
 			{
 				$this->document->addScript(JURI::root(true) .'/media/com_membersmanager/uikit-v3/js/uikit'.$size.'.js', (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/javascript');
+				$this->document->addScript(JURI::root(true) .'/media/com_membersmanager/uikit-v3/js/uikit-icons'.$size.'.js', (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/javascript');
 			}
 		}
 		if (MembersmanagerHelper::checkArray($this->access_types))
@@ -150,7 +163,7 @@ class MembersmanagerViewCpanel extends JViewLegacy
 			// Add Ajax Token
 			$this->document->addScriptDeclaration("var token = '". JSession::getFormToken() . "';");
 			// set the query path
-			$this->document->addScriptDeclaration("var path = '" . JURI::root() . "index.php?option=com_membersmanager&task=ajax.searchMembers&format=json&raw=true&token='+token+'&vdm='+vastDevMod+'&search=';");
+			$this->document->addScriptDeclaration("var path = '" . JURI::root() . "index.php?option=com_membersmanager&task=ajax.searchMembers&format=json&raw=true&'+token+'=1&vdm='+vastDevMod+'&search=';");
 		} 
 		// add the document default css file
 		$this->document->addStyleSheet(JURI::root(true) .'/components/com_membersmanager/assets/css/cpanel.css', (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/css');
@@ -161,8 +174,6 @@ class MembersmanagerViewCpanel extends JViewLegacy
 	 */
 	protected function addToolBar()
 	{
-		// adding the joomla toolbar to the front
-		JLoader::register('JToolbarHelper', JPATH_ADMINISTRATOR.'/includes/toolbar.php');
 
 		// set help url for this view if found
 		$help_url = MembersmanagerHelper::getHelpUrl('cpanel');
@@ -190,7 +201,7 @@ class MembersmanagerViewCpanel extends JViewLegacy
 		{
 			// this is where you want to load your module position
 			$modules = JModuleHelper::getModules($position);
-			if ($modules)
+			if (MembersmanagerHelper::checkArray($modules, true))
 			{
 				// set the place holder
 				$this->setModules[$position] = array();

@@ -13,6 +13,8 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\Utilities\ArrayHelper;
+
 /**
  * Membersmanager Ajax Controller
  */
@@ -53,7 +55,7 @@ class MembersmanagerControllerAjax extends JControllerLegacy
 						$returnRaw = $jinput->get('raw', false, 'BOOLEAN');
 						$fieldValue = $jinput->get('field', NULL, 'WORD');
 						$valueValue = $jinput->get('value', NULL, 'STRING');
-						if($fieldValue && $valueValue && $user->id != 0)
+						if($fieldValue && $user->id != 0 && $valueValue)
 						{
 							$result = $this->getModel('ajax')->checkUnique($fieldValue, $valueValue);
 						}
@@ -168,7 +170,7 @@ class MembersmanagerControllerAjax extends JControllerLegacy
 						$returnRaw = $jinput->get('raw', false, 'BOOLEAN');
 						$targetValue = $jinput->get('target', NULL, 'WORD');
 						$typeValue = $jinput->get('type', NULL, 'WORD');
-						if($targetValue && $typeValue && $user->id != 0)
+						if($targetValue && $user->id != 0 && $typeValue)
 						{
 							$result = $this->getModel('ajax')->uploadfile($targetValue, $typeValue);
 						}
@@ -209,7 +211,7 @@ class MembersmanagerControllerAjax extends JControllerLegacy
 						$targetValue = $jinput->get('target', NULL, 'WORD');
 						$flushValue = $jinput->get('flush', NULL, 'INT');
 						$typeValue = $jinput->get('type', NULL, 'WORD');
-						if($filenameValue && $targetValue && $flushValue && $typeValue && $user->id != 0)
+						if($filenameValue && $user->id != 0 && $targetValue && $flushValue && $typeValue)
 						{
 							$result = $this->getModel('ajax')->removeFile($filenameValue, $targetValue, $flushValue, $typeValue);
 						}
@@ -284,10 +286,10 @@ class MembersmanagerControllerAjax extends JControllerLegacy
 					try
 					{
 						$returnRaw = $jinput->get('raw', false, 'BOOLEAN');
-						$imageValue = $jinput->get('image', NULL, 'STRING');
-						if($imageValue && $user->id != 0)
+						$chartValue = $jinput->get('chart', NULL, 'STRING');
+						if($chartValue && $user->id != 0)
 						{
-							$result = $this->getModel('ajax')->getChartImageLink($imageValue);
+							$result = $this->getModel('ajax')->getChartImageLink($chartValue);
 						}
 						else
 						{

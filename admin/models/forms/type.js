@@ -10,10 +10,7 @@
 
 
 // Some Global Values
-jform_vvvvvvyvvz_required = false;
-jform_vvvvvvyvwa_required = false;
-jform_vvvvvvyvwb_required = false;
-jform_vvvvvvyvwc_required = false;
+jform_vvvvvvyvvy_required = false;
 
 // Initial Script
 jQuery(document).ready(function()
@@ -31,116 +28,77 @@ function vvvvvvy(add_relationship_vvvvvvy)
 		jQuery('#jform_communicate').closest('.control-group').show();
 		jQuery('#jform_field_type').closest('.control-group').show();
 		// add required attribute to field_type field
-		if (jform_vvvvvvyvvz_required)
+		if (jform_vvvvvvyvvy_required)
 		{
 			updateFieldRequired('field_type',0);
 			jQuery('#jform_field_type').prop('required','required');
 			jQuery('#jform_field_type').attr('aria-required',true);
 			jQuery('#jform_field_type').addClass('required');
-			jform_vvvvvvyvvz_required = false;
+			jform_vvvvvvyvvy_required = false;
 		}
 		jQuery('#jform_edit_relationship').closest('.control-group').show();
-		// add required attribute to edit_relationship field
-		if (jform_vvvvvvyvwa_required)
-		{
-			updateFieldRequired('edit_relationship',0);
-			jQuery('#jform_edit_relationship').prop('required','required');
-			jQuery('#jform_edit_relationship').attr('aria-required',true);
-			jQuery('#jform_edit_relationship').addClass('required');
-			jform_vvvvvvyvwa_required = false;
-		}
 		jQuery('#jform_type').closest('.control-group').show();
-		// add required attribute to type field
-		if (jform_vvvvvvyvwb_required)
-		{
-			updateFieldRequired('type',0);
-			jQuery('#jform_type').prop('required','required');
-			jQuery('#jform_type').attr('aria-required',true);
-			jQuery('#jform_type').addClass('required');
-			jform_vvvvvvyvwb_required = false;
-		}
 		jQuery('#jform_view_relationship').closest('.control-group').show();
-		// add required attribute to view_relationship field
-		if (jform_vvvvvvyvwc_required)
-		{
-			updateFieldRequired('view_relationship',0);
-			jQuery('#jform_view_relationship').prop('required','required');
-			jQuery('#jform_view_relationship').attr('aria-required',true);
-			jQuery('#jform_view_relationship').addClass('required');
-			jform_vvvvvvyvwc_required = false;
-		}
 	}
 	else
 	{
 		jQuery('#jform_communicate').closest('.control-group').hide();
 		jQuery('#jform_field_type').closest('.control-group').hide();
 		// remove required attribute from field_type field
-		if (!jform_vvvvvvyvvz_required)
+		if (!jform_vvvvvvyvvy_required)
 		{
 			updateFieldRequired('field_type',1);
 			jQuery('#jform_field_type').removeAttr('required');
 			jQuery('#jform_field_type').removeAttr('aria-required');
 			jQuery('#jform_field_type').removeClass('required');
-			jform_vvvvvvyvvz_required = true;
+			jform_vvvvvvyvvy_required = true;
 		}
 		jQuery('#jform_edit_relationship').closest('.control-group').hide();
-		// remove required attribute from edit_relationship field
-		if (!jform_vvvvvvyvwa_required)
-		{
-			updateFieldRequired('edit_relationship',1);
-			jQuery('#jform_edit_relationship').removeAttr('required');
-			jQuery('#jform_edit_relationship').removeAttr('aria-required');
-			jQuery('#jform_edit_relationship').removeClass('required');
-			jform_vvvvvvyvwa_required = true;
-		}
 		jQuery('#jform_type').closest('.control-group').hide();
-		// remove required attribute from type field
-		if (!jform_vvvvvvyvwb_required)
-		{
-			updateFieldRequired('type',1);
-			jQuery('#jform_type').removeAttr('required');
-			jQuery('#jform_type').removeAttr('aria-required');
-			jQuery('#jform_type').removeClass('required');
-			jform_vvvvvvyvwb_required = true;
-		}
 		jQuery('#jform_view_relationship').closest('.control-group').hide();
-		// remove required attribute from view_relationship field
-		if (!jform_vvvvvvyvwc_required)
-		{
-			updateFieldRequired('view_relationship',1);
-			jQuery('#jform_view_relationship').removeAttr('required');
-			jQuery('#jform_view_relationship').removeAttr('aria-required');
-			jQuery('#jform_view_relationship').removeClass('required');
-			jform_vvvvvvyvwc_required = true;
-		}
 	}
 }
 
-// update required fields
-function updateFieldRequired(name,status)
-{
-	var not_required = jQuery('#jform_not_required').val();
+// update fields required
+function updateFieldRequired(name, status) {
+	// check if not_required exist
+	if (jQuery('#jform_not_required').length > 0) {
+		var not_required = jQuery('#jform_not_required').val().split(",");
 
-	if(status == 1)
-	{
-		if (isSet(not_required) && not_required != 0)
+		if(status == 1)
 		{
-			not_required = not_required+','+name;
+			not_required.push(name);
 		}
 		else
 		{
-			not_required = ','+name;
+			not_required = removeFieldFromNotRequired(not_required, name);
 		}
-	}
-	else
-	{
-		if (isSet(not_required) && not_required != 0)
-		{
-			not_required = not_required.replace(','+name,'');
-		}
-	}
 
-	jQuery('#jform_not_required').val(not_required);
+		jQuery('#jform_not_required').val(fixNotRequiredArray(not_required).toString());
+	}
+}
+
+// remove field from not_required
+function removeFieldFromNotRequired(array, what) {
+	return array.filter(function(element){
+		return element !== what;
+	});
+}
+
+// fix not required array
+function fixNotRequiredArray(array) {
+	var seen = {};
+	return removeEmptyFromNotRequiredArray(array).filter(function(item) {
+		return seen.hasOwnProperty(item) ? false : (seen[item] = true);
+	});
+}
+
+// remove empty from not_required array
+function removeEmptyFromNotRequiredArray(array) {
+	return array.filter(function (el) {
+		// remove ( 一_一) as well - lol
+		return (el.length > 0 && '一_一' !== el);
+	});
 }
 
 // the isSet function

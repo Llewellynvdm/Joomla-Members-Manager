@@ -13,7 +13,7 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
-jimport('joomla.application.component.helper');
+use Joomla\Utilities\ArrayHelper;
 
 /**
  * Membersmanager Ajax Model
@@ -93,11 +93,25 @@ class MembersmanagerModelAjax extends JModelList
 				{
 					// build image path
 					$imagepath = MembersmanagerHelper::getFolderPath('path', 'chartpath') . $imageName . '.png';
-					// now write the file if not exists
-					if (file_exists($imagepath) || MembersmanagerHelper::writeFile($imagepath, $image))
+					// check if the file exist
+					if (file_exists($imagepath))
 					{
 						// build and return image link
 						return array('link' => MembersmanagerHelper::getFolderPath('url', 'chartpath') . $imageName . '.png');
+					}
+					// now write the file if not exists
+					if (MembersmanagerHelper::writeFile($imagepath, $image))
+					{
+						// now check if this type of image is allowed to be uploaded
+						if (JHelperMedia::canUpload($imagepath, 'com_membersmanager'))
+						{
+							// build and return image link
+							return array('link' => MembersmanagerHelper::getFolderPath('url', 'chartpath') . $imageName . '.png');
+						}
+						// load the file class
+						jimport('joomla.filesystem.file');
+						// remove the image
+						JFile::delete($imagepath);
 					}
 				}
 			}
@@ -109,45 +123,6 @@ class MembersmanagerModelAjax extends JModelList
 	protected $target;
 	protected $targetType;
 	protected $formatType;
-
-	// set some defaults
-	protected $formats = 
-		array( 
-			'image_formats' => array(
-				1 => 'jpg',
-				2 => 'jpeg',
-				3 => 'gif',
-				4 => 'png'),
-			'document_formats' => array(
-				1 => 'doc',
-				2 => 'docx',
-				3 => 'odt',
-				4 => 'pdf',
-				5 => 'csv',
-				6 => 'xls',
-				7 => 'xlsx',
-				8 => 'ods',
-				9 => 'ppt',
-				10 => 'pptx',
-				11 => 'pps',
-				12 => 'ppsx',
-				13 => 'odp',
-				14 => 'zip'),
-			'media_formats' => array(
-				1 => 'mp3',
-				2 => 'm4a',
-				3 => 'ogg',
-				4 => 'wav',
-				5 => 'mp4',
-				6 => 'm4v',
-				7 => 'mov',
-				8 => 'wmv',
-				9 => 'avi',
-				10 => 'mpg',
-				11 => 'ogv',
-				12 => '3gp',
-				13 => '3g2'));
-
 	// file details
 	protected $fileName;
 	protected $folderPath;
@@ -169,7 +144,7 @@ class MembersmanagerModelAjax extends JModelList
 			$this->target = (string) $target;
 			$this->targetType = (string) $type;
 			$this->formatType = (string) $this->types[$type];
-			if ($package = $this->_getPackageFromUpload())
+			if (($package = $this->_getPackageFromUpload()) !== false)
 			{
 				// now we move the file into place
 				return $this->uploadNow($package, $view);
@@ -187,9 +162,9 @@ class MembersmanagerModelAjax extends JModelList
 		{
 			$name = MembersmanagerHelper::safeString(str_replace('.'.$this->fileFormat, '', $package['packagename']), 'filename', '_', false);
 		}
-		$this->fileName = $this->target.'_'.$this->targetType.'_'.$this->fileFormat.'_'.MembersmanagerHelper::randomkey(20).'VDM'.$name;
+		$this->fileName = $this->target . '_' . $this->targetType . '_' . $this->fileFormat . '_' . MembersmanagerHelper::randomkey(20) . 'VDM' . $name;
 		// set the folder path
-		if ($this->formatType === 'document' || $this->formatType === 'media')
+		if ($this->formatType === 'file' || $this->formatType === 'document' || $this->formatType === 'media')
 		{
 			// get the folder path
 			$this->folderPath = MembersmanagerHelper::getFolderPath('path', 'hiddenfilepath');
@@ -209,26 +184,69 @@ class MembersmanagerModelAjax extends JModelList
 			{
 				MembersmanagerHelper::resizeImage($this->fileName, $this->fileFormat, $this->target, $this->folderPath, $this->fullPath);
 			}
-			// Get the basic encryption.
-			$basickey = MembersmanagerHelper::getCryptKey('basic');
-			$basic = null;
+			$encryption = null;
+			$expertmode = false;
+			// basic encryption of these format types
+			if ($this->formatType === 'document' || $this->formatType === 'media')
+			{
+				// Get the basic encryption.
+				$encryptionkey = MembersmanagerHelper::getCryptKey('basic');
+			}
+			// medium encryption of these format types
+			elseif ($this->formatType === 'file')
+			{
+				// check if we have expert Mode
+				if (method_exists('MembersmanagerHelper', 'encrypt'))
+				{
+					$expertmode = true;
+				}
+				else
+				{
+					// Get the medium encryption.
+					$encryptionkey = MembersmanagerHelper::getCryptKey('medium');
+				}
+			}
 			// set link options
-			$linkOptions = MembersmanagerHelper::getLinkOptions();
-			// set link options
-			if ($basickey)
+			if (isset($encryptionkey) && $encryptionkey)
 			{
 				// Get the encryption object.
-				$basic = new FOFEncryptAes($basickey, 128);
+				$encryption = new FOFEncryptAes($encryptionkey, 128);
 			}
 			// when it is documents we need to give file name in base64
-			if ($this->formatType === 'document' || $this->formatType === 'media')
+			if ($this->formatType === 'file' || $this->formatType === 'document' || $this->formatType === 'media')
 			{
 				// store the name
 				$keyName = $this->fileName;
-				if (MembersmanagerHelper::checkObject($basic))
+				if (MembersmanagerHelper::checkObject($encryption) || $expertmode)
 				{
+					// also encrypt the actual content of the file
+					if ($this->formatType === 'file')
+					{
+						// add notice to name that file is encrypted
+						$this->fileName = $keyName =  '.' . $this->fileName;
+						$securefullPath = $this->folderPath . $this->fileName;
+						// also encrypt the actual content of the file
+						if ($expertmode)
+						{
+							MembersmanagerHelper::writeFile($securefullPath, wordwrap(MembersmanagerHelper::encrypt(file_get_contents($this->fullPath)), 128, "\n", true));
+						}
+						else
+						{
+							MembersmanagerHelper::writeFile($securefullPath, wordwrap($encryption->encryptString(file_get_contents($this->fullPath)), 128, "\n", true));
+						}
+						// remove the original
+						jimport('joomla.filesystem.file');
+						JFile::delete($this->fullPath);
+					}
 					// Get the encryption object.
-					$localFile = MembersmanagerHelper::base64_urlencode($basic->encryptString($keyName));
+					if ($expertmode)
+					{
+						$localFile = MembersmanagerHelper::base64_urlencode(MembersmanagerHelper::encrypt($keyName, false), true);
+					}
+					else
+					{
+						$localFile = MembersmanagerHelper::base64_urlencode($encryption->encryptString($keyName));
+					}
 				}
 				else
 				{
@@ -237,39 +255,45 @@ class MembersmanagerModelAjax extends JModelList
 				}
 			}
 			// check if we must update the current item
-			if (isset($view['a_id']) && $view['a_id'] > 0 && isset($view['a_view']))
+			if (isset($view['a_id']) && $view['a_id'] > 0)
 			{
 				$object = new stdClass();
 				$object->id = (int) $view['a_id'];
-				if ($this->targetType === 'image' || $this->targetType === 'document')
+				if ($this->formatType === 'file' || $this->targetType === 'image' || $this->targetType === 'document')
 				{
-					if ($linkOptions['lock'] && MembersmanagerHelper::checkObject($basic))
+					if (MembersmanagerHelper::checkObject($encryption) || $expertmode)
 					{
 						// Get the encryption object.
-						$object->{$this->target.'_'.$this->targetType} = $basic->encryptString($this->fileName);
+						if ($expertmode)
+						{
+							$object->{$this->target . '_' . $this->targetType} = MembersmanagerHelper::encrypt($this->fileName);
+						}
+						else
+						{
+							$object->{$this->target . '_' . $this->targetType} = $encryption->encryptString($this->fileName);
+						}
 					}
 					else
 					{
 						// can not get the encryption object.
-						$object->{$this->target.'_'.$this->targetType} = $this->fileName;
+						$object->{$this->target . '_' . $this->targetType} = $this->fileName;
 					}
 				}
 				elseif ($this->targetType === 'images' || $this->targetType === 'documents' || $this->targetType === 'media')
 				{
-					$this->fileName = $this->setFileNameArray('add', $basic, $view);
-					if ($linkOptions['lock'] && MembersmanagerHelper::checkObject($basic))
+					$this->fileName = $this->setFileNameArray('add', $encryption, $view);
+					if (MembersmanagerHelper::checkObject($encryption))
 					{
 						// Get the encryption object.
-						$object->{$this->target.'_'.$this->targetType} = $basic->encryptString($this->fileName);
+						$object->{$this->target . '_' . $this->targetType} = $encryption->encryptString($this->fileName);
 					}
 					else
 					{
 						// can not get the encryption object.
-						$object->{$this->target.'_'.$this->targetType} = $this->fileName;
+						$object->{$this->target . '_' . $this->targetType} = $this->fileName;
 					}
-					
 				}
-				JFactory::getDbo()->updateObject('#__membersmanager_'.$view['a_view'], $object, 'id');
+				JFactory::getDbo()->updateObject('#__membersmanager_' . (string) $view['a_view'], $object, 'id');
 			}
 			elseif ($this->targetType === 'images' || $this->targetType === 'documents' || $this->targetType === 'media')
 			{
@@ -279,19 +303,22 @@ class MembersmanagerModelAjax extends JModelList
 			// set the results
 			$result = array('success' =>  $this->fileName, 'fileformat' => $this->fileFormat);
 			// add some more values if document format type
-			if ($this->formatType === 'document' || $this->formatType === 'media')
+			if ($this->formatType === 'file' || $this->formatType === 'document' || $this->formatType === 'media')
 			{
-				$tokenLink = '';
+				// set link options
+				$linkOptions = MembersmanagerHelper::getLinkOptions();
+				// do not lock file for link unless lock is set
 				if ($linkOptions['lock'] == 0)
 				{
 					$localFile = MembersmanagerHelper::base64_urlencode($keyName, true);
 				}
+				$tokenLink = '';
 				if ($linkOptions['session'])
 				{
-					$tokenLink = '&token=' . JSession::getFormToken();
+					$tokenLink = '&' . JSession::getFormToken() . '=1';
 				}
-				// if document
-				if ($this->formatType === 'document')
+				// if document or file
+				if ($this->formatType === 'file' || $this->formatType === 'document')
 				{
 					$result['link'] = 'index.php?option=com_membersmanager&task=download.document&file=' . $localFile . $tokenLink;
 				}
@@ -318,16 +345,17 @@ class MembersmanagerModelAjax extends JModelList
 			$this->targetType = (string) $type;
 			$this->formatType = (string) $this->types[$type];
 			$this->fileName = (string) $oldFile;
+			// check permissions
 			if (isset($view['a_id']) && $view['a_id'] > 0 && isset($view['a_view']))
 			{
 				// get user to see if he has permission to upload
 				$user = JFactory::getUser();
-				if (!$user->authorise($view['a_view'].'.edit.'.$this->target.'_'.$this->targetType, 'com_membersmanager'))
+				if (!$user->authorise($view['a_view'] . '.edit.'. $this->target . '_' . $this->targetType, 'com_membersmanager'))
 				{
 					return array('error' =>  JText::_('COM_MEMBERSMANAGER_YOU_DO_NOT_HAVE_PERMISSION_TO_REMOVE_THIS_FILE'));
 				}
 			}
-			if ($this->formatType === 'document' || $this->formatType === 'media')
+			if ($this->formatType === 'file' || $this->formatType === 'document' || $this->formatType === 'media')
 			{
 				// get the file path
 				$this->folderPath = MembersmanagerHelper::getFolderPath('path', 'hiddenfilepath');
@@ -338,32 +366,30 @@ class MembersmanagerModelAjax extends JModelList
 				$this->folderPath = MembersmanagerHelper::getFolderPath();
 			}
 			// remove from the db if there is an id
-			if ($clearDB == 1 && isset($view['a_id']) && $view['a_id'] > 0 && isset($view['a_view']) && in_array($view['a_view'], $this->allowedViews))
+			if ($clearDB == 1 && isset($view['a_id']) && $view['a_id'] > 0)
 			{
 				$object = new stdClass();
 				$object->id = (int) $view['a_id'];
-				if ($this->targetType === 'image' || $this->targetType === 'document')
+				if ($this->formatType === 'file' || $this->targetType === 'image' || $this->targetType === 'document')
 				{
-					$object->{$this->target.'_'.$this->targetType} = '';
-					JFactory::getDbo()->updateObject('#__membersmanager_'.$view['a_view'], $object, 'id');
+					$object->{$this->target . '_' . $this->targetType} = '';
+					JFactory::getDbo()->updateObject('#__membersmanager_' . $view['a_view'], $object, 'id');
 				}
 				elseif ($this->targetType === 'images' || $this->targetType === 'documents' || $this->targetType === 'media')
 				{
 					// Get the basic encription.
-					$basickey = MembersmanagerHelper::getCryptKey('basic');
-					$basic = null;
-					// set link options
-					$linkOptions = MembersmanagerHelper::getLinkOptions();
-					if ($linkOptions['lock'] && $basickey)
+					$encryptionkey = MembersmanagerHelper::getCryptKey('basic');
+					$encryption = null;
+					if ($encryptionkey)
 					{
 						// Get the encryption object.
-						$basic = new FOFEncryptAes($basickey, 128);
+						$encryption = new FOFEncryptAes($encryptionkey, 128);
 					}
-					$fileNameArray = $this->setFileNameArray('remove', $basic, $view);
-					if ($linkOptions['lock'] && MembersmanagerHelper::checkObject($basic))
+					$fileNameArray = $this->setFileNameArray('remove', $encryption, $view);
+					if (MembersmanagerHelper::checkObject($encryption))
 					{
 						// Get the encryption object.
-						$object->{$this->target.'_'.$this->targetType} = $basic->encryptString($fileNameArray);
+						$object->{$this->target.'_'.$this->targetType} = $encryption->encryptString($fileNameArray);
 					}
 					else
 					{
@@ -375,28 +401,37 @@ class MembersmanagerModelAjax extends JModelList
 			}
 			// load the file class
 			jimport('joomla.filesystem.file');
-			// remove file with this filename
-			$fileFormats = $this->formats[$this->formatType .'_formats'];
-			foreach ($fileFormats as $fileFormat)
+			// check if this is a locked file
+			if (substr($this->fileName, 0, 1) === '.' && JFile::exists($this->folderPath . $this->fileName))
 			{
-				if (JFile::exists($this->folderPath . $this->fileName . '.' . $fileFormat))
+				// remove the file
+				return JFile::delete($this->folderPath . $this->fileName);
+			}
+			else
+			{
+				// set formats
+				$this->formats = MembersmanagerHelper::getFileExtensions($this->formatType);
+				foreach ($this->formats as $fileFormat)
 				{
-					// remove the file
-					return JFile::delete($this->folderPath . $this->fileName . '.' . $fileFormat);
+					if (JFile::exists($this->folderPath . $this->fileName . '.' . $fileFormat))
+					{
+						// remove the file
+						return JFile::delete($this->folderPath . $this->fileName . '.' . $fileFormat);
+					}
 				}
 			}
 		}
 		return array('error' => JText::_('COM_MEMBERSMANAGER_THERE_HAS_BEEN_AN_ERROR'));
 	}
 
-	protected function setFileNameArray($action, $basic, $view)
+	protected function setFileNameArray($action, $encryption, $view)
 	{
 		$curentFiles = MembersmanagerHelper::getVar($view['a_view'], $view['a_id'], 'id', $this->target.'_'.$this->targetType);
 		// unlock if needed
-		if ($basic && $curentFiles === base64_encode(base64_decode($curentFiles, true)))
+		if ($encryption && $curentFiles === base64_encode(base64_decode($curentFiles, true)))
 		{
-			// basic decrypt data banner_image.
-			$curentFiles = rtrim($basic->decryptString($curentFiles), "\0");
+			// decrypt data image.
+			$curentFiles = rtrim($encryption->decryptString($curentFiles), "\0");
 		}
 		// convert to array if needed
 		if (MembersmanagerHelper::checkJson($curentFiles))
@@ -514,16 +549,18 @@ class MembersmanagerModelAjax extends JModelList
 	 */
 	protected function check($archivename)
 	{
+		// set formats
+		$this->formats = MembersmanagerHelper::getFileExtensions($this->formatType);
 		// Clean the name
 		$archivename = JPath::clean($archivename);
 		// get file format
 		$this->fileFormat = strtolower(pathinfo($archivename, PATHINFO_EXTENSION));
 		// get fileFormat key
 		$allowedFormats = array();
-		if (in_array($this->fileFormat, $this->formats[$this->formatType .'_formats']))
+		if (in_array($this->fileFormat, $this->formats))
 		{
 			// get allowed formats
-			$allowedFormats = (array) $this->app_params->get($this->formatType.'_formats', null);
+			$allowedFormats = (array) $this->app_params->get($this->formatType.'_formats', array());
 		}
 		// check the extension
 		if (!in_array($this->fileFormat, $allowedFormats))
@@ -536,29 +573,26 @@ class MembersmanagerModelAjax extends JModelList
 
 		// check permission if user
 		$view = $this->getViewID();
-		if (isset($view['a_id']) && $view['a_id'] > 0 && isset($view['a_view']) && in_array($view['a_view'], $this->allowedViews))
+		// get user to see if he has permission to upload
+		$user = JFactory::getUser();
+		if (!$user->authorise($view['a_view'] . '.edit.' . $this->target . '_' . $this->targetType, 'com_membersmanager'))
 		{
-			// get user to see if he has permission to upload
-			$user = JFactory::getUser();
-			if (!$user->authorise($view['a_view'].'.edit.'.$this->target.'_'.$this->targetType, 'com_membersmanager'))
-			{
-				// Cleanup the import files
-				$this->remove($archivename);
-				$this->errorMessage = JText::_('COM_MEMBERSMANAGER_YOU_DO_NOT_HAVE_PERMISSION_TO_UPLOAD_AN'.$this->targetType);
-				return false;
-			}
+			// Cleanup the import files
+			$this->remove($archivename);
+			$this->errorMessage = JText::_('COM_MEMBERSMANAGER_YOU_DO_NOT_HAVE_PERMISSION_TO_UPLOAD_AN' . $this->targetType);
+			return false;
 		}
-		
+
 		$config = JFactory::getConfig();
 		// set Package Name
 		$check['packagename'] = $archivename;
-		
+
 		// set directory
 		$check['dir'] = $config->get('tmp_path'). '/' .$archivename;
-		
+
 		return $check;
 	}
-	
+
 	/**
 	 * Clean up temporary uploaded file
 	 *
@@ -570,7 +604,7 @@ class MembersmanagerModelAjax extends JModelList
 	protected function remove($package)
 	{
 		jimport('joomla.filesystem.file');
-		
+
 		$config = JFactory::getConfig();
 		$package = $config->get('tmp_path'). '/' .$package;
 
@@ -596,7 +630,7 @@ class MembersmanagerModelAjax extends JModelList
 			// get the vdm key
 			$jinput = JFactory::getApplication()->input;
 			$vdm = $jinput->get('vdm', null, 'WORD');
-			if ($vdm) 
+			if ($vdm)
 			{
 				// set view and id
 				if ($view = MembersmanagerHelper::get($vdm))
@@ -611,8 +645,16 @@ class MembersmanagerModelAjax extends JModelList
 						);
 					}
 				}
+				// set GUID if found
+				if (($guid = MembersmanagerHelper::get($vdm . '__guid')) !== false && method_exists('MembersmanagerHelper', 'validGUID'))
+				{
+					if (MembersmanagerHelper::validGUID($guid))
+					{
+						$this->viewid[$call]['a_guid'] = $guid;
+					}
+				}
 				// set return if found
-				if ($return = MembersmanagerHelper::get($vdm . '__return'))
+				if (($return = MembersmanagerHelper::get($vdm . '__return')) !== false)
 				{
 					if (MembersmanagerHelper::checkString($return))
 					{

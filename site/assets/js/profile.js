@@ -14,7 +14,7 @@
 function getReport_server(report_key){
 	var getUrl = JRouter("index.php?option=com_membersmanager&task=ajax.getReport&raw=true&format=json&vdm="+vastDevMod);
 	if(token.length > 0 && report_key.length > 0){
-		var request = 'token='+token+'&key='+report_key;
+		var request = 'token='+token+'&sleutel='+report_key;
 	}
 	return jQuery.ajax({
 		type: 'GET',
@@ -32,13 +32,13 @@ function getReport(id, element, report_key){
 	// get key
 	var key = id+element;
 	// first we see if we have local storage of this data
-	var data = null; // jQuery.jStorage.get(key);
+	var data = null; //jQuery.jStorage.get(key); (does not make sense here)
 	if (!data) {
 		getReport_server(report_key).done(function(result) {
 			if(result.html){
 				setReport(result.html);
 				// store the data for next time
-				jQuery.jStorage.set(key,result.html,{TTL: expire});
+				jQuery.jStorage.set(key, result.html,{TTL: expire});
 			} else if(result.error){
 				// set an error if item date could not return
 				setReport(result.error);
@@ -50,7 +50,7 @@ function getReport(id, element, report_key){
 	} else {
 		setReport(data, key);
 		// make sure to keep the Time To Live updated
-		jQuery.jStorage.setTTL(key,expire);
+		jQuery.jStorage.setTTL(key, expire);
 	}
 } 
 // set the Report
@@ -80,7 +80,7 @@ function loadTheChartInModal(callback, targetDivID){
 function getListMessages_server(messages_key){
 	var getUrl = JRouter("index.php?option=com_membersmanager&task=ajax.getListMessages&raw=true&format=json&vdm="+vastDevMod);
 	if(token.length > 0 && messages_key.length > 0){
-		var request = 'token='+token+'&key='+messages_key;
+		var request = 'token='+token+'&sleutel='+messages_key;
 	}
 	return jQuery.ajax({
 		type: 'POST',

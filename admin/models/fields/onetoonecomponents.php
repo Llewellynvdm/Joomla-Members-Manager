@@ -48,7 +48,7 @@ class JFormFieldOnetoonecomponents extends JFormFieldList
 			// set the correct path focus
 			$focus = JPATH_ADMINISTRATOR;
 			// check if we are in the site area
-			if (JFactory::getApplication()->isSite())
+			if (JFactory::getApplication()->isClient('site'))
 			{
 				// set admin path
 				$adminPath = $focus . '/components/' . $_component . '/helpers/' . $component . '.php';

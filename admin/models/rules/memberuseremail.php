@@ -110,8 +110,28 @@ class JFormRuleMemberuseremail extends FormRule
 				->from('#__users')
 				->where('email = ' . $db->quote($value));
 
-			// Get the extra field check attribute.
-			$userId = ($form instanceof Form && ($userId = $form->getValue('user'))) ? $userId : (($input instanceof Registry && ($userId = $input->get('user'))) ? $userId : '');
+			// Get the user ID if set.
+			$userId = ($form instanceof Form && ($userId = $form->getValue('user'))) ? $userId : (($input instanceof Registry && ($userId = $input->get('user'))) ? $userId : 0);
+			// if still not user is found get member id
+			if ($userId == 0)
+			{
+				$memberId = ($form instanceof Form && ($memberId = $form->getValue('id'))) ? $memberId : (($input instanceof Registry && ($memberId = $input->get('id'))) ? $memberId : 0);
+			}
+			// get account type if needed
+			if ($userId == 0 && $memberId > 0)
+			{
+				$accountId = ($form instanceof Form && ($accountId = $form->getValue('account'))) ? $accountId : (($input instanceof Registry && ($accountId = $input->get('account'))) ? $accountId : 0);
+				// make sure these account is set
+				if ($accountId == 0)
+				{
+					$accountId = MembersmanagerHelper::getVar('member', $memberId, 'id', 'account');
+				}
+			}
+			// get user value if not set (due to permissions)
+			if ($userId == 0 && $memberId > 0 && $accountId > 0 && (1 == $accountId || 4 == $accountId))
+			{
+				$userId = MembersmanagerHelper::getVar('member', $memberId, 'id', 'user');
+			}
 			$query->where($db->quoteName('id') . ' <> ' . (int) $userId);
 
 			// Set and query the database.

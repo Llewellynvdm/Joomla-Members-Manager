@@ -88,11 +88,13 @@ $hidden = ($displayData->setCharts) ? '' : ' hidden';
 ?>
 <div class="extra<?php echo $displayData->id; ?>"<?php echo $hidden; ?>>
 <?php if ($displayData->setCharts): ?>
+	<ul class="uk-thumbnav" uk-margin>
 	<?php foreach ($displayData->charts as $name => $codes): ?>
 		<?php foreach ($codes as $code): ?>
-			<a href="#getreport" onclick="loadTheChartInModal(<?php echo $code['function_name']; ?>, '<?php echo $code['id_name']; ?>')" class="uk-thumbnail uk-thumbnail-small <?php echo $code['id_name']; ?>_target" uk-toggle><?php echo $code['div']; ?></a>
+			<li><a href="#getreport" onclick="loadTheChartInModal(<?php echo $code['function_name']; ?>, '<?php echo $code['id_name']; ?>')" class="<?php echo $code['id_name']; ?>_target" uk-toggle><?php echo $code['div']; ?></a></li>
 		<?php endforeach; ?>
 	<?php endforeach; ?>
+	</ul>
 <?php else: ?>
 	<div uk-alert>
 		<p><?php echo JText::_('COM_MEMBERSMANAGER_NOT_ENOUGH_DATA'); ?>.</p>

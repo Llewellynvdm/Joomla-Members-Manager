@@ -13,9 +13,10 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
+
+
 // the bucket for uikit 2 classes
 $this->classes = array();
-
 ?>
 <form action="<?php echo JRoute::_('index.php?option=com_membersmanager'); ?>" method="post" name="adminForm" id="adminForm">
 <?php if ($this->params->get('members_display_type', false) == 3) : // List ?>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension type="component" version="3.2" method="upgrade">
 	<name>COM_MEMBERSMANAGER</name>
-	<creationDate>14th August, 2019</creationDate>
+	<creationDate>6th January, 2021</creationDate>
 	<author>Llewellyn van der Merwe</author>
 	<authorEmail>llewellyn@joomlacomponentbuilder.com</authorEmail>
 	<authorUrl>https://www.joomlacomponentbuilder.com/</authorUrl>
@@ -99,6 +99,6 @@ Watch this [tutorial](https://youtu.be/lkE0ZiSWufg) to see how.</p>
 
 	</administration>
 	<updateservers>
-		<server type="extension" enabled="1" element="com_membersmanager" name="Members Manager">https://raw.githubusercontent.com/vdm-io/Joomla-Members-Manager/master/membersmanager_server.xml</server>
+		<server type="extension" enabled="1" element="com_membersmanager" name="Members Manager">https://raw.githubusercontent.com/llewellynvdm/Joomla-Members-Manager/master/membersmanager_server.xml</server>
 	</updateservers>
 </extension>

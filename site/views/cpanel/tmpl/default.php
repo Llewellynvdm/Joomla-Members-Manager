@@ -13,10 +13,16 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
+
 ?>
 
 <?php if ($this->user->id > 0): ?>
 	<?php if (MembersmanagerHelper::checkArray($this->access_types)) : ?>
+		<?php if (MembersmanagerHelper::checkArray($this->cpanelHeaderModules)): ?>
+			<?php foreach($this->cpanelHeaderModules as $module): ?>
+				<?php echo JLayoutHelper::render('panelbox', $module); ?>
+			<?php endforeach; ?>
+		<?php endif; ?>
 		<?php echo $this->item->event->onContentBeforeDisplay; ?>
 		<?php if (($staff_name = MembersmanagerHelper::getMemberName($this->item->id, $this->user->id, null, null, false)) !== false): ?>
 			<?php $button_text = JText::sprintf('COM_MEMBERSMANAGER_WELCOME_S_UPDATE_YOUR_DETAILS', $staff_name); ?>
@@ -25,7 +31,7 @@ defined('_JEXEC') or die('Restricted access');
 				<?php if (3 == $this->uikitVersion) : ?>
 					<div uk-grid>
 						<div class="uk-width-1-2@m">
-							<h1><?php echo JText::_('COM_MEMBERSMANAGER_CPANEL'); ?></h1>
+							<h1><?php echo $this->cpanelHeader; ?></h1>
 						</div>
 						<div class="uk-width-1-2@m">
 							<?php echo $staff_edit_button; ?>
@@ -34,7 +40,7 @@ defined('_JEXEC') or die('Restricted access');
 				<?php else: ?>
 					<div class="uk-grid">
 						<div class="uk-width-medium-1-2">
-							<h1><?php echo JText::_('COM_MEMBERSMANAGER_CPANEL'); ?></h1>
+							<h1><?php echo $this->cpanelHeader; ?></h1>
 						</div>
 						<div class="uk-width-medium-1-2">
 							<?php echo $staff_edit_button; ?>
@@ -42,10 +48,10 @@ defined('_JEXEC') or die('Restricted access');
 					</div>
 				<?php endif; ?>
 			<?php else: ?>
-				<h1><?php echo JText::_('COM_MEMBERSMANAGER_CPANEL'); ?></h1>
+				<h1><?php echo $this->cpanelHeader; ?></h1>
 			<?php endif; ?>
 		<?php else: ?>
-			<h1><?php echo JText::_('COM_MEMBERSMANAGER_CPANEL'); ?></h1>
+			<h1><?php echo $this->cpanelHeader; ?></h1>
 		<?php endif; ?>
 		<?php echo $this->item->event->onContentAfterTitle; ?>
 		<?php if (3 == $this->uikitVersion) : ?>

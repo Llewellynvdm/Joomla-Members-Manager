@@ -341,26 +341,15 @@
 			hint="COM_MEMBERSMANAGER_CONFIG_BUTTON_REPORT_NAME_HINT"
 			autocomplete="on"
 		/>
-		<!-- Image_formats Field. Type: List. (joomla) -->
+		<!-- Image_formats Field. Type: Allowedimageformats. (custom) -->
 		<field
-			type="list"
+			type="allowedimageformats"
 			name="image_formats"
 			label="COM_MEMBERSMANAGER_CONFIG_IMAGE_FORMATS_LABEL"
 			description="COM_MEMBERSMANAGER_CONFIG_IMAGE_FORMATS_DESCRIPTION"
 			class="list_class"
 			multiple="true"
-			filter="ARRAY"
-			default="">
-			<!-- Option Set. -->
-			<option value="jpg">
-				COM_MEMBERSMANAGER_CONFIG_JPG</option>
-			<option value="jpeg">
-				COM_MEMBERSMANAGER_CONFIG_JPEG</option>
-			<option value="gif">
-				COM_MEMBERSMANAGER_CONFIG_GIF</option>
-			<option value="png">
-				COM_MEMBERSMANAGER_CONFIG_PNG</option>
-		</field>
+		/>
 		<!-- Crop_profile Field. Type: Radio. (joomla) -->
 		<field
 			type="radio"
@@ -459,7 +448,6 @@
 			class="text_area"
 			required="false"
 			filter="STRING"
-			validate="email"
 			message="COM_MEMBERSMANAGER_CONFIG_EMAIL_MESSAGE"
 			hint="COM_MEMBERSMANAGER_CONFIG_EMAIL_HINT"
 		/>
@@ -528,11 +516,9 @@
 			type="text"
 			name="postal"
 			label="COM_MEMBERSMANAGER_CONFIG_POSTAL_LABEL"
-			size="60"
+			size="50"
 			maxlength="150"
-			default=""
 			description="COM_MEMBERSMANAGER_CONFIG_POSTAL_DESCRIPTION"
-			class="text_area"
 			filter="STRING"
 			message="COM_MEMBERSMANAGER_CONFIG_POSTAL_MESSAGE"
 			hint="COM_MEMBERSMANAGER_CONFIG_POSTAL_HINT"
@@ -570,9 +556,8 @@
 			type="text"
 			name="postalcode"
 			label="COM_MEMBERSMANAGER_CONFIG_POSTALCODE_LABEL"
-			size="60"
+			size="50"
 			maxlength="150"
-			default=""
 			description="COM_MEMBERSMANAGER_CONFIG_POSTALCODE_DESCRIPTION"
 			class="text_area"
 			filter="STRING"

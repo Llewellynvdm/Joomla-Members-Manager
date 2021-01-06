@@ -13,6 +13,8 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\Utilities\ArrayHelper;
+
 /**
  * Membersmanager Profile Model
  */
@@ -177,7 +179,7 @@ class MembersmanagerModelProfile extends JModelItem
 				if ($e->getCode() == 404)
 				{
 					// Need to go thru the error handler to allow Redirect to work.
-					JError::raiseWaring(404, $e->getMessage());
+					JError::raiseWarning(404, $e->getMessage());
 				}
 				else
 				{
@@ -261,6 +263,13 @@ class MembersmanagerModelProfile extends JModelItem
 				$jinput = JFactory::getApplication()->input;
 				$return = $jinput->get('return', null, 'base64');
 				MembersmanagerHelper::set($this->vastDevMod . '__return', $return);
+				// set a GUID value if found
+				if (isset($item) && MembersmanagerHelper::checkObject($item) && isset($item->guid)
+					&& method_exists('MembersmanagerHelper', 'validGUID')
+					&& MembersmanagerHelper::validGUID($item->guid))
+				{
+					MembersmanagerHelper::set($this->vastDevMod . '__guid', $item->guid);
+				}
 			}
 
 		return $this->_item[$pk];

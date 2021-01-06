@@ -13,6 +13,8 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\Utilities\ArrayHelper;
+
 /**
  * Types Model
  */
@@ -25,11 +27,12 @@ class MembersmanagerModelTypes extends JModelList
 			$config['filter_fields'] = array(
 				'a.id','id',
 				'a.published','published',
+				'a.access','access',
 				'a.ordering','ordering',
 				'a.created_by','created_by',
 				'a.modified_by','modified_by',
-				'a.name','name',
-				'a.add_relationship','add_relationship'
+				'a.add_relationship','add_relationship',
+				'a.name','name'
 			);
 		}
 
@@ -81,11 +84,17 @@ class MembersmanagerModelTypes extends JModelList
 		return false;
 	}
 
-	
+
 	/**
 	 * Method to auto-populate the model state.
 	 *
+	 * Note. Calling getState in this method will result in recursion.
+	 *
+	 * @param   string  $ordering   An optional ordering field.
+	 * @param   string  $direction  An optional direction (asc|desc).
+	 *
 	 * @return  void
+	 *
 	 */
 	protected function populateState($ordering = null, $direction = null)
 	{
@@ -96,29 +105,30 @@ class MembersmanagerModelTypes extends JModelList
 		{
 			$this->context .= '.' . $layout;
 		}
-		$name = $this->getUserStateFromRequest($this->context . '.filter.name', 'filter_name');
-		$this->setState('filter.name', $name);
 
-		$add_relationship = $this->getUserStateFromRequest($this->context . '.filter.add_relationship', 'filter_add_relationship');
-		$this->setState('filter.add_relationship', $add_relationship);
-        
-		$sorting = $this->getUserStateFromRequest($this->context . '.filter.sorting', 'filter_sorting', 0, 'int');
-		$this->setState('filter.sorting', $sorting);
-        
 		$access = $this->getUserStateFromRequest($this->context . '.filter.access', 'filter_access', 0, 'int');
 		$this->setState('filter.access', $access);
-        
-		$search = $this->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
-		$this->setState('filter.search', $search);
 
 		$published = $this->getUserStateFromRequest($this->context . '.filter.published', 'filter_published', '');
 		$this->setState('filter.published', $published);
-        
+
 		$created_by = $this->getUserStateFromRequest($this->context . '.filter.created_by', 'filter_created_by', '');
 		$this->setState('filter.created_by', $created_by);
 
 		$created = $this->getUserStateFromRequest($this->context . '.filter.created', 'filter_created');
 		$this->setState('filter.created', $created);
+
+		$sorting = $this->getUserStateFromRequest($this->context . '.filter.sorting', 'filter_sorting', 0, 'int');
+		$this->setState('filter.sorting', $sorting);
+
+		$search = $this->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
+		$this->setState('filter.search', $search);
+
+		$add_relationship = $this->getUserStateFromRequest($this->context . '.filter.add_relationship', 'filter_add_relationship');
+		$this->setState('filter.add_relationship', $add_relationship);
+
+		$name = $this->getUserStateFromRequest($this->context . '.filter.name', 'filter_name');
+		$this->setState('filter.name', $name);
 
 		// List state information.
 		parent::populateState($ordering, $direction);
@@ -137,12 +147,18 @@ class MembersmanagerModelTypes extends JModelList
 		// load parent items
 		$items = parent::getItems();
 
-		// set values to display correctly.
+		// Set values to display correctly.
 		if (MembersmanagerHelper::checkArray($items))
 		{
+			// Get the user object if not set.
+			if (!isset($user) || !MembersmanagerHelper::checkObject($user))
+			{
+				$user = JFactory::getUser();
+			}
 			foreach ($items as $nr => &$item)
 			{
-				$access = (JFactory::getUser()->authorise('type.access', 'com_membersmanager.type.' . (int) $item->id) && JFactory::getUser()->authorise('type.access', 'com_membersmanager'));
+				// Remove items the user can't access.
+				$access = ($user->authorise('type.access', 'com_membersmanager.type.' . (int) $item->id) && $user->authorise('type.access', 'com_membersmanager'));
 				if (!$access)
 				{
 					unset($items[$nr]);
@@ -153,41 +169,23 @@ class MembersmanagerModelTypes extends JModelList
 				$groups_targetArray = json_decode($item->groups_target, true);
 				if (MembersmanagerHelper::checkArray($groups_targetArray))
 				{
-					$groups_targetNames = '';
-					$counter = 0;
+					$groups_targetNames = array();
 					foreach ($groups_targetArray as $groups_target)
 					{
-						if ($counter == 0)
-						{
-							$groups_targetNames .= MembersmanagerHelper::getGroupName($groups_target);
-						}
-						else
-						{
-							$groups_targetNames .= ', '.MembersmanagerHelper::getGroupName($groups_target);
-						}
-						$counter++;
+						$groups_targetNames[] = MembersmanagerHelper::getGroupName($groups_target);
 					}
-					$item->groups_target = $groups_targetNames;
+					$item->groups_target =  implode(', ', $groups_targetNames);
 				}
 				// decode groups_access
 				$groups_accessArray = json_decode($item->groups_access, true);
 				if (MembersmanagerHelper::checkArray($groups_accessArray))
 				{
-					$groups_accessNames = '';
-					$counter = 0;
+					$groups_accessNames = array();
 					foreach ($groups_accessArray as $groups_access)
 					{
-						if ($counter == 0)
-						{
-							$groups_accessNames .= MembersmanagerHelper::getGroupName($groups_access);
-						}
-						else
-						{
-							$groups_accessNames .= ', '.MembersmanagerHelper::getGroupName($groups_access);
-						}
-						$counter++;
+						$groups_accessNames[] = MembersmanagerHelper::getGroupName($groups_access);
 					}
-					$item->groups_access = $groups_accessNames;
+					$item->groups_access =  implode(', ', $groups_accessNames);
 				}
 			}
 		}
@@ -264,9 +262,17 @@ class MembersmanagerModelTypes extends JModelList
 		$query->select('ag.title AS access_level');
 		$query->join('LEFT', '#__viewlevels AS ag ON ag.id = a.access');
 		// Filter by access level.
-		if ($access = $this->getState('filter.access'))
+		$_access = $this->getState('filter.access');
+		if ($_access && is_numeric($_access))
 		{
-			$query->where('a.access = ' . (int) $access);
+			$query->where('a.access = ' . (int) $_access);
+		}
+		elseif (MembersmanagerHelper::checkArray($_access))
+		{
+			// Secure the array for the query
+			$_access = ArrayHelper::toInteger($_access);
+			// Filter by the Access Array.
+			$query->where('a.access IN (' . implode(',', $_access) . ')');
 		}
 		// Implement View Level Access
 		if (!$user->authorise('core.options', 'com_membersmanager'))
@@ -290,14 +296,26 @@ class MembersmanagerModelTypes extends JModelList
 		}
 
 		// Filter by Add_relationship.
-		if ($add_relationship = $this->getState('filter.add_relationship'))
+		$_add_relationship = $this->getState('filter.add_relationship');
+		if (is_numeric($_add_relationship))
 		{
-			$query->where('a.add_relationship = ' . $db->quote($db->escape($add_relationship)));
+			if (is_float($_add_relationship))
+			{
+				$query->where('a.add_relationship = ' . (float) $_add_relationship);
+			}
+			else
+			{
+				$query->where('a.add_relationship = ' . (int) $_add_relationship);
+			}
+		}
+		elseif (MembersmanagerHelper::checkString($_add_relationship))
+		{
+			$query->where('a.add_relationship = ' . $db->quote($db->escape($_add_relationship)));
 		}
 
 		// Add the list ordering clause.
 		$orderCol = $this->state->get('list.ordering', 'a.id');
-		$orderDirn = $this->state->get('list.direction', 'asc');	
+		$orderDirn = $this->state->get('list.direction', 'desc');
 		if ($orderCol != '')
 		{
 			$query->order($db->escape($orderCol . ' ' . $orderDirn));
@@ -309,17 +327,23 @@ class MembersmanagerModelTypes extends JModelList
 	/**
 	 * Method to get list export data.
 	 *
+	 * @param   array  $pks  The ids of the items to get
+	 * @param   JUser  $user  The user making the request
+	 *
 	 * @return mixed  An array of data items on success, false on failure.
 	 */
-	public function getExportData($pks)
+	public function getExportData($pks, $user = null)
 	{
 		// setup the query
-		if (MembersmanagerHelper::checkArray($pks))
+		if (($pks_size = MembersmanagerHelper::checkArray($pks)) !== false || 'bulk' === $pks)
 		{
-			// Set a value to know this is exporting method.
+			// Set a value to know this is export method. (USE IN CUSTOM CODE TO ALTER OUTCOME)
 			$_export = true;
-			// Get the user object.
-			$user = JFactory::getUser();
+			// Get the user object if not set.
+			if (!isset($user) || !MembersmanagerHelper::checkObject($user))
+			{
+				$user = JFactory::getUser();
+			}
 			// Create a new query object.
 			$db = JFactory::getDBO();
 			$query = $db->getQuery(true);
@@ -329,7 +353,24 @@ class MembersmanagerModelTypes extends JModelList
 
 			// From the membersmanager_type table
 			$query->from($db->quoteName('#__membersmanager_type', 'a'));
-			$query->where('a.id IN (' . implode(',',$pks) . ')');
+			// The bulk export path
+			if ('bulk' === $pks)
+			{
+				$query->where('a.id > 0');
+			}
+			// A large array of ID's will not work out well
+			elseif ($pks_size > 500)
+			{
+				// Use lowest ID
+				$query->where('a.id >= ' . (int) min($pks));
+				// Use highest ID
+				$query->where('a.id <= ' . (int) max($pks));
+			}
+			// The normal default path
+			else
+			{
+				$query->where('a.id IN (' . implode(',',$pks) . ')');
+			}
 			// Implement View Level Access
 			if (!$user->authorise('core.options', 'com_membersmanager'))
 			{
@@ -347,12 +388,13 @@ class MembersmanagerModelTypes extends JModelList
 			{
 				$items = $db->loadObjectList();
 
-				// set values to display correctly.
+				// Set values to display correctly.
 				if (MembersmanagerHelper::checkArray($items))
 				{
 					foreach ($items as $nr => &$item)
 					{
-						$access = (JFactory::getUser()->authorise('type.access', 'com_membersmanager.type.' . (int) $item->id) && JFactory::getUser()->authorise('type.access', 'com_membersmanager'));
+						// Remove items the user can't access.
+						$access = ($user->authorise('type.access', 'com_membersmanager.type.' . (int) $item->id) && $user->authorise('type.access', 'com_membersmanager'));
 						if (!$access)
 						{
 							unset($items[$nr]);
@@ -416,11 +458,12 @@ class MembersmanagerModelTypes extends JModelList
 		$id .= ':' . $this->getState('filter.id');
 		$id .= ':' . $this->getState('filter.search');
 		$id .= ':' . $this->getState('filter.published');
+		$id .= ':' . $this->getState('filter.access');
 		$id .= ':' . $this->getState('filter.ordering');
 		$id .= ':' . $this->getState('filter.created_by');
 		$id .= ':' . $this->getState('filter.modified_by');
-		$id .= ':' . $this->getState('filter.name');
 		$id .= ':' . $this->getState('filter.add_relationship');
+		$id .= ':' . $this->getState('filter.name');
 
 		return parent::getStoreId($id);
 	}

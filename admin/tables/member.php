@@ -14,6 +14,8 @@
 defined('_JEXEC') or die('Restricted access');
 
 use Joomla\Registry\Registry;
+use Joomla\String\StringHelper;
+use Joomla\Utilities\ArrayHelper;
 
 /**
  * Members Table class
@@ -141,7 +143,7 @@ class MembersmanagerTableMember extends JTable
 
 			while ($table->load(array('alias' => $this->alias)) && ($table->id != $this->id || $this->id == 0))
 			{
-				$this->alias = JString::increment($this->alias, 'dash');
+				$this->alias = StringHelper::increment($this->alias, 'dash');
 			}
 		}
 		
@@ -156,7 +158,7 @@ class MembersmanagerTableMember extends JTable
 			$bad_characters = array("\n", "\r", "\"", "<", ">");
 
 			// Remove bad characters.
-			$after_clean = JString::str_ireplace($bad_characters, "", $this->metakey);
+			$after_clean = StringHelper::str_ireplace($bad_characters, "", $this->metakey);
 
 			// Create array using commas as delimiter.
 			$keys = explode(',', $after_clean);
@@ -180,7 +182,7 @@ class MembersmanagerTableMember extends JTable
 		{
 			// Only process if not empty
 			$bad_characters = array("\"", "<", ">");
-			$this->metadesc = JString::str_ireplace($bad_characters, "", $this->metadesc);
+			$this->metadesc = StringHelper::str_ireplace($bad_characters, "", $this->metadesc);
 		}
 
 		// If we don't have any access rules set at this point just use an empty JAccessRules class
@@ -219,7 +221,7 @@ class MembersmanagerTableMember extends JTable
 		$db->execute();
 		if ($db->loadRowList())
 		{
-			// asset alread set so use saved rules
+			// asset already set so use saved rules
 			$assetId = (int) $db->loadResult();
 			return JAccess::getAssetRules($assetId); // (TODO) instead of keeping inherited Allowed it becomes Allowed.
 		}

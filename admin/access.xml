@@ -51,6 +51,8 @@
 		<action name="member.version" title="COM_MEMBERSMANAGER_MEMBERS_EDIT_VERSION" description="COM_MEMBERSMANAGER_MEMBERS_EDIT_VERSION_DESC" />
 		<action name="member.export" title="COM_MEMBERSMANAGER_MEMBERS_EXPORT" description="COM_MEMBERSMANAGER_MEMBERS_EXPORT_DESC" />
 		<action name="member.import" title="COM_MEMBERSMANAGER_MEMBERS_IMPORT" description="COM_MEMBERSMANAGER_MEMBERS_IMPORT_DESC" />
+		<action name="member.privacy.access" title="COM_MEMBERSMANAGER_MEMBERS_PRIVACY_ACCESS" description="COM_MEMBERSMANAGER_MEMBERS_PRIVACY_ACCESS_DESC" />
+		<action name="member.privacy.delete" title="COM_MEMBERSMANAGER_MEMBERS_PRIVACY_DELETE" description="COM_MEMBERSMANAGER_MEMBERS_PRIVACY_DELETE_DESC" />
 		<action name="member.submenu" title="COM_MEMBERSMANAGER_MEMBERS_SUBMENU" description="COM_MEMBERSMANAGER_MEMBERS_SUBMENU_DESC" />
 		<action name="member.view.account" title="COM_MEMBERSMANAGER_MEMBERS_VIEW_ACCOUNT" description="COM_MEMBERSMANAGER_MEMBERS_VIEW_ACCOUNT_DESC" />
 		<action name="member.view.email" title="COM_MEMBERSMANAGER_MEMBERS_VIEW_EMAIL" description="COM_MEMBERSMANAGER_MEMBERS_VIEW_EMAIL_DESC" />
@@ -99,6 +101,8 @@
 		<action name="member.create" title="COM_MEMBERSMANAGER_MEMBERS_CREATE" description="COM_MEMBERSMANAGER_MEMBERS_CREATE_DESC" />
 		<action name="member.delete" title="COM_MEMBERSMANAGER_MEMBERS_DELETE" description="COM_MEMBERSMANAGER_MEMBERS_DELETE_DESC" />
 		<action name="member.access" title="COM_MEMBERSMANAGER_MEMBERS_ACCESS" description="COM_MEMBERSMANAGER_MEMBERS_ACCESS_DESC" />
+		<action name="member.privacy.delete" title="COM_MEMBERSMANAGER_MEMBERS_PRIVACY_DELETE" description="COM_MEMBERSMANAGER_MEMBERS_PRIVACY_DELETE_DESC" />
+		<action name="member.privacy.access" title="COM_MEMBERSMANAGER_MEMBERS_PRIVACY_ACCESS" description="COM_MEMBERSMANAGER_MEMBERS_PRIVACY_ACCESS_DESC" />
 		<action name="member.edit.name" title="COM_MEMBERSMANAGER_MEMBERS_EDIT_NAME" description="COM_MEMBERSMANAGER_MEMBERS_EDIT_NAME_DESC" />
 		<action name="member.view.name" title="COM_MEMBERSMANAGER_MEMBERS_VIEW_NAME" description="COM_MEMBERSMANAGER_MEMBERS_VIEW_NAME_DESC" />
 		<action name="member.edit.email" title="COM_MEMBERSMANAGER_MEMBERS_EDIT_EMAIL" description="COM_MEMBERSMANAGER_MEMBERS_EDIT_EMAIL_DESC" />

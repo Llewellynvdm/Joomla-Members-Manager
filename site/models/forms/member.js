@@ -13,7 +13,6 @@
 jform_vvvvvvvvvv_required = false;
 jform_vvvvvvwvvw_required = false;
 jform_vvvvvvwvvx_required = false;
-jform_vvvvvvxvvy_required = false;
 
 // Initial Script
 jQuery(document).ready(function()
@@ -186,28 +185,10 @@ function vvvvvvx(account_vvvvvvx)
 	if (account)
 	{
 		jQuery('#jform_email').closest('.control-group').show();
-		// add required attribute to email field
-		if (jform_vvvvvvxvvy_required)
-		{
-			updateFieldRequired('email',0);
-			jQuery('#jform_email').prop('required','required');
-			jQuery('#jform_email').attr('aria-required',true);
-			jQuery('#jform_email').addClass('required');
-			jform_vvvvvvxvvy_required = false;
-		}
 	}
 	else
 	{
 		jQuery('#jform_email').closest('.control-group').hide();
-		// remove required attribute from email field
-		if (!jform_vvvvvvxvvy_required)
-		{
-			updateFieldRequired('email',1);
-			jQuery('#jform_email').removeAttr('required');
-			jQuery('#jform_email').removeAttr('aria-required');
-			jQuery('#jform_email').removeClass('required');
-			jform_vvvvvvxvvy_required = true;
-		}
 	}
 }
 
@@ -222,31 +203,46 @@ function account_vvvvvvx_SomeFunc(account_vvvvvvx)
 	return false;
 }
 
-// update required fields
-function updateFieldRequired(name,status)
-{
-	var not_required = jQuery('#jform_not_required').val();
+// update fields required
+function updateFieldRequired(name, status) {
+	// check if not_required exist
+	if (jQuery('#jform_not_required').length > 0) {
+		var not_required = jQuery('#jform_not_required').val().split(",");
 
-	if(status == 1)
-	{
-		if (isSet(not_required) && not_required != 0)
+		if(status == 1)
 		{
-			not_required = not_required+','+name;
+			not_required.push(name);
 		}
 		else
 		{
-			not_required = ','+name;
+			not_required = removeFieldFromNotRequired(not_required, name);
 		}
-	}
-	else
-	{
-		if (isSet(not_required) && not_required != 0)
-		{
-			not_required = not_required.replace(','+name,'');
-		}
-	}
 
-	jQuery('#jform_not_required').val(not_required);
+		jQuery('#jform_not_required').val(fixNotRequiredArray(not_required).toString());
+	}
+}
+
+// remove field from not_required
+function removeFieldFromNotRequired(array, what) {
+	return array.filter(function(element){
+		return element !== what;
+	});
+}
+
+// fix not required array
+function fixNotRequiredArray(array) {
+	var seen = {};
+	return removeEmptyFromNotRequiredArray(array).filter(function(item) {
+		return seen.hasOwnProperty(item) ? false : (seen[item] = true);
+	});
+}
+
+// remove empty from not_required array
+function removeEmptyFromNotRequiredArray(array) {
+	return array.filter(function (el) {
+		// remove ( 一_一) as well - lol
+		return (el.length > 0 && '一_一' !== el);
+	});
 }
 
 // the isSet function
@@ -261,14 +257,18 @@ function isSet(val)
 
 jQuery(document).ready(function($)
 {
-	var tokenValue = jQuery('#jform_token').val();
-	// check if this token value is used
-	checkUnique(tokenValue, 'token', 0);
+	if( jQuery('#jform_token').length ){
+		var tokenValue = jQuery('#jform_token').val();
+		// check if this token value is used
+		checkUnique(tokenValue, 'token', 0);
+	}
 	// load the profile image if it is set
-	var profile = $('#jform_profile_image').val();
-	if (profile.length > 20)
-	{
-		setFile(profile, false, 'profile', 'image')
+	if( jQuery('#jform_profile_image').length ){
+		var profile = $('#jform_profile_image').val();
+		if (profile.length > 20)
+		{
+			setFile(profile, false, 'profile', 'image')
+		}
 	}
 });
 function getUserDetails(user){
@@ -303,12 +303,12 @@ function setUserDetails(result){
 
 function setFilekey(filename, fileFormat, target, type){
 	var currentFileName = jQuery("#jform_"+target+"_"+type).val();
-	if (currentFileName.length > 20 && (type === 'image' || type === 'document')){
+	if (currentFileName.length > 20 && (type === 'image' || type === 'document' || type === 'file')){
 		// remove file from server
 		removeFile_server(currentFileName, target, 2, type);
 	}
 	// set new key
-	if ((filename.length > 20 && (type === 'image' || type === 'document')) || (isJsonString(filename) && (type === 'images' || type === 'documents' || type === 'media'))){
+	if ((filename.length > 20 && (type === 'image' || type === 'document' || type === 'file')) || (isJsonString(filename) && (type === 'images' || type === 'documents' || type === 'media'))){
 		if((type === 'images' || type === 'documents' || type === 'media') && jQuery("#jform_id").val() == 0 && isJsonString(currentFileName)) {
 			var newA = jQuery.parseJSON(currentFileName);
 			var newB = jQuery.parseJSON(filename);
@@ -316,15 +316,15 @@ function setFilekey(filename, fileFormat, target, type){
 		}
 		jQuery("#jform_"+target+"_"+type).val(filename);
 		// set the FILE
-		return setFile(filename, fileFormat, target, type);
+		return setFile(filename, fileFormat, target, type, true);
 	}
 	return false;
 }
 
-function setFile(filename, fileFormat, target, type){
-	if (type === 'image' || type === 'document') {
+function setFile(filename, fileFormat, target, type, updateName){
+	if (type === 'image' || type === 'document'  || type === 'file') {
 		if (!target) {
-			target = filename.split('_')[0];
+			target = filename.split('_')[0].trimLeft('.');
 		}
 		if (!type) {
 			type = filename.split('_')[1];
@@ -333,6 +333,11 @@ function setFile(filename, fileFormat, target, type){
 			fileFormat = filename.split('_')[2];
 		}
 		var isAre = 'is';
+		// if we have a file then we must update the name with the file name
+		if (updateName && type === 'file' && filename.length > 20) {
+			jQuery('#jform_name').val(filename.split('VDM')[1]+'.'+fileFormat);
+			jQuery('#jform_alias').val('');
+		}
 	} else if ((type === 'images' || type === 'documents' || type === 'media') && isJsonString(filename) ) {
 		filename = jQuery.parseJSON(filename);
 		if (!target) {
@@ -346,12 +351,17 @@ function setFile(filename, fileFormat, target, type){
 		return false;
 	}
 	// set icon
-	if (type === 'images' || type === 'image') {
-		var icon = 'file-image-o';
+	if (typeof file_vector_style_abr !== 'undefined'  && fileFormat){
+		var icon = 'fiv-' + file_vector_style_abr + ' fiv-icon-' + fileFormat + ' fiv-size-lg';
+		var thenotice = '<div class="success-'+target+'-'+type+'-8768"><div class="uk-alert uk-alert-success" data-uk-alert><p class="uk-text-center"><span class="uk-text-bold uk-text-large"><span class="'+icon+'"></span><br />Your '+target+' '+type+' '+isAre+' set </span> </p></div>';
 	} else {
-		var icon = 'file';
+		if (type === 'images' || type === 'image') {
+			var icon = 'uk-icon-file-image-o';
+		} else {
+			var icon = 'uk-icon-file';
+		}
+		var thenotice = '<div class="success-'+target+'-'+type+'-8768"><div class="uk-alert uk-alert-success" data-uk-alert><p class="uk-text-center"><span class="uk-text-bold uk-text-large"><i class="'+icon+'"></i> Your '+target+' '+type+' '+isAre+' set </span> </p></div>';
 	}
-	var thenotice = '<div class="success-'+target+'-'+type+'-8768"><div class="uk-alert uk-alert-success" data-uk-alert><p class="uk-text-center"><span class="uk-text-bold uk-text-large"><i class="uk-icon-'+icon+'"></i> Your '+target+' '+type+' '+isAre+' set </span> </p></div>';
 	var thefile = getFile(filename, fileFormat, target, type);
 	jQuery("."+target+"_"+type+"_uploader").append(thenotice+thefile);
 	// all is done
@@ -367,13 +377,13 @@ function removeFileCheck(clearServer, target, type, uiVer){
 }
 
 function removeFile(clearServer, target, flush, type){
-	if ((clearServer.length > 20 && (type === 'image' || type === 'document')) || (clearServer.length > 1 && (type === 'images' || type === 'documents' || type === 'media'))){
+	if ((clearServer.length > 20 && (type === 'image' || type === 'document' || type === 'file')) || (clearServer.length > 1 && (type === 'images' || type === 'documents' || type === 'media'))){
 		// remove file from server
 		removeFile_server(clearServer, target, flush, type);
 	}
 	jQuery(".success-"+target+"-"+type+"-8768").remove();	
 	// remove locally 
-	if (clearServer.length > 20 && (type === 'image' || type === 'document')) {
+	if (clearServer.length > 20 && (type === 'image' || type === 'document' || type === 'file')) {
 		// remove the file
 		jQuery("#jform_"+target+"_"+type).val('');
 	} else if (clearServer.length > 20 && (type === 'images' || type === 'documents' || type === 'media')) {

@@ -78,10 +78,7 @@ class MembersmanagerViewMember extends JViewLegacy
 	 * Setting the toolbar
 	 */
 	protected function addToolBar()
-	{
-		// adding the joomla edit toolbar to the front
-		JLoader::register('JToolbarHelper', JPATH_ADMINISTRATOR.'/includes/toolbar.php');
-		JFactory::getApplication()->input->set('hidemainmenu', true);
+	{JFactory::getApplication()->input->set('hidemainmenu', true);
 		$user = JFactory::getUser();
 		$userId	= $user->id;
 		$isNew = $this->item->id == 0;

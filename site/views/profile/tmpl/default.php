@@ -13,6 +13,8 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
+
+
 JHtml::_('bootstrap.modal');
 // check if this was directed here from a list view of member manager
 $return_to = $this->app->input->get('return', null, 'base64');
@@ -20,7 +22,6 @@ if (!is_null($return_to) && \JUri::isInternal(base64_decode($return_to)))
 {
 	$return_to = base64_decode($return_to);
 }
-
 ?>
 
 <?php if ($this->user->id > 0 || 2 == $this->params->get('login_required', 1)): ?>
@@ -79,7 +80,7 @@ if (!is_null($return_to) && \JUri::isInternal(base64_decode($return_to)))
 ?>
 function JRouter(link) {
 <?php
-	if ($app->isSite())
+	if ($app->isClient('site'))
 	{
 		echo 'var url = "'.JURI::root().'";';
 	}

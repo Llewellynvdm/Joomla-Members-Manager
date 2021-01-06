@@ -17,14 +17,54 @@ defined('_JEXEC') or die('Restricted access');
 <div class="uk-grid">
 	<?php if ($this->searchForm && $this->user->authorise('member.create', 'com_membersmanager')): ?>
 		<div class="uk-width-medium-1-2">
+			<?php if (MembersmanagerHelper::checkArray($this->cpanelAboveSearchModules)): ?>
+				<?php foreach($this->cpanelAboveSearchModules as $module): ?>
+					<?php echo JLayoutHelper::render('panelbox', $module); ?>
+				<?php endforeach; ?>
+			<?php endif; ?>
 			<?php echo JLayoutHelper::render('cpanel_search_form', $this->searchForm); ?>
+			<?php if (MembersmanagerHelper::checkArray($this->cpanelBelowSearchModules)): ?>
+				<?php foreach($this->cpanelBelowSearchModules as $module): ?>
+					<?php echo JLayoutHelper::render('panelbox', $module); ?>
+				<?php endforeach; ?>
+			<?php endif; ?>
 		</div>
 		<div class="uk-width-medium-1-2">
+			<?php if (MembersmanagerHelper::checkArray($this->cpanelAboveCreateButtonModules)): ?>
+				<?php foreach($this->cpanelAboveCreateButtonModules as $module): ?>
+					<?php echo JLayoutHelper::render('panelbox', $module); ?>
+				<?php endforeach; ?>
+			<?php endif; ?>
 			<?php echo JLayoutHelper::render('cpanel_uikit_two_buttons', true) ?>
+			<?php if (MembersmanagerHelper::checkArray($this->cpanelBelowCreateButtonModules)): ?>
+				<?php foreach($this->cpanelBelowCreateButtonModules as $module): ?>
+					<?php echo JLayoutHelper::render('panelbox', $module); ?>
+				<?php endforeach; ?>
+			<?php endif; ?>
 		</div>
 	<?php elseif ($this->searchForm): ?>
+		<?php if (MembersmanagerHelper::checkArray($this->cpanelAboveSearchModules)): ?>
+			<?php foreach($this->cpanelAboveSearchModules as $module): ?>
+				<?php echo JLayoutHelper::render('panelbox', $module); ?>
+			<?php endforeach; ?>
+		<?php endif; ?>
 		<?php echo JLayoutHelper::render('cpanel_search_form', $this->searchForm); ?>
+		<?php if (MembersmanagerHelper::checkArray($this->cpanelBelowSearchModules)): ?>
+			<?php foreach($this->cpanelBelowSearchModules as $module): ?>
+				<?php echo JLayoutHelper::render('panelbox', $module); ?>
+			<?php endforeach; ?>
+		<?php endif; ?>
 	<?php elseif ($this->user->authorise('member.create', 'com_membersmanager')): ?>
+		<?php if (MembersmanagerHelper::checkArray($this->cpanelAboveCreateButtonModules)): ?>
+			<?php foreach($this->cpanelAboveCreateButtonModules as $module): ?>
+				<?php echo JLayoutHelper::render('panelbox', $module); ?>
+			<?php endforeach; ?>
+		<?php endif; ?>
 		<?php echo JLayoutHelper::render('cpanel_uikit_two_buttons', true) ?>
+		<?php if (MembersmanagerHelper::checkArray($this->cpanelBelowCreateButtonModules)): ?>
+			<?php foreach($this->cpanelBelowCreateButtonModules as $module): ?>
+				<?php echo JLayoutHelper::render('panelbox', $module); ?>
+			<?php endforeach; ?>
+		<?php endif; ?>
 	<?php endif; ?>
 </div>

@@ -13,6 +13,8 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\Utilities\ArrayHelper;
+
 /**
  * Members Model
  */
@@ -25,6 +27,7 @@ class MembersmanagerModelMembers extends JModelList
 			$config['filter_fields'] = array(
 				'a.id','id',
 				'a.published','published',
+				'a.access','access',
 				'a.ordering','ordering',
 				'a.created_by','created_by',
 				'a.modified_by','modified_by',
@@ -228,11 +231,17 @@ class MembersmanagerModelMembers extends JModelList
 		return false;
 	}
 
-	
+
 	/**
 	 * Method to auto-populate the model state.
 	 *
+	 * Note. Calling getState in this method will result in recursion.
+	 *
+	 * @param   string  $ordering   An optional ordering field.
+	 * @param   string  $direction  An optional direction (asc|desc).
+	 *
 	 * @return  void
+	 *
 	 */
 	protected function populateState($ordering = null, $direction = null)
 	{
@@ -243,26 +252,27 @@ class MembersmanagerModelMembers extends JModelList
 		{
 			$this->context .= '.' . $layout;
 		}
-		$account = $this->getUserStateFromRequest($this->context . '.filter.account', 'filter_account');
-		$this->setState('filter.account', $account);
-        
-		$sorting = $this->getUserStateFromRequest($this->context . '.filter.sorting', 'filter_sorting', 0, 'int');
-		$this->setState('filter.sorting', $sorting);
-        
+
 		$access = $this->getUserStateFromRequest($this->context . '.filter.access', 'filter_access', 0, 'int');
 		$this->setState('filter.access', $access);
-        
-		$search = $this->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
-		$this->setState('filter.search', $search);
 
 		$published = $this->getUserStateFromRequest($this->context . '.filter.published', 'filter_published', '');
 		$this->setState('filter.published', $published);
-        
+
 		$created_by = $this->getUserStateFromRequest($this->context . '.filter.created_by', 'filter_created_by', '');
 		$this->setState('filter.created_by', $created_by);
 
 		$created = $this->getUserStateFromRequest($this->context . '.filter.created', 'filter_created');
 		$this->setState('filter.created', $created);
+
+		$sorting = $this->getUserStateFromRequest($this->context . '.filter.sorting', 'filter_sorting', 0, 'int');
+		$this->setState('filter.sorting', $sorting);
+
+		$search = $this->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
+		$this->setState('filter.search', $search);
+
+		$account = $this->getUserStateFromRequest($this->context . '.filter.account', 'filter_account');
+		$this->setState('filter.account', $account);
 
 		// List state information.
 		parent::populateState($ordering, $direction);
@@ -281,12 +291,18 @@ class MembersmanagerModelMembers extends JModelList
 		// load parent items
 		$items = parent::getItems();
 
-		// set values to display correctly.
+		// Set values to display correctly.
 		if (MembersmanagerHelper::checkArray($items))
 		{
+			// Get the user object if not set.
+			if (!isset($user) || !MembersmanagerHelper::checkObject($user))
+			{
+				$user = JFactory::getUser();
+			}
 			foreach ($items as $nr => &$item)
 			{
-				$access = (JFactory::getUser()->authorise('member.access', 'com_membersmanager.member.' . (int) $item->id) && JFactory::getUser()->authorise('member.access', 'com_membersmanager'));
+				// Remove items the user can't access.
+				$access = ($user->authorise('member.access', 'com_membersmanager.member.' . (int) $item->id) && $user->authorise('member.access', 'com_membersmanager'));
 				if (!$access)
 				{
 					unset($items[$nr]);
@@ -294,14 +310,14 @@ class MembersmanagerModelMembers extends JModelList
 				}
 
 				// if linked to user get active name
-				if ($item->user > 0 && isset($item->user_name))
+				if (isset($item->user) && is_numeric($item->user) && $item->user > 0 && isset($item->user_name))
 				{
 					$item->name = $item->user_name;
 				}
 				// always add surname
 				$item->name = $item->name . ' ' . $item->surname;
 				// if linked to user get active name
-				if ($item->user > 0)
+				if (isset($item->user) && is_numeric($item->user) && $item->user > 0)
 				{
 					$item->email = JFactory::getUser($item->user)->email;
 				}
@@ -406,9 +422,17 @@ class MembersmanagerModelMembers extends JModelList
 		$query->select('ag.title AS access_level');
 		$query->join('LEFT', '#__viewlevels AS ag ON ag.id = a.access');
 		// Filter by access level.
-		if ($access = $this->getState('filter.access'))
+		$_access = $this->getState('filter.access');
+		if ($_access && is_numeric($_access))
 		{
-			$query->where('a.access = ' . (int) $access);
+			$query->where('a.access = ' . (int) $_access);
+		}
+		elseif (MembersmanagerHelper::checkArray($_access))
+		{
+			// Secure the array for the query
+			$_access = ArrayHelper::toInteger($_access);
+			// Filter by the Access Array.
+			$query->where('a.access IN (' . implode(',', $_access) . ')');
 		}
 		// Implement View Level Access
 		if (!$user->authorise('core.options', 'com_membersmanager'))
@@ -432,14 +456,26 @@ class MembersmanagerModelMembers extends JModelList
 		}
 
 		// Filter by Account.
-		if ($account = $this->getState('filter.account'))
+		$_account = $this->getState('filter.account');
+		if (is_numeric($_account))
 		{
-			$query->where('a.account = ' . $db->quote($db->escape($account)));
+			if (is_float($_account))
+			{
+				$query->where('a.account = ' . (float) $_account);
+			}
+			else
+			{
+				$query->where('a.account = ' . (int) $_account);
+			}
+		}
+		elseif (MembersmanagerHelper::checkString($_account))
+		{
+			$query->where('a.account = ' . $db->quote($db->escape($_account)));
 		}
 
 		// Add the list ordering clause.
 		$orderCol = $this->state->get('list.ordering', 'a.id');
-		$orderDirn = $this->state->get('list.direction', 'asc');	
+		$orderDirn = $this->state->get('list.direction', 'desc');
 		if ($orderCol != '')
 		{
 			$query->order($db->escape($orderCol . ' ' . $orderDirn));
@@ -451,17 +487,23 @@ class MembersmanagerModelMembers extends JModelList
 	/**
 	 * Method to get list export data.
 	 *
+	 * @param   array  $pks  The ids of the items to get
+	 * @param   JUser  $user  The user making the request
+	 *
 	 * @return mixed  An array of data items on success, false on failure.
 	 */
-	public function getExportData($pks)
+	public function getExportData($pks, $user = null)
 	{
 		// setup the query
-		if (MembersmanagerHelper::checkArray($pks))
+		if (($pks_size = MembersmanagerHelper::checkArray($pks)) !== false || 'bulk' === $pks)
 		{
-			// Set a value to know this is exporting method.
+			// Set a value to know this is export method. (USE IN CUSTOM CODE TO ALTER OUTCOME)
 			$_export = true;
-			// Get the user object.
-			$user = JFactory::getUser();
+			// Get the user object if not set.
+			if (!isset($user) || !MembersmanagerHelper::checkObject($user))
+			{
+				$user = JFactory::getUser();
+			}
 			// Create a new query object.
 			$db = JFactory::getDBO();
 			$query = $db->getQuery(true);
@@ -471,7 +513,24 @@ class MembersmanagerModelMembers extends JModelList
 
 			// From the membersmanager_member table
 			$query->from($db->quoteName('#__membersmanager_member', 'a'));
-			$query->where('a.id IN (' . implode(',',$pks) . ')');
+			// The bulk export path
+			if ('bulk' === $pks)
+			{
+				$query->where('a.id > 0');
+			}
+			// A large array of ID's will not work out well
+			elseif ($pks_size > 500)
+			{
+				// Use lowest ID
+				$query->where('a.id >= ' . (int) min($pks));
+				// Use highest ID
+				$query->where('a.id <= ' . (int) max($pks));
+			}
+			// The normal default path
+			else
+			{
+				$query->where('a.id IN (' . implode(',',$pks) . ')');
+			}
 			// Implement View Level Access
 			if (!$user->authorise('core.options', 'com_membersmanager'))
 			{
@@ -494,12 +553,13 @@ class MembersmanagerModelMembers extends JModelList
 				// Get the encryption object.
 				$medium = new FOFEncryptAes($mediumkey);
 
-				// set values to display correctly.
+				// Set values to display correctly.
 				if (MembersmanagerHelper::checkArray($items))
 				{
 					foreach ($items as $nr => &$item)
 					{
-						$access = (JFactory::getUser()->authorise('member.access', 'com_membersmanager.member.' . (int) $item->id) && JFactory::getUser()->authorise('member.access', 'com_membersmanager'));
+						// Remove items the user can't access.
+						$access = ($user->authorise('member.access', 'com_membersmanager.member.' . (int) $item->id) && $user->authorise('member.access', 'com_membersmanager'));
 						if (!$access)
 						{
 							unset($items[$nr]);
@@ -507,14 +567,14 @@ class MembersmanagerModelMembers extends JModelList
 						}
 
 						// if linked to user get active name
-						if ($item->user > 0 && isset($item->user_name))
+						if (isset($item->user) && is_numeric($item->user) && $item->user > 0 && isset($item->user_name))
 						{
 							$item->name = $item->user_name;
 						}
 						// always add surname
 						$item->name = $item->name . ' ' . $item->surname;
 						// if linked to user get active name
-						if ($item->user > 0)
+						if (isset($item->user) && is_numeric($item->user) && $item->user > 0)
 						{
 							$item->email = JFactory::getUser($item->user)->email;
 						}
@@ -577,6 +637,303 @@ class MembersmanagerModelMembers extends JModelList
 		}
 		return false;
 	}
+
+	/**
+	 * Method to get data during an export request.
+	 *
+	 * @param   array  $pks  The ids of the items to get
+	 * @param   JUser  $user  The user making the request
+	 *
+	 * @return mixed  An array of data items on success, false on failure.
+	 */
+	public function getPrivacyExport($pks, $user = null)
+	{
+		// setup the query
+		if (($pks_size = MembersmanagerHelper::checkArray($pks)) !== false || 'bulk' === $pks)
+		{
+			// Set a value to know this is privacy method. (USE IN CUSTOM CODE TO ALTER OUTCOME)
+			$_privacy = true;
+			// Get the user object if not set.
+			if (!isset($user) || !MembersmanagerHelper::checkObject($user))
+			{
+				$user = JFactory::getUser();
+			}
+			// Create a new query object.
+			$db = JFactory::getDBO();
+			$query = $db->getQuery(true);
+
+			// Select some fields
+			$query->select('a.*');
+
+			// From the membersmanager_member table
+			$query->from($db->quoteName('#__membersmanager_member', 'a'));
+			// The bulk export path
+			if ('bulk' === $pks)
+			{
+				$query->where('a.id > 0');
+			}
+			// A large array of ID's will not work out well
+			elseif ($pks_size > 500)
+			{
+				// Use lowest ID
+				$query->where('a.id >= ' . (int) min($pks));
+				// Use highest ID
+				$query->where('a.id <= ' . (int) max($pks));
+			}
+			// The normal default path
+			else
+			{
+				$query->where('a.id IN (' . implode(',',$pks) . ')');
+			}
+			// Get global switch to activate text only export
+			$export_text_only = JComponentHelper::getParams('com_membersmanager')->get('export_text_only', 0);
+			// Add these queries only if text only is required
+			if ($export_text_only)
+			{
+
+				// From the users table.
+				$query->select($db->quoteName('g.name','user'));
+				$query->join('LEFT', $db->quoteName('#__users', 'g') . ' ON (' . $db->quoteName('a.user') . ' = ' . $db->quoteName('g.id') . ')');
+
+				// From the membersmanager_member table.
+				$query->select($db->quoteName('h.user','main_member'));
+				$query->join('LEFT', $db->quoteName('#__membersmanager_member', 'h') . ' ON (' . $db->quoteName('a.main_member') . ' = ' . $db->quoteName('h.id') . ')');
+
+				// From the membersmanager_type table.
+				$query->select($db->quoteName('i.name','type'));
+				$query->join('LEFT', $db->quoteName('#__membersmanager_type', 'i') . ' ON (' . $db->quoteName('a.type') . ' = ' . $db->quoteName('i.id') . ')');
+			}
+			// Implement View Level Access
+			if (!$user->authorise('core.options', 'com_membersmanager'))
+			{
+				$groups = implode(',', $user->getAuthorisedViewLevels());
+				$query->where('a.access IN (' . $groups . ')');
+			}
+
+			// Order the results by ordering
+			$query->order('a.ordering  ASC');
+
+			// Load the items
+			$db->setQuery($query);
+			$db->execute();
+			if ($db->getNumRows())
+			{
+				$items = $db->loadObjectList();
+
+				// Get the medium encryption key.
+				$mediumkey = MembersmanagerHelper::getCryptKey('medium');
+				// Get the encryption object.
+				$medium = new FOFEncryptAes($mediumkey);
+
+				// Set values to display correctly.
+				if (MembersmanagerHelper::checkArray($items))
+				{
+					// Get the user object if not set.
+					if (!isset($user) || !MembersmanagerHelper::checkObject($user))
+					{
+						$user = JFactory::getUser();
+					}
+					// Get global permissional control activation. (default is inactive)
+					$strict_permission_per_field = JComponentHelper::getParams('com_membersmanager')->get('strict_permission_per_field', 0);
+
+					foreach ($items as $nr => &$item)
+					{
+						// Remove items the user can't access.
+						$access = ($user->authorise('member.access', 'com_membersmanager.member.' . (int) $item->id) && $user->authorise('member.access', 'com_membersmanager'));
+						if (!$access)
+						{
+							unset($items[$nr]);
+							continue;
+						}
+
+						// use permissional control if globally set.
+						if ($strict_permission_per_field)
+						{
+							// set view permissional control for name value.
+							if (isset($item->name) && (!$user->authorise('member.view.name', 'com_membersmanager.member.' . (int) $item->id)
+								|| !$user->authorise('member.view.name', 'com_membersmanager')))
+							{
+								// We JUST empty the value (do you have a better idea)
+								$item->name = '';
+							}
+							// set access permissional control for email value.
+							if (isset($item->email) && (!$user->authorise('member.access.email', 'com_membersmanager.member.' . (int) $item->id)
+								|| !$user->authorise('member.access.email', 'com_membersmanager')))
+							{
+								// We JUST empty the value (do you have a better idea)
+								$item->email = '';
+							}
+							// set view permissional control for email value.
+							if (isset($item->email) && (!$user->authorise('member.view.email', 'com_membersmanager.member.' . (int) $item->id)
+								|| !$user->authorise('member.view.email', 'com_membersmanager')))
+							{
+								// We JUST empty the value (do you have a better idea)
+								$item->email = '';
+							}
+							// set view permissional control for account value.
+							if (isset($item->account) && (!$user->authorise('member.view.account', 'com_membersmanager.member.' . (int) $item->id)
+								|| !$user->authorise('member.view.account', 'com_membersmanager')))
+							{
+								// We JUST empty the value (do you have a better idea)
+								$item->account = '';
+							}
+							// set view permissional control for user value.
+							if (isset($item->user) && (!$user->authorise('member.view.user', 'com_membersmanager.member.' . (int) $item->id)
+								|| !$user->authorise('member.view.user', 'com_membersmanager')))
+							{
+								// We JUST empty the value (do you have a better idea)
+								$item->user = '';
+							}
+							// set view permissional control for token value.
+							if (isset($item->token) && (!$user->authorise('member.view.token', 'com_membersmanager.member.' . (int) $item->id)
+								|| !$user->authorise('member.view.token', 'com_membersmanager')))
+							{
+								// We JUST empty the value (do you have a better idea)
+								$item->token = '';
+							}
+							// set access permissional control for profile_image value.
+							if (isset($item->profile_image) && (!$user->authorise('member.access.profile_image', 'com_membersmanager.member.' . (int) $item->id)
+								|| !$user->authorise('member.access.profile_image', 'com_membersmanager')))
+							{
+								// We JUST empty the value (do you have a better idea)
+								$item->profile_image = '';
+							}
+							// set view permissional control for profile_image value.
+							if (isset($item->profile_image) && (!$user->authorise('member.view.profile_image', 'com_membersmanager.member.' . (int) $item->id)
+								|| !$user->authorise('member.view.profile_image', 'com_membersmanager')))
+							{
+								// We JUST empty the value (do you have a better idea)
+								$item->profile_image = '';
+							}
+							// set view permissional control for main_member value.
+							if (isset($item->main_member) && (!$user->authorise('member.view.main_member', 'com_membersmanager.member.' . (int) $item->id)
+								|| !$user->authorise('member.view.main_member', 'com_membersmanager')))
+							{
+								// We JUST empty the value (do you have a better idea)
+								$item->main_member = '';
+							}
+							// set access permissional control for password_check value.
+							if (isset($item->password_check) && (!$user->authorise('member.access.password_check', 'com_membersmanager.member.' . (int) $item->id)
+								|| !$user->authorise('member.access.password_check', 'com_membersmanager')))
+							{
+								// We JUST empty the value (do you have a better idea)
+								$item->password_check = '';
+							}
+							// set view permissional control for password_check value.
+							if (isset($item->password_check) && (!$user->authorise('member.view.password_check', 'com_membersmanager.member.' . (int) $item->id)
+								|| !$user->authorise('member.view.password_check', 'com_membersmanager')))
+							{
+								// We JUST empty the value (do you have a better idea)
+								$item->password_check = '';
+							}
+							// set access permissional control for password value.
+							if (isset($item->password) && (!$user->authorise('member.access.password', 'com_membersmanager.member.' . (int) $item->id)
+								|| !$user->authorise('member.access.password', 'com_membersmanager')))
+							{
+								// We JUST empty the value (do you have a better idea)
+								$item->password = '';
+							}
+							// set view permissional control for password value.
+							if (isset($item->password) && (!$user->authorise('member.view.password', 'com_membersmanager.member.' . (int) $item->id)
+								|| !$user->authorise('member.view.password', 'com_membersmanager')))
+							{
+								// We JUST empty the value (do you have a better idea)
+								$item->password = '';
+							}
+							// set access permissional control for useremail value.
+							if (isset($item->useremail) && (!$user->authorise('member.access.useremail', 'com_membersmanager.member.' . (int) $item->id)
+								|| !$user->authorise('member.access.useremail', 'com_membersmanager')))
+							{
+								// We JUST empty the value (do you have a better idea)
+								$item->useremail = '';
+							}
+							// set view permissional control for useremail value.
+							if (isset($item->useremail) && (!$user->authorise('member.view.useremail', 'com_membersmanager.member.' . (int) $item->id)
+								|| !$user->authorise('member.view.useremail', 'com_membersmanager')))
+							{
+								// We JUST empty the value (do you have a better idea)
+								$item->useremail = '';
+							}
+							// set access permissional control for username value.
+							if (isset($item->username) && (!$user->authorise('member.access.username', 'com_membersmanager.member.' . (int) $item->id)
+								|| !$user->authorise('member.access.username', 'com_membersmanager')))
+							{
+								// We JUST empty the value (do you have a better idea)
+								$item->username = '';
+							}
+							// set view permissional control for username value.
+							if (isset($item->username) && (!$user->authorise('member.view.username', 'com_membersmanager.member.' . (int) $item->id)
+								|| !$user->authorise('member.view.username', 'com_membersmanager')))
+							{
+								// We JUST empty the value (do you have a better idea)
+								$item->username = '';
+							}
+							// set view permissional control for surname value.
+							if (isset($item->surname) && (!$user->authorise('member.view.surname', 'com_membersmanager.member.' . (int) $item->id)
+								|| !$user->authorise('member.view.surname', 'com_membersmanager')))
+							{
+								// We JUST empty the value (do you have a better idea)
+								$item->surname = '';
+							}
+							// set view permissional control for type value.
+							if (isset($item->type) && (!$user->authorise('member.view.type', 'com_membersmanager.member.' . (int) $item->id)
+								|| !$user->authorise('member.view.type', 'com_membersmanager')))
+							{
+								// We JUST empty the value (do you have a better idea)
+								$item->type = '';
+							}
+						}
+						// if linked to user get active name
+						if (isset($item->user) && is_numeric($item->user) && $item->user > 0 && isset($item->user_name))
+						{
+							$item->name = $item->user_name;
+						}
+						// always add surname
+						$item->name = $item->name . ' ' . $item->surname;
+						// if linked to user get active name
+						if (isset($item->user) && is_numeric($item->user) && $item->user > 0)
+						{
+							$item->email = JFactory::getUser($item->user)->email;
+						}
+						if ($mediumkey && !is_numeric($item->profile_image) && $item->profile_image === base64_encode(base64_decode($item->profile_image, true)))
+						{
+							// decrypt profile_image
+							$item->profile_image = $medium->decryptString($item->profile_image);
+						}
+						// convert type
+						$item->type = MembersmanagerHelper::jsonToString($item->type, ', ', 'type', 'id', 'name');
+					}
+				}
+
+				// set account value for later
+		if (MembersmanagerHelper::checkArray($items))
+		{
+			foreach ($items as $nr => &$item)
+			{
+				// keep account type value
+				$item->account_id = $item->account;
+			}
+		}
+			// Add these translation only if text only is required
+			if ($export_text_only)
+			{
+
+					// set selection value to a translatable value
+					if (MembersmanagerHelper::checkArray($items))
+					{
+						foreach ($items as $nr => &$item)
+						{
+							// convert account
+							$item->account = $this->selectionTranslation($item->account, 'account');
+						}
+					}
+
+			}
+				return json_decode(json_encode($items), true);
+			}
+		}
+		return false;
+	}
 	
 	/**
 	 * Method to get a store id based on model configuration state.
@@ -590,6 +947,7 @@ class MembersmanagerModelMembers extends JModelList
 		$id .= ':' . $this->getState('filter.id');
 		$id .= ':' . $this->getState('filter.search');
 		$id .= ':' . $this->getState('filter.published');
+		$id .= ':' . $this->getState('filter.access');
 		$id .= ':' . $this->getState('filter.ordering');
 		$id .= ':' . $this->getState('filter.created_by');
 		$id .= ':' . $this->getState('filter.modified_by');

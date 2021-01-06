@@ -11,7 +11,7 @@
 
 
 // No direct access to this file
-defined('_JEXEC') or die('Restricted access'); 
+defined('_JEXEC') or die('Restricted access');
 
 $edit = "index.php?option=com_membersmanager&view=types&task=type.edit";
 
@@ -26,11 +26,8 @@ $edit = "index.php?option=com_membersmanager&view=types&task=type.edit";
 		<td class="order nowrap center hidden-phone">
 		<?php if ($canDo->get('type.edit.state')): ?>
 			<?php
-				if ($this->saveOrder)
-				{
-					$iconClass = ' inactive';
-				}
-				else
+				$iconClass = '';
+				if (!$this->saveOrder)
 				{
 					$iconClass = ' inactive tip-top" hasTooltip" title="' . JHtml::tooltipText('JORDERINGDISABLED');
 				}
