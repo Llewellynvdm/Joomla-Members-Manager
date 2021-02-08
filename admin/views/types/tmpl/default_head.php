@@ -17,7 +17,7 @@ defined('_JEXEC') or die('Restricted access');
 <tr>
 	<?php if ($this->canEdit&& $this->canState): ?>
 		<th width="1%" class="nowrap center hidden-phone">
-			<?php echo JHtml::_('grid.sort', '<i class="icon-menu-2"></i>', 'a.ordering', $this->listDirn, $this->listOrder, null, 'asc', 'JGRID_HEADING_ORDERING'); ?>
+			<?php echo JHtml::_('searchtools.sort', '', 'a.ordering', $this->listDirn, $this->listOrder, null, 'asc', 'JGRID_HEADING_ORDERING', 'icon-menu-2'); ?>
 		</th>
 		<th width="20" class="nowrap center">
 			<?php echo JHtml::_('grid.checkall'); ?>
@@ -31,7 +31,7 @@ defined('_JEXEC') or die('Restricted access');
 		</th>
 	<?php endif; ?>
 	<th class="nowrap" >
-			<?php echo JHtml::_('grid.sort', 'COM_MEMBERSMANAGER_TYPE_NAME_LABEL', 'a.name', $this->listDirn, $this->listOrder); ?>
+			<?php echo JHtml::_('searchtools.sort', 'COM_MEMBERSMANAGER_TYPE_NAME_LABEL', 'a.name', $this->listDirn, $this->listOrder); ?>
 	</th>
 	<th class="nowrap hidden-phone" >
 			<?php echo JText::_('COM_MEMBERSMANAGER_TYPE_DESCRIPTION_LABEL'); ?>
@@ -47,7 +47,7 @@ defined('_JEXEC') or die('Restricted access');
 	</th>
 	<?php if ($this->canState): ?>
 		<th width="10" class="nowrap center" >
-			<?php echo JHtml::_('grid.sort', 'COM_MEMBERSMANAGER_TYPE_STATUS', 'a.published', $this->listDirn, $this->listOrder); ?>
+			<?php echo JHtml::_('searchtools.sort', 'COM_MEMBERSMANAGER_TYPE_STATUS', 'a.published', $this->listDirn, $this->listOrder); ?>
 		</th>
 	<?php else: ?>
 		<th width="10" class="nowrap center" >
@@ -55,6 +55,6 @@ defined('_JEXEC') or die('Restricted access');
 		</th>
 	<?php endif; ?>
 	<th width="5" class="nowrap center hidden-phone" >
-			<?php echo JHtml::_('grid.sort', 'COM_MEMBERSMANAGER_TYPE_ID', 'a.id', $this->listDirn, $this->listOrder); ?>
+			<?php echo JHtml::_('searchtools.sort', 'COM_MEMBERSMANAGER_TYPE_ID', 'a.id', $this->listDirn, $this->listOrder); ?>
 	</th>
 </tr>

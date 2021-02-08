@@ -35,6 +35,10 @@ class MembersmanagerViewTypes extends JViewLegacy
 		$this->pagination = $this->get('Pagination');
 		$this->state = $this->get('State');
 		$this->user = JFactory::getUser();
+		// Load the filter form from xml.
+		$this->filterForm = $this->get('FilterForm');
+		// Load the active filters.
+		$this->activeFilters = $this->get('ActiveFilters');
 		// Add the list ordering clause.
 		$this->listOrder = $this->escape($this->state->get('list.ordering', 'a.id'));
 		$this->listDirn = $this->escape($this->state->get('list.direction', 'DESC'));
@@ -160,42 +164,6 @@ class MembersmanagerViewTypes extends JViewLegacy
 			JToolBarHelper::preferences('com_membersmanager');
 		}
 
-		// Only load publish filter if state change is allowed
-		if ($this->canState)
-		{
-			JHtmlSidebar::addFilter(
-				JText::_('JOPTION_SELECT_PUBLISHED'),
-				'filter_published',
-				JHtml::_('select.options', JHtml::_('jgrid.publishedOptions'), 'value', 'text', $this->state->get('filter.published'), true)
-			);
-		}
-
-		JHtmlSidebar::addFilter(
-			JText::_('JOPTION_SELECT_ACCESS'),
-			'filter_access',
-			JHtml::_('select.options', JHtml::_('access.assetgroups'), 'value', 'text', $this->state->get('filter.access'))
-		);
-
-		// Set Add Relationship Selection
-		$this->add_relationshipOptions = $this->getTheAdd_relationshipSelections();
-		// We do some sanitation for Add Relationship filter
-		if (MembersmanagerHelper::checkArray($this->add_relationshipOptions) &&
-			isset($this->add_relationshipOptions[0]->value) &&
-			!MembersmanagerHelper::checkString($this->add_relationshipOptions[0]->value))
-		{
-			unset($this->add_relationshipOptions[0]);
-		}
-		// Only load Add Relationship filter if it has values
-		if (MembersmanagerHelper::checkArray($this->add_relationshipOptions))
-		{
-			// Add Relationship Filter
-			JHtmlSidebar::addFilter(
-				'- Select '.JText::_('COM_MEMBERSMANAGER_TYPE_ADD_RELATIONSHIP_LABEL').' -',
-				'filter_add_relationship',
-				JHtml::_('select.options', $this->add_relationshipOptions, 'value', 'text', $this->state->get('filter.add_relationship'))
-			);
-		}
-
 		// Only load published batch if state and batch is allowed
 		if ($this->canState && $this->canBatch)
 		{
@@ -219,6 +187,15 @@ class MembersmanagerViewTypes extends JViewLegacy
 		// Only load Add Relationship batch if create, edit, and batch is allowed
 		if ($this->canBatch && $this->canCreate && $this->canEdit)
 		{
+			// Set Add Relationship Selection
+			$this->add_relationshipOptions = JFormHelper::loadFieldType('typesfilteraddrelationship')->options;
+			// We do some sanitation for Add Relationship filter
+			if (MembersmanagerHelper::checkArray($this->add_relationshipOptions) &&
+				isset($this->add_relationshipOptions[0]->value) &&
+				!MembersmanagerHelper::checkString($this->add_relationshipOptions[0]->value))
+			{
+				unset($this->add_relationshipOptions[0]);
+			}
 			// Add Relationship Batch Selection
 			JHtmlBatch_::addListSelection(
 				'- Keep Original '.JText::_('COM_MEMBERSMANAGER_TYPE_ADD_RELATIONSHIP_LABEL').' -',
@@ -274,40 +251,5 @@ class MembersmanagerViewTypes extends JViewLegacy
 			'a.name' => JText::_('COM_MEMBERSMANAGER_TYPE_NAME_LABEL'),
 			'a.id' => JText::_('JGRID_HEADING_ID')
 		);
-	}
-
-	protected function getTheAdd_relationshipSelections()
-	{
-		// Get a db connection.
-		$db = JFactory::getDbo();
-
-		// Create a new query object.
-		$query = $db->getQuery(true);
-
-		// Select the text.
-		$query->select($db->quoteName('add_relationship'));
-		$query->from($db->quoteName('#__membersmanager_type'));
-		$query->order($db->quoteName('add_relationship') . ' ASC');
-
-		// Reset the query using our newly populated query object.
-		$db->setQuery($query);
-
-		$results = $db->loadColumn();
-		$_filter = array();
-
-		if ($results)
-		{
-			// get model
-			$model = $this->getModel();
-			$results = array_unique($results);
-			foreach ($results as $add_relationship)
-			{
-				// Translate the add_relationship selection
-				$text = $model->selectionTranslation($add_relationship,'add_relationship');
-				// Now add the add_relationship and its text to the options array
-				$_filter[] = JHtml::_('select.option', $add_relationship, JText::_($text));
-			}
-		}
-		return $_filter;
 	}
 }

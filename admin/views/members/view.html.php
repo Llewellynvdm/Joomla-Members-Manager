@@ -35,6 +35,10 @@ class MembersmanagerViewMembers extends JViewLegacy
 		$this->pagination = $this->get('Pagination');
 		$this->state = $this->get('State');
 		$this->user = JFactory::getUser();
+		// Load the filter form from xml.
+		$this->filterForm = $this->get('FilterForm');
+		// Load the active filters.
+		$this->activeFilters = $this->get('ActiveFilters');
 		// Add the list ordering clause.
 		$this->listOrder = $this->escape($this->state->get('list.ordering', 'a.id'));
 		$this->listDirn = $this->escape($this->state->get('list.direction', 'DESC'));
@@ -160,42 +164,6 @@ class MembersmanagerViewMembers extends JViewLegacy
 			JToolBarHelper::preferences('com_membersmanager');
 		}
 
-		// Only load publish filter if state change is allowed
-		if ($this->canState)
-		{
-			JHtmlSidebar::addFilter(
-				JText::_('JOPTION_SELECT_PUBLISHED'),
-				'filter_published',
-				JHtml::_('select.options', JHtml::_('jgrid.publishedOptions'), 'value', 'text', $this->state->get('filter.published'), true)
-			);
-		}
-
-		JHtmlSidebar::addFilter(
-			JText::_('JOPTION_SELECT_ACCESS'),
-			'filter_access',
-			JHtml::_('select.options', JHtml::_('access.assetgroups'), 'value', 'text', $this->state->get('filter.access'))
-		);
-
-		// Set Account Selection
-		$this->accountOptions = $this->getTheAccountSelections();
-		// We do some sanitation for Account filter
-		if (MembersmanagerHelper::checkArray($this->accountOptions) &&
-			isset($this->accountOptions[0]->value) &&
-			!MembersmanagerHelper::checkString($this->accountOptions[0]->value))
-		{
-			unset($this->accountOptions[0]);
-		}
-		// Only load Account filter if it has values
-		if (MembersmanagerHelper::checkArray($this->accountOptions))
-		{
-			// Account Filter
-			JHtmlSidebar::addFilter(
-				'- Select '.JText::_('COM_MEMBERSMANAGER_MEMBER_ACCOUNT_LABEL').' -',
-				'filter_account',
-				JHtml::_('select.options', $this->accountOptions, 'value', 'text', $this->state->get('filter.account'))
-			);
-		}
-
 		// Only load published batch if state and batch is allowed
 		if ($this->canState && $this->canBatch)
 		{
@@ -219,6 +187,15 @@ class MembersmanagerViewMembers extends JViewLegacy
 		// Only load Account batch if create, edit, and batch is allowed
 		if ($this->canBatch && $this->canCreate && $this->canEdit)
 		{
+			// Set Account Selection
+			$this->accountOptions = JFormHelper::loadFieldType('membersfilteraccount')->options;
+			// We do some sanitation for Account filter
+			if (MembersmanagerHelper::checkArray($this->accountOptions) &&
+				isset($this->accountOptions[0]->value) &&
+				!MembersmanagerHelper::checkString($this->accountOptions[0]->value))
+			{
+				unset($this->accountOptions[0]);
+			}
 			// Account Batch Selection
 			JHtmlBatch_::addListSelection(
 				'- Keep Original '.JText::_('COM_MEMBERSMANAGER_MEMBER_ACCOUNT_LABEL').' -',
@@ -274,40 +251,5 @@ class MembersmanagerViewMembers extends JViewLegacy
 			'a.account' => JText::_('COM_MEMBERSMANAGER_MEMBER_ACCOUNT_LABEL'),
 			'a.id' => JText::_('JGRID_HEADING_ID')
 		);
-	}
-
-	protected function getTheAccountSelections()
-	{
-		// Get a db connection.
-		$db = JFactory::getDbo();
-
-		// Create a new query object.
-		$query = $db->getQuery(true);
-
-		// Select the text.
-		$query->select($db->quoteName('account'));
-		$query->from($db->quoteName('#__membersmanager_member'));
-		$query->order($db->quoteName('account') . ' ASC');
-
-		// Reset the query using our newly populated query object.
-		$db->setQuery($query);
-
-		$results = $db->loadColumn();
-		$_filter = array();
-
-		if ($results)
-		{
-			// get model
-			$model = $this->getModel();
-			$results = array_unique($results);
-			foreach ($results as $account)
-			{
-				// Translate the account selection
-				$text = $model->selectionTranslation($account,'account');
-				// Now add the account and its text to the options array
-				$_filter[] = JHtml::_('select.option', $account, JText::_($text));
-			}
-		}
-		return $_filter;
 	}
 }

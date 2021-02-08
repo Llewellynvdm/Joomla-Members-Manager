@@ -253,8 +253,15 @@ class MembersmanagerModelMembers extends JModelList
 			$this->context .= '.' . $layout;
 		}
 
+		// Check if the form was submitted
+		$formSubmited = $app->input->post->get('form_submited');
+
 		$access = $this->getUserStateFromRequest($this->context . '.filter.access', 'filter_access', 0, 'int');
-		$this->setState('filter.access', $access);
+		if ($formSubmited)
+		{
+			$access = $app->input->post->get('access');
+			$this->setState('filter.access', $access);
+		}
 
 		$published = $this->getUserStateFromRequest($this->context . '.filter.published', 'filter_published', '');
 		$this->setState('filter.published', $published);
@@ -272,7 +279,11 @@ class MembersmanagerModelMembers extends JModelList
 		$this->setState('filter.search', $search);
 
 		$account = $this->getUserStateFromRequest($this->context . '.filter.account', 'filter_account');
-		$this->setState('filter.account', $account);
+		if ($formSubmited)
+		{
+			$account = $app->input->post->get('account');
+			$this->setState('filter.account', $account);
+		}
 
 		// List state information.
 		parent::populateState($ordering, $direction);
@@ -947,7 +958,18 @@ class MembersmanagerModelMembers extends JModelList
 		$id .= ':' . $this->getState('filter.id');
 		$id .= ':' . $this->getState('filter.search');
 		$id .= ':' . $this->getState('filter.published');
-		$id .= ':' . $this->getState('filter.access');
+		// Check if the value is an array
+		$_access = $this->getState('filter.access');
+		if (MembersmanagerHelper::checkArray($_access))
+		{
+			$id .= ':' . implode(':', $_access);
+		}
+		// Check if this is only an number or string
+		elseif (is_numeric($_access)
+		 || MembersmanagerHelper::checkString($_access))
+		{
+			$id .= ':' . $_access;
+		}
 		$id .= ':' . $this->getState('filter.ordering');
 		$id .= ':' . $this->getState('filter.created_by');
 		$id .= ':' . $this->getState('filter.modified_by');

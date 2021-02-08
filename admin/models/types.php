@@ -106,8 +106,15 @@ class MembersmanagerModelTypes extends JModelList
 			$this->context .= '.' . $layout;
 		}
 
+		// Check if the form was submitted
+		$formSubmited = $app->input->post->get('form_submited');
+
 		$access = $this->getUserStateFromRequest($this->context . '.filter.access', 'filter_access', 0, 'int');
-		$this->setState('filter.access', $access);
+		if ($formSubmited)
+		{
+			$access = $app->input->post->get('access');
+			$this->setState('filter.access', $access);
+		}
 
 		$published = $this->getUserStateFromRequest($this->context . '.filter.published', 'filter_published', '');
 		$this->setState('filter.published', $published);
@@ -125,10 +132,18 @@ class MembersmanagerModelTypes extends JModelList
 		$this->setState('filter.search', $search);
 
 		$add_relationship = $this->getUserStateFromRequest($this->context . '.filter.add_relationship', 'filter_add_relationship');
-		$this->setState('filter.add_relationship', $add_relationship);
+		if ($formSubmited)
+		{
+			$add_relationship = $app->input->post->get('add_relationship');
+			$this->setState('filter.add_relationship', $add_relationship);
+		}
 
 		$name = $this->getUserStateFromRequest($this->context . '.filter.name', 'filter_name');
-		$this->setState('filter.name', $name);
+		if ($formSubmited)
+		{
+			$name = $app->input->post->get('name');
+			$this->setState('filter.name', $name);
+		}
 
 		// List state information.
 		parent::populateState($ordering, $direction);
@@ -458,7 +473,18 @@ class MembersmanagerModelTypes extends JModelList
 		$id .= ':' . $this->getState('filter.id');
 		$id .= ':' . $this->getState('filter.search');
 		$id .= ':' . $this->getState('filter.published');
-		$id .= ':' . $this->getState('filter.access');
+		// Check if the value is an array
+		$_access = $this->getState('filter.access');
+		if (MembersmanagerHelper::checkArray($_access))
+		{
+			$id .= ':' . implode(':', $_access);
+		}
+		// Check if this is only an number or string
+		elseif (is_numeric($_access)
+		 || MembersmanagerHelper::checkString($_access))
+		{
+			$id .= ':' . $_access;
+		}
 		$id .= ':' . $this->getState('filter.ordering');
 		$id .= ':' . $this->getState('filter.created_by');
 		$id .= ':' . $this->getState('filter.modified_by');

@@ -16,6 +16,7 @@ defined('_JEXEC') or die('Restricted access');
 JHtml::_('behavior.tooltip');
 JHtml::_('behavior.multiselect');
 JHtml::_('dropdown.init');
+JHtml::_('formbehavior.chosen', '.multipleAccessLevels', null, array('placeholder_text_multiple' => '- ' . JText::_('COM_MEMBERSMANAGER_FILTER_SELECT_ACCESS') . ' -'));
 JHtml::_('formbehavior.chosen', 'select');
 if ($this->saveOrder)
 {
@@ -23,23 +24,6 @@ if ($this->saveOrder)
 	JHtml::_('sortablelist.sortable', 'typeList', 'adminForm', strtolower($this->listDirn), $saveOrderingUrl);
 }
 ?>
-<script type="text/javascript">
-	Joomla.orderTable = function()
-	{
-		table = document.getElementById("sortTable");
-		direction = document.getElementById("directionTable");
-		order = table.options[table.selectedIndex].value;
-		if (order != '<?php echo $this->listOrder; ?>')
-		{
-			dirn = 'asc';
-		}
-		else
-		{
-			dirn = direction.options[direction.selectedIndex].value;
-		}
-		Joomla.tableOrdering(order, dirn, '');
-	}
-</script>
 <form action="<?php echo JRoute::_('index.php?option=com_membersmanager&view=types'); ?>" method="post" name="adminForm" id="adminForm">
 <?php if(!empty( $this->sidebar)): ?>
 	<div id="j-sidebar-container" class="span2">
@@ -49,13 +33,17 @@ if ($this->saveOrder)
 <?php else : ?>
 	<div id="j-main-container">
 <?php endif; ?>
+<?php
+	// Add the trash helper layout
+	echo JLayoutHelper::render('trashhelper', $this);
+	// Add the searchtools
+	echo JLayoutHelper::render('joomla.searchtools.default', array('view' => $this));
+?>
 <?php if (empty($this->items)): ?>
-	<?php echo $this->loadTemplate('toolbar');?>
 	<div class="alert alert-no-items">
 		<?php echo JText::_('JGLOBAL_NO_MATCHING_RESULTS'); ?>
 	</div>
 <?php else : ?>
-	<?php echo $this->loadTemplate('toolbar');?>
 	<table class="table table-striped" id="typeList">
 		<thead><?php echo $this->loadTemplate('head');?></thead>
 		<tfoot><?php echo $this->loadTemplate('foot');?></tfoot>
@@ -73,8 +61,6 @@ if ($this->saveOrder)
 			$this->loadTemplate('batch_body')
 		); ?>
 	<?php endif; ?>
-	<input type="hidden" name="filter_order" value="<?php echo $this->listOrder; ?>" />
-	<input type="hidden" name="filter_order_Dir" value="<?php echo $this->listDirn; ?>" />
 	<input type="hidden" name="boxchecked" value="0" />
 	</div>
 <?php endif; ?>

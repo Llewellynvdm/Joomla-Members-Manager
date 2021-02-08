@@ -13,7 +13,7 @@ Watch this [tutorial](https://youtu.be/lkE0ZiSWufg) to see how.
 + *Author*: [Llewellyn van der Merwe](mailto:llewellyn@joomlacomponentbuilder.com)
 + *Name*: [Members Manager](https://www.joomlacomponentbuilder.com/)
 + *First Build*: 6th July, 2018
-+ *Last Build*: 7th February, 2021
++ *Last Build*: 8th February, 2021
 + *Version*: 2.0.x
 + *Copyright*: Copyright (C) 2015. All Rights Reserved
 + *License*: GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
@@ -26,11 +26,11 @@ due to [Automated Component Builder](http://joomlacomponentbuilder.com))
 > (if creating a folder and file took **5 seconds** and writing one line of code took **10 seconds**,
 > never making one mistake or taking any coffee break.)
 
-+ *Line count*: **48634**
-+ *File count*: **254**
++ *Line count*: **48925**
++ *File count*: **259**
 + *Folder count*: **70**
 
-**89 Hours** or **11 Eight Hour Days** (the actual time the author spent)
+**90 Hours** or **11 Eight Hour Days** (the actual time the author spent)
 
 > (with the following break down:
 > **debugging @34hours** = codingtime / 4;
@@ -38,7 +38,7 @@ due to [Automated Component Builder](http://joomlacomponentbuilder.com))
 > **mapping @14hours** = codingtime / 10;
 > **office @23hours** = codingtime / 6;)
 
-**225 Hours** or **28 Eight Hour Days**
+**226 Hours** or **28 Eight Hour Days**
 (a total of the realistic time frame for this project)
 
 > (if creating a folder and file took **5 seconds** and writing one line of code took **10 seconds**,
