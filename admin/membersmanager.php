@@ -13,7 +13,7 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
-JHtml::_('behavior.tabstate');
+
 
 // Access check.
 if (!JFactory::getUser()->authorise('core.manage', 'com_membersmanager'))
@@ -27,10 +27,10 @@ $document->addStyleSheet('components/com_membersmanager/assets/css/admin.css');
 $document->addScript('components/com_membersmanager/assets/js/admin.js');
 
 // require helper files
-JLoader::register('MembersmanagerHelper', __DIR__ . '/helpers/membersmanager.php'); 
-JLoader::register('JHtmlBatch_', __DIR__ . '/helpers/html/batch_.php'); 
+JLoader::register('MembersmanagerHelper', __DIR__ . '/helpers/membersmanager.php');
+JLoader::register('JHtmlBatch_', __DIR__ . '/helpers/html/batch_.php');
 
-// Triger the Global Admin Event
+// Trigger the Global Admin Event
 MembersmanagerHelper::globalEvent($document);
 
 // Get an instance of the controller prefixed by Membersmanager

@@ -13,7 +13,7 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
-JHtml::_('behavior.tabstate');
+
 
 // Set the component css/js
 $document = JFactory::getDocument();
@@ -22,9 +22,9 @@ $document->addScript('components/com_membersmanager/assets/js/site.js');
 
 // Require helper files
 JLoader::register('MembersmanagerHelper', __DIR__ . '/helpers/membersmanager.php');
-JLoader::register('MembersmanagerHelperRoute', __DIR__ . '/helpers/route.php'); 
+JLoader::register('MembersmanagerHelperRoute', __DIR__ . '/helpers/route.php');
 
-// Triger the Global Site Event
+// Trigger the Global Site Event
 MembersmanagerHelper::globalEvent($document);
 
 // Get an instance of the controller prefixed by Membersmanager

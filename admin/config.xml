@@ -56,8 +56,8 @@
 			required="true"
 			multiple="false"
 		/>
-		<!-- Spacer_hr_one Field. Type: Spacer. A None Database Field. (joomla) -->
-		<field type="spacer" name="spacer_hr_one" hr="true" class="spacer_hr_one" />
+		<!-- Spacer_hr_1 Field. Type: Spacer. A None Database Field. (joomla) -->
+		<field type="spacer" name="spacer_hr_1" hr="true" class="spacer_hr_1" />
 		<!-- Placeholder_prefix Field. Type: Text. (joomla) -->
 		<field
 			type="text"
@@ -73,8 +73,8 @@
 			hint="COM_MEMBERSMANAGER_CONFIG_PLACEHOLDER_PREFIX_HINT"
 			autocomplete="on"
 		/>
-		<!-- Spacer_hr_two Field. Type: Spacer. A None Database Field. (joomla) -->
-		<field type="spacer" name="spacer_hr_two" hr="true" class="spacer_hr_two" />
+		<!-- Spacer_hr_2 Field. Type: Spacer. A None Database Field. (joomla) -->
+		<field type="spacer" name="spacer_hr_2" hr="true" class="spacer_hr_2" />
 		<field name="autorTitle"
 			type="spacer"
 			label="COM_MEMBERSMANAGER_CONFIG_AUTHOR"

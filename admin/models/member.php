@@ -183,12 +183,6 @@ class MembersmanagerModelMember extends JModelAdmin
 				// set the username
 				$item->username = $member->username;
 			}
-			
-			if (!empty($item->id))
-			{
-				$item->tags = new JHelperTags;
-				$item->tags->getTagIds($item->id, 'com_membersmanager.member');
-			}
 		}
 
 		return $item;
@@ -898,7 +892,7 @@ class MembersmanagerModelMember extends JModelAdmin
 	 */
 	public function getScript()
 	{
-		return 'administrator/components/com_membersmanager/models/forms/member.js';
+		return 'media/com_membersmanager/js/member.js';
 	}
     
 	/**

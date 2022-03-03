@@ -20,6 +20,8 @@ use Joomla\Utilities\ArrayHelper;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use Joomla\CMS\Filesystem\File;
+use Joomla\CMS\Filesystem\Folder;
 
 /**
  * Membersmanager component helper.
@@ -1967,11 +1969,10 @@ abstract class MembersmanagerHelper
 			self::$params = JComponentHelper::getParams('com_membersmanager');
 		}
 		$folderPath = self::$params->get($target, $default);
-		jimport('joomla.filesystem.folder');
 		// create the folder if it does not exist
-		if ($createIfNotSet && !JFolder::exists($folderPath))
+		if ($createIfNotSet && !Folder::exists($folderPath))
 		{
-			JFolder::create($folderPath);
+			Folder::create($folderPath);
 		}
 		// return the url
 		if ('url' === $type)
@@ -2853,7 +2854,10 @@ abstract class MembersmanagerHelper
 				self::$companyDetails[$method][$f.'company_doc_footer'.$b] = $doc_footer;
 			}
 			// check branding options
-			self::triggerPlugin('membersmanagerBrandingOverride', 'onGetCompanyDetails', array(&self::$companyDetails[$method], $f, $b));
+			if (method_exists(__CLASS__, 'triggerPlugin'))
+			{
+				self::triggerPlugin('membersmanagerBrandingOverride', 'onGetCompanyDetails', array(&self::$companyDetails[$method], $f, $b));
+			}
 			// if object is called for
 			if ('object' == $method)
 			{
@@ -8268,12 +8272,12 @@ abstract class MembersmanagerHelper
 			$filePath = $path . '/' . $name . '.php';
 			$fullPathModel = $fullPathModels . '/' . $name . '.php';
 			// check if it exists
-			if (JFile::exists($filePath))
+			if (File::exists($filePath))
 			{
 				// get the file
 				require_once $filePath;
 			}
-			elseif (JFile::exists($fullPathModel))
+			elseif (File::exists($fullPathModel))
 			{
 				// get the file
 				require_once $fullPathModel;
@@ -9094,9 +9098,8 @@ abstract class MembersmanagerHelper
 	{
 		// Prep the path a little
 		$path = '/'. trim(str_replace('//', '/', $path), '/');
-		jimport('joomla.filesystem.folder');
-		/// Check if folder exist
-		if (!JFolder::exists($path))
+		// Check if folder exist
+		if (!Folder::exists($path))
 		{
 			// Lock key.
 			self::$mediumCryptKey = 'none';

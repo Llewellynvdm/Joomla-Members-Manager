@@ -52,7 +52,7 @@ class MembersmanagerRouter extends JComponentRouterBase
 		{
 			$view = $query['view'];
 
-			if (empty($query['Itemid']))
+			if (empty($query['Itemid']) && !(isset($view) && isset($query['id']) && ($view === 'member' || $view === 'members' || $view === 'cpanel' || $view === 'profile')))
 			{
 				$segments[] = $query['view'];
 			}
@@ -115,7 +115,7 @@ class MembersmanagerRouter extends JComponentRouterBase
 		$count = count($segments);
 		$vars = array();
 		
-		//Handle View and Identifier
+		// Handle View and Identifier
 		switch($segments[0])
 		{
 			case 'member':

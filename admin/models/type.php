@@ -154,12 +154,6 @@ class MembersmanagerModelType extends JModelAdmin
 				// JSON Decode groups_access.
 				$item->groups_access = json_decode($item->groups_access,true);
 			}
-			
-			if (!empty($item->id))
-			{
-				$item->tags = new JHelperTags;
-				$item->tags->getTagIds($item->id, 'com_membersmanager.type');
-			}
 		}
 
 		return $item;
@@ -459,7 +453,7 @@ class MembersmanagerModelType extends JModelAdmin
 	 */
 	public function getScript()
 	{
-		return 'administrator/components/com_membersmanager/models/forms/type.js';
+		return 'media/com_membersmanager/js/type.js';
 	}
     
 	/**

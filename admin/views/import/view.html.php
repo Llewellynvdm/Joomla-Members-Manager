@@ -85,10 +85,10 @@ class MembersmanagerViewImport extends JViewLegacy
 		}
 
 		// set help url for this view if found
-		$help_url = MembersmanagerHelper::getHelpUrl('import');
-		if (MembersmanagerHelper::checkString($help_url))
+		$this->help_url = MembersmanagerHelper::getHelpUrl('import');
+		if (MembersmanagerHelper::checkString($this->help_url))
 		{
-			   JToolbarHelper::help('COM_MEMBERSMANAGER_HELP_MANAGER', false, $help_url);
+			   JToolbarHelper::help('COM_MEMBERSMANAGER_HELP_MANAGER', false, $this->help_url);
 		}
 	}
 }

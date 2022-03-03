@@ -102,8 +102,6 @@
 			maxlength="150"
 			description="COM_MEMBERSMANAGER_MEMBER_NAME_DESCRIPTION"
 			class="text_area"
-			readonly="false"
-			disabled="false"
 			required="true"
 			filter="STRING"
 			message="COM_MEMBERSMANAGER_MEMBER_NAME_MESSAGE"
