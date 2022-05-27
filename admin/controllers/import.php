@@ -13,12 +13,13 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\Utilities\ArrayHelper;
 
 /**
- * Membersmanager Import Controller
+ * Membersmanager Import Base Controller
  */
-class MembersmanagerControllerImport extends JControllerLegacy
+class MembersmanagerControllerImport extends BaseController
 {
 	/**
 	 * Import an spreadsheet.

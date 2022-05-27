@@ -13,6 +13,7 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Table\Table;
 use Joomla\Registry\Registry;
 use Joomla\String\StringHelper;
 use Joomla\Utilities\ArrayHelper;
@@ -20,7 +21,7 @@ use Joomla\Utilities\ArrayHelper;
 /**
  * Members Table class
  */
-class MembersmanagerTableMember extends JTable
+class MembersmanagerTableMember extends Table
 {
 	/**
 	 * Ensure the params and metadata in json encoded in the bind method

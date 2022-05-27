@@ -13,12 +13,13 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\MVC\Model\ListModel;
 use Joomla\Utilities\ArrayHelper;
 
 /**
- * Membersmanager Ajax Model
+ * Membersmanager Ajax List Model
  */
-class MembersmanagerModelAjax extends JModelList
+class MembersmanagerModelAjax extends ListModel
 {
 	protected $app_params;
 
@@ -621,8 +622,22 @@ class MembersmanagerModelAjax extends JModelList
 	}
 
 
+	/**
+	 * The view persistence details
+	 *
+	 * @var	array
+	 * @since 1.0.0
+	 */
 	protected $viewid = array();
 
+	/**
+	 * The view details loaded via the session
+	 *
+	 * @input	string  $call    The state key
+	 *
+	 * @return mixed
+	 * @since 1.0.0
+	 */
 	protected function getViewID($call = 'table')
 	{
 		if (!isset($this->viewid[$call]))

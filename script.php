@@ -770,7 +770,7 @@ class com_membersmanagerInstallerScript
 			echo '<a target="_blank" href="https://www.joomlacomponentbuilder.com/" title="Members Manager">
 				<img src="components/com_membersmanager/assets/images/vdm-component.jpg"/>
 				</a>
-				<h3>Upgrade to Version 2.0.6 Was Successful! Let us know if anything is not working as expected.</h3>';
+				<h3>Upgrade to Version 2.1.0 Was Successful! Let us know if anything is not working as expected.</h3>';
 
 			// Set db if not set already.
 			if (!isset($db))

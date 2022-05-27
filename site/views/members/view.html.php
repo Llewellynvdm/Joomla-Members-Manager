@@ -13,10 +13,12 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\MVC\View\HtmlView;
+
 /**
- * Membersmanager View class for the Members
+ * Membersmanager Html View class for the Members
  */
-class MembersmanagerViewMembers extends JViewLegacy
+class MembersmanagerViewMembers extends HtmlView
 {
 	// Overwriting JView display method
 	function display($tpl = null)
@@ -80,12 +82,12 @@ class MembersmanagerViewMembers extends JViewLegacy
 			// The uikit css.
 			if ((!$HeaderCheck->css_loaded('uikit.min') || $uikit == 1) && $uikit != 2 && $uikit != 3)
 			{
-				$this->document->addStyleSheet(JURI::root(true) .'/media/com_membersmanager/uikit-v2/css/uikit'.$style.$size.'.css', (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/css');
+				JHtml::_('stylesheet', 'media/com_membersmanager/uikit-v2/css/uikit'.$style.$size.'.css', ['version' => 'auto']);
 			}
 			// The uikit js.
 			if ((!$HeaderCheck->js_loaded('uikit.min') || $uikit == 1) && $uikit != 2 && $uikit != 3)
 			{
-				$this->document->addScript(JURI::root(true) .'/media/com_membersmanager/uikit-v2/js/uikit'.$size.'.js', (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/javascript');
+				JHtml::_('script', 'media/com_membersmanager/uikit-v2/js/uikit'.$size.'.js', ['version' => 'auto']);
 			}
 		}
 		// Use Uikit Version 3
@@ -94,13 +96,13 @@ class MembersmanagerViewMembers extends JViewLegacy
 			// The uikit css.
 			if ((!$HeaderCheck->css_loaded('uikit.min') || $uikit == 1) && $uikit != 2 && $uikit != 3)
 			{
-				$this->document->addStyleSheet(JURI::root(true) .'/media/com_membersmanager/uikit-v3/css/uikit'.$size.'.css', (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/css');
+				JHtml::_('stylesheet', 'media/com_membersmanager/uikit-v3/css/uikit'.$size.'.css', ['version' => 'auto']);
 			}
 			// The uikit js.
 			if ((!$HeaderCheck->js_loaded('uikit.min') || $uikit == 1) && $uikit != 2 && $uikit != 3)
 			{
-				$this->document->addScript(JURI::root(true) .'/media/com_membersmanager/uikit-v3/js/uikit'.$size.'.js', (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/javascript');
-				$this->document->addScript(JURI::root(true) .'/media/com_membersmanager/uikit-v3/js/uikit-icons'.$size.'.js', (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/javascript');
+				JHtml::_('script', 'media/com_membersmanager/uikit-v3/js/uikit'.$size.'.js', ['version' => 'auto']);
+				JHtml::_('script', 'media/com_membersmanager/uikit-v3/js/uikit-icons'.$size.'.js', ['version' => 'auto']);
 			}
 		}
 		// load the meta description

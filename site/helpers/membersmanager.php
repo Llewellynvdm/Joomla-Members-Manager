@@ -5753,12 +5753,12 @@ abstract class MembersmanagerHelper
 	}
 
 	/**
-	 * File Extension to Mimetype
+	 * File Extensions to Mimetypes
 	 * https://gist.github.com/Llewellynvdm/74be373357e131b8775a7582c3de508b
 	 * http://svn.apache.org/repos/asf/httpd/httpd/trunk/docs/conf/mime.types
-	 * 
+	 *
 	 * @var     array
-	 **/
+	 */
 	protected static $fileExtensionToMimeType = array(
 		'123'			=> 'application/vnd.lotus-1-2-3',
 		'3dml'			=> 'text/vnd.in3d.3dml',
@@ -6303,6 +6303,7 @@ abstract class MembersmanagerHelper
 		'opf'			=> 'application/oebps-package+xml',
 		'opml'			=> 'text/x-opml',
 		'oprc'			=> 'application/vnd.palm',
+		'opus'			=> 'audio/ogg',
 		'org'			=> 'application/vnd.lotus-organizer',
 		'osf'			=> 'application/vnd.yamaha.openscoreformat',
 		'osfpvg'		=> 'application/vnd.yamaha.openscoreformat.osfpvg+xml',
@@ -6764,7 +6765,7 @@ abstract class MembersmanagerHelper
 		 */		
 
 		// get the extension form file
-		$extension = \strtolower(\pathinfo($file, \PATHINFO_EXTENSION));
+		$extension = strtolower(pathinfo($file, PATHINFO_EXTENSION));
 		// check if we have the extension listed
 		if (isset(self::$fileExtensionToMimeType[$extension]))
 		{
@@ -8900,3 +8901,4 @@ abstract class MembersmanagerHelper
 		return true;
 	}
 }
+

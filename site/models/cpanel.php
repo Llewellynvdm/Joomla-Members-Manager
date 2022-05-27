@@ -13,12 +13,13 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\MVC\Model\ItemModel;
 use Joomla\Utilities\ArrayHelper;
 
 /**
- * Membersmanager Cpanel Model
+ * Membersmanager Cpanel Item Model
  */
-class MembersmanagerModelCpanel extends JModelItem
+class MembersmanagerModelCpanel extends ItemModel
 {
 	/**
 	 * Model context string.

@@ -13,15 +13,16 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\CMS\Filesystem\File;
 use Joomla\CMS\Filesystem\Folder;
 use Joomla\Utilities\ArrayHelper;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
 /**
- * Membersmanager Import Model
+ * Membersmanager Import Base Database Model
  */
-class MembersmanagerModelImport extends JModelLegacy
+class MembersmanagerModelImport extends BaseDatabaseModel
 {
 	// set uploading values
 	protected $use_streams = false;

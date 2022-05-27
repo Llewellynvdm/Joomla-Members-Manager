@@ -13,10 +13,12 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\MVC\View\HtmlView;
+
 /**
- * Membersmanager View class for the Types
+ * Membersmanager Html View class for the Types
  */
-class MembersmanagerViewTypes extends JViewLegacy
+class MembersmanagerViewTypes extends HtmlView
 {
 	/**
 	 * Types view display method

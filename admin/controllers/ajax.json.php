@@ -13,12 +13,13 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\Utilities\ArrayHelper;
 
 /**
- * Membersmanager Ajax Controller
+ * Membersmanager Ajax Base Controller
  */
-class MembersmanagerControllerAjax extends JControllerLegacy
+class MembersmanagerControllerAjax extends BaseController
 {
 	public function __construct($config)
 	{

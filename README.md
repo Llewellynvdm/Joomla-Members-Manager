@@ -13,8 +13,8 @@ Watch this [tutorial](https://youtu.be/lkE0ZiSWufg) to see how.
 + *Author*: [Llewellyn van der Merwe](mailto:llewellyn@joomlacomponentbuilder.com)
 + *Name*: [Members Manager](https://www.joomlacomponentbuilder.com/)
 + *First Build*: 6th July, 2018
-+ *Last Build*: 2nd March, 2022
-+ *Version*: 2.0.x
++ *Last Build*: 27th May, 2022
++ *Version*: 2.1.x
 + *Copyright*: Copyright (C) 2015. All Rights Reserved
 + *License*: GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -26,8 +26,8 @@ due to [Automated Component Builder](http://joomlacomponentbuilder.com))
 > (if creating a folder and file took **5 seconds** and writing one line of code took **10 seconds**,
 > never making one mistake or taking any coffee break.)
 
-+ *Line count*: **48989**
-+ *File count*: **259**
++ *Line count*: **49080**
++ *File count*: **260**
 + *Folder count*: **70**
 
 **90 Hours** or **11 Eight Hour Days** (the actual time the author spent)

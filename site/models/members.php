@@ -13,12 +13,13 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\MVC\Model\ListModel;
 use Joomla\Utilities\ArrayHelper;
 
 /**
- * Membersmanager Model for Members
+ * Membersmanager List Model for Members
  */
-class MembersmanagerModelMembers extends JModelList
+class MembersmanagerModelMembers extends ListModel
 {
 	/**
 	 * Model user data.

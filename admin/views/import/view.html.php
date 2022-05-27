@@ -13,10 +13,12 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\MVC\View\HtmlView;
+
 /**
- * Membersmanager Import View
+ * Membersmanager Import Html View
  */
-class MembersmanagerViewImport extends JViewLegacy
+class MembersmanagerViewImport extends HtmlView
 {
 	protected $headerList;
 	protected $hasPackage = false;

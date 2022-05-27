@@ -13,12 +13,13 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\Utilities\ArrayHelper;
 
 /**
- * Membersmanager Component Controller
+ * Membersmanager Component Base Controller
  */
-class MembersmanagerController extends JControllerLegacy
+class MembersmanagerController extends BaseController
 {
 	/**
 	 * Method to display a view.
